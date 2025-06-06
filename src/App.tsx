@@ -4,6 +4,17 @@ import { useState, useEffect } from 'react';
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import Modal from './components/Modal';
+import IncidentList from './components/IncidentList';
+
+const sampleIncidents = [
+  {
+    id: '1',
+    title: 'Network Latency Issue',
+    timestamp: '2024-03-20 14:30',
+    status: 'active' as const,
+    description: 'Increased latency detected in the northern region.'
+  },
+];
 
 // Example custom marker icon
 const customIcon = new Icon({
@@ -83,6 +94,11 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </button>
+      </div>
+    
+      {/* Incident List Section */}
+      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 1000 }}>
+        <IncidentList incidents={sampleIncidents} />
       </div>
 
       {/* Timeline Modal */}

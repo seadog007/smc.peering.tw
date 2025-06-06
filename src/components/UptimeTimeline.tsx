@@ -1,3 +1,6 @@
+import React from 'react';
+import './UptimeTimeline.css';
+
 interface TimelineSegment {
   startTime: Date;
   endTime: Date;
@@ -16,13 +19,13 @@ export default function UptimeTimeline({ segments, startDate, endDate }: UptimeT
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'online':
-        return 'bg-uptime-online';
+        return 'var(--color-uptime-online)';
       case 'warning':
-        return 'bg-uptime-warning';
+        return 'var(--color-uptime-warning)';
       case 'offline':
-        return 'bg-uptime-offline';
+        return 'var(--color-uptime-offline)';
       default:
-        return 'bg-gray-300';
+        return 'var(--color-uptime-offline)';
     }
   };
 
@@ -35,69 +38,65 @@ export default function UptimeTimeline({ segments, startDate, endDate }: UptimeT
       case 'offline':
         return 'Offline';
       default:
-        return status;
+        return 'Unknown';
     }
   };
 
   return (
-    <div className="space-y-4 text-gray-900">
-      {/* Timeline */}
+    <div className="uptime-timeline">
       <div className="timeline-container">
-        <div className="flex h-full gap-1">
+        <div className="timeline-segments">
           {segments.map((segment, index) => {
-            const segmentDuration = segment.endTime.getTime() - segment.startTime.getTime();
-            const width = (segmentDuration / totalDuration) * 100;
+            const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
+            const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
             
             return (
               <div
                 key={index}
-                className={`timeline-segment ${getStatusColor(segment.status)}`}
-                style={{ width: `${width}%` }}
-                title={`${getStatusLabel(segment.status)}: ${segment.startTime.toLocaleString()} - ${segment.endTime.toLocaleString()}`}
+                className="timeline-segment"
+                style={{
+                  left: `${start}%`,
+                  width: `${width}%`,
+                  backgroundColor: getStatusColor(segment.status)
+                }}
+                title={`${getStatusLabel(segment.status)}: ${segment.startTime.toLocaleTimeString()} - ${segment.endTime.toLocaleTimeString()}`}
               />
             );
           })}
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex gap-4 justify-center">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-uptime-online"></div>
-          <span className="text-sm text-gray-700">Online</span>
+      <div className="timeline-legend">
+        <div className="legend-item">
+          <div className="legend-color online"></div>
+          <span className="legend-label">Online</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-uptime-warning"></div>
-          <span className="text-sm text-gray-700">Warning</span>
+        <div className="legend-item">
+          <div className="legend-color warning"></div>
+          <span className="legend-label">Warning</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-uptime-offline"></div>
-          <span className="text-sm text-gray-700">Offline</span>
+        <div className="legend-item">
+          <div className="legend-color offline"></div>
+          <span className="legend-label">Offline</span>
         </div>
       </div>
 
-      {/* Time Range */}
-      <div className="flex justify-between text-sm text-gray-600">
-        <span>{startDate.toLocaleString()}</span>
-        <span>{endDate.toLocaleString()}</span>
+      <div className="timeline-range">
+        <span>{startDate.toLocaleTimeString()}</span>
+        <span>{endDate.toLocaleTimeString()}</span>
       </div>
 
-      {/* Status Summary */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2 text-gray-900">Status Summary</h3>
-        <div className="space-y-2">
+      <div className="status-summary">
+        <h3 className="summary-title">Status Summary</h3>
+        <div className="summary-content">
           {segments.map((segment, index) => {
             const duration = segment.endTime.getTime() - segment.startTime.getTime();
-            const minutes = Math.round(duration / (1000 * 60));
+            const minutes = Math.floor(duration / (1000 * 60));
             
             return (
-              <div key={index} className="flex justify-between items-center">
-                <span className={`font-medium text-white ${getStatusColor(segment.status)} px-2 py-1 rounded`}>
-                  {getStatusLabel(segment.status)}
-                </span>
-                <span className="text-gray-700">
-                  {minutes} minutes
-                </span>
+              <div key={index} className="summary-item">
+                <span className="summary-status">{getStatusLabel(segment.status)}</span>
+                <span className="summary-duration">{minutes} minutes</span>
               </div>
             );
           })}
