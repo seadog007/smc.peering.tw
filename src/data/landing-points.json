@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tanshui-taiwan",
+    "name": "Tanshui, Taiwan",
+    "coordinates": [
+      121.46258584635854,
+      25.18136115573805
+    ]
+  },
+  {
+    "id": "fangshan-taiwan",
+    "name": "Fangshan, Taiwan",
+    "coordinates": [
+      120.66209813218148,
+      22.249258581382197
+    ]
+  },
+  {
+    "id": "toucheng-taiwan",
+    "name": "Toucheng, Taiwan",
+    "coordinates": [
+      121.80145279380189,
+      24.863592858849902
+    ]
+  }
+] 
