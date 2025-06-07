@@ -4,6 +4,7 @@ import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 import landingPoints from '../data/landing-points.json';
+import CableLayer from './CableLayer';
 
 // Create a custom white dot icon
 const whiteDotIcon = new Icon({
@@ -62,6 +63,7 @@ export default function Map({ center, markers, lines }: MapProps) {
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         <MapController center={[23.5, 121]} />
+        <CableLayer />
         
         {/* Render landing points */}
         {landingPoints.map((point) => (
