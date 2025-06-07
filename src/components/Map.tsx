@@ -26,28 +26,11 @@ interface MapProps {
   }>;
 }
 
-function MapController({ center }: { center: LatLngExpression }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    map.setView(center);
-    // Disable all map interactions
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-  }, [center, map]);
-
-  return null;
-}
-
 export default function Map({ center, markers, lines }: MapProps) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <MapContainer 
-        center={[23.5, 121]} // Center of Taiwan
+        center={center} // Center of Taiwan
         zoom={7} // Zoom level to show whole Taiwan
         style={{ height: '100%', width: '100%' }}
         zoomControl={false} // Disable zoom controls
@@ -62,7 +45,6 @@ export default function Map({ center, markers, lines }: MapProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
-        <MapController center={[23.5, 121]} />
         <CableLayer />
         
         {/* Render landing points */}
