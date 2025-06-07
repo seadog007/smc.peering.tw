@@ -22,5 +22,117 @@
       121.80145279380189,
       24.863592858849902
     ]
+  },
+  {
+    "id": "dongyin-taiwan",
+    "name": "Dongyin, Taiwan",
+    "coordinates": [
+      120.49296999999949,
+      26.367330000000443
+    ]
+  },
+  {
+    "id": "yuanli-taiwan",
+    "name": "Yuanli, Taiwan",
+    "coordinates": [
+      120.64548999999985,
+      24.432460000000326
+    ]
+  },
+  {
+    "id": "jinhu-township-taiwan",
+    "name": "Jinhu Township, Taiwan",
+    "coordinates": [
+      118.43943999999946,
+      24.437479999999816
+    ]
+  },
+  {
+    "id": "budai-taiwan",
+    "name": "Budai, Taiwan",
+    "coordinates": [
+      120.17046999999953,
+      23.362789999999872
+    ]
+  },
+  {
+    "id": "huxi-township-taiwan",
+    "name": "Huxi Township, Taiwan",
+    "coordinates": [
+      119.65616000000064,
+      23.573629999999714
+    ]
+  },
+  {
+    "id": "jincheng-township-taiwan",
+    "name": "Jincheng Township, Taiwan",
+    "coordinates": [
+      118.31584,
+      24.413410000000344
+    ]
+  },
+  {
+    "id": "tainan-taiwan",
+    "name": "Tainan, Taiwan",
+    "coordinates": [
+      120.18086199999875,
+      22.99721
+    ]
+  },
+  {
+    "id": "taoyuan-taiwan",
+    "name": "Taoyuan, Taiwan",
+    "coordinates": [
+      121.31111109999966,
+      24.98888889999996
+    ]
+  },
+  {
+    "id": "nangan-taiwan",
+    "name": "Nangan, Taiwan",
+    "coordinates": [
+      119.93435,
+      26.15516
+    ]
+  },
+  {
+    "id": "magong-taiwan",
+    "name": "Magong, Taiwan",
+    "coordinates": [
+      119.5745100000003,
+      23.571549999999434
+    ]
+  },
+  {
+    "id": "xiyu-township-taiwan",
+    "name": "Xiyu Township, Taiwan",
+    "coordinates": [
+      119.51201999999984,
+      23.60192
+    ]
+  },
+  {
+    "id": "xiju-taiwan",
+    "name": "Xiju, Taiwan",
+    "coordinates": [
+      119.93907578760941,
+      25.973144107820715
+    ]
+  },
+  {
+    "id": "beigan-taiwan",
+    "name": "Beigan, Taiwan",
+    "coordinates": [
+      119.98859,
+      26.225399999999755
+    ]
+  },
+  {
+    "id": "pa-li-taiwan",
+    "name": "Pa-li, Taiwan",
+    "coordinates": [
+      121.38319137135348,
+      25.149983824511253
+    ]
   }
 ] 
