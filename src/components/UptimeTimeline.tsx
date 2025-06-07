@@ -1,6 +1,11 @@
 import React from 'react';
 import './UptimeTimeline.css';
 
+interface Cable {
+  id: string;
+  name: string;
+}
+
 interface TimelineSegment {
   startTime: Date;
   endTime: Date;
@@ -8,12 +13,13 @@ interface TimelineSegment {
 }
 
 interface UptimeTimelineProps {
-  segments: TimelineSegment[];
+  cables: Cable[];
+  segments: { [cableId: string]: TimelineSegment[] };
   startDate: Date;
   endDate: Date;
 }
 
-export default function UptimeTimeline({ segments, startDate, endDate }: UptimeTimelineProps) {
+export default function UptimeTimeline({ cables, segments, startDate, endDate }: UptimeTimelineProps) {
   const totalDuration = endDate.getTime() - startDate.getTime();
 
   const getStatusColor = (status: string) => {
@@ -42,65 +48,46 @@ export default function UptimeTimeline({ segments, startDate, endDate }: UptimeT
     }
   };
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+
   return (
     <div className="uptime-timeline">
-      <div className="timeline-container">
-        <div className="timeline-segments">
-          {segments.map((segment, index) => {
-            const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
-            const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
-            
-            return (
-              <div
-                key={index}
-                className="timeline-segment"
-                style={{
-                  left: `${start}%`,
-                  width: `${width}%`,
-                  backgroundColor: getStatusColor(segment.status)
-                }}
-                title={`${getStatusLabel(segment.status)}: ${segment.startTime.toLocaleTimeString()} - ${segment.endTime.toLocaleTimeString()}`}
-              />
-            );
-          })}
-        </div>
-      </div>
+      {cables.map((cable) => (
+        <div key={cable.id} className="cable-timeline">
+          <h3 className="cable-name">{cable.name}</h3>
+          <div className="timeline-container">
+            <div className="timeline-segments">
+              {(segments[cable.id] || []).map((segment, index) => {
+                const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
+                const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
 
-      <div className="timeline-legend">
-        <div className="legend-item">
-          <div className="legend-color online"></div>
-          <span className="legend-label">Online</span>
+                return (
+                  <div
+                    key={index}
+                    className="timeline-segment"
+                    style={{
+                      left: `${start}%`,
+                      width: `${width}%`,
+                      backgroundColor: getStatusColor(segment.status),
+                    }}
+                    title={`${getStatusLabel(segment.status)}: ${segment.startTime.toLocaleTimeString()} - ${segment.endTime.toLocaleTimeString()}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
         </div>
-        <div className="legend-item">
-          <div className="legend-color warning"></div>
-          <span className="legend-label">Warning</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-color offline"></div>
-          <span className="legend-label">Offline</span>
-        </div>
-      </div>
-
-      <div className="timeline-range">
-        <span>{startDate.toLocaleTimeString()}</span>
-        <span>{endDate.toLocaleTimeString()}</span>
-      </div>
-
-      <div className="status-summary">
-        <h3 className="summary-title">Status Summary</h3>
-        <div className="summary-content">
-          {segments.map((segment, index) => {
-            const duration = segment.endTime.getTime() - segment.startTime.getTime();
-            const minutes = Math.floor(duration / (1000 * 60));
-            
-            return (
-              <div key={index} className="summary-item">
-                <span className="summary-status">{getStatusLabel(segment.status)}</span>
-                <span className="summary-duration">{minutes} minutes</span>
-              </div>
-            );
-          })}
-        </div>
+      ))}
+      <div className="timeline-axis">
+        <span>{formatTime(startDate)}</span>
+        <span>{formatTime(new Date(startDate.getTime() + totalDuration / 2))}</span>
+        <span>{formatTime(endDate)}</span>
       </div>
     </div>
   );

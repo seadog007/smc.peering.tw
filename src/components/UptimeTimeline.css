@@ -7,15 +7,28 @@
 .uptime-timeline {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   color: #fff;
   height: 100%;
   background-color: #1a1a1a;
+  padding: 1rem;
+}
+
+.cable-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cable-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e5e5e5;
 }
 
 .timeline-container {
   width: 100%;
-  height: 2rem;
+  height: 1.5rem;
   background-color: #2a2a2a;
   border-radius: 0.25rem;
   overflow: hidden;
@@ -33,6 +46,17 @@
   height: 100%;
   position: absolute;
   transition: background-color 0.2s;
+}
+
+.timeline-axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #a3a3a3;
+  padding: 0 0.5rem;
+  border-top: 1px solid #333;
+  padding-top: 0.5rem;
+  margin-top: auto;
 }
 
 .timeline-legend {

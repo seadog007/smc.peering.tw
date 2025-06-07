@@ -6,6 +6,7 @@ import UptimeTimeline from './components/UptimeTimeline';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import './App.css';
+import landingPoints from './data/landing-points.json';
 
 const sampleIncidents = [
   {
@@ -25,44 +26,11 @@ const customIcon = new Icon({
   iconAnchor: [12, 41]
 });
 
-function App() {
-  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
-
-  // Debug state changes
-  useEffect(() => {
-    console.log('Modal state changed:', isTimelineOpen);
-  }, [isTimelineOpen]);
-
-  const handleOpenTimeline = () => {
-    console.log('Opening timeline...');
-    setIsTimelineOpen(true);
-  };
-
-  const handleCloseTimeline = () => {
-    console.log('Closing timeline...');
-    setIsTimelineOpen(false);
-  };
-
-  // Example data
-  const mapCenter: LatLngTuple = [25.0330, 121.5654]; // Taipei coordinates
-  const markers = [
-    { position: [25.0330, 121.5654] as LatLngTuple, title: 'Location 1' },
-    { position: [25.0340, 121.5754] as LatLngTuple, title: 'Location 2', customIcon },
-  ];
-  const lines = [
-    {
-      positions: [
-        [25.0330, 121.5654] as LatLngTuple,
-        [25.0340, 121.5754] as LatLngTuple,
-      ],
-      color: '#ff0000',
-    },
-  ];
-
-  // Example timeline data
-  const now = new Date();
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-  const timelineSegments = [
+// Sample timeline data for cables
+const now = new Date();
+const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+const timelineSegments = {
+  'apcn-2': [
     {
       startTime: oneHourAgo,
       endTime: new Date(oneHourAgo.getTime() + 20 * 60 * 1000),
@@ -78,7 +46,58 @@ function App() {
       endTime: now,
       status: 'online' as const,
     },
-  ];
+  ],
+  'eac-c2c': [
+    {
+      startTime: oneHourAgo,
+      endTime: new Date(oneHourAgo.getTime() + 10 * 60 * 1000),
+      status: 'online' as const,
+    },
+    {
+      startTime: new Date(oneHourAgo.getTime() + 10 * 60 * 1000),
+      endTime: new Date(oneHourAgo.getTime() + 45 * 60 * 1000),
+      status: 'offline' as const,
+    },
+    {
+      startTime: new Date(oneHourAgo.getTime() + 45 * 60 * 1000),
+      endTime: now,
+      status: 'online' as const,
+    },
+  ]
+};
+
+function App() {
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
+
+  useEffect(() => {
+    // Dynamically import cable data to pass to timeline
+    const loadCables = async () => {
+      const cableFiles = import.meta.glob<{ default: { id: string, name: string } }>('/src/data/cables/*.json');
+      const loadedCables = [];
+      for (const path in cableFiles) {
+        const module = await cableFiles[path]();
+        loadedCables.push({
+          id: module.default.id,
+          name: module.default.name
+        });
+      }
+      setCables(loadedCables);
+    };
+    loadCables();
+  }, []);
+
+  const handleOpenTimeline = () => setIsTimelineOpen(true);
+  const handleCloseTimeline = () => setIsTimelineOpen(false);
+
+  // Example data
+  const mapCenter: LatLngTuple = [23.5, 121]; // Center of Taiwan
+  const markers = landingPoints.map(point => ({
+    position: [point.coordinates[1], point.coordinates[0]] as LatLngTuple,
+    title: point.name,
+    customIcon
+  }));
+  const lines: any[] = []; // No lines needed for this example
 
   return (
     <div className="app-container">
@@ -109,6 +128,7 @@ function App() {
         title="Uptime Timeline"
       >
         <UptimeTimeline
+          cables={cables}
           segments={timelineSegments}
           startDate={oneHourAgo}
           endDate={now}
