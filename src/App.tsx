@@ -68,7 +68,16 @@ const timelineSegments = {
 
 function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Dynamically import cable data to pass to timeline
@@ -91,20 +100,16 @@ function App() {
   const handleCloseTimeline = () => setIsTimelineOpen(false);
 
   // Example data
-  const mapCenter: LatLngTuple = [24, 122.5]; // Center of Taiwan
-  const markers = landingPoints.map(point => ({
-    position: [point.coordinates[1], point.coordinates[0]] as LatLngTuple,
-    title: point.name,
-    customIcon
-  }));
-  const lines: any[] = []; // No lines needed for this example
+  const mapCenter: LatLngTuple = [23.5, 121];
+  const markers: any[] = [];
+  const lines: any[] = [];
 
   return (
     <div className="app-container">
-      <Map center={mapCenter} markers={markers} lines={lines} />
-      
-      {/* Timeline Button */}
-      <div className="timeline-button-container">
+      <div className="map-section">
+        <Map center={mapCenter} markers={markers} lines={lines} />
+      </div>
+      {!isMobile && (
         <button
           onClick={handleOpenTimeline}
           className="timeline-button"
@@ -114,14 +119,10 @@ function App() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </button>
-      </div>
-    
-      {/* Incident List Section */}
-      <div className="incident-list-container-outer">
+      )}
+      <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
         <IncidentList incidents={sampleIncidents} />
       </div>
-
-      {/* Timeline Modal */}
       <Modal
         isOpen={isTimelineOpen}
         onClose={handleCloseTimeline}

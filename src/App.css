@@ -3,19 +3,35 @@
   height: 100vh;
   position: relative;
   background-color: #1a1a1a;
+  overflow: hidden;
 }
 
-.timeline-button-container {
+.map-section {
+  width: 100%;
+  height: 100%;
+}
+
+.incident-section {
   position: absolute;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
+  width: 30%;
+  height: calc(100% - 40px);
   z-index: 1000;
+}
+
+.incident-section.full-width {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  border-radius: 0;
 }
 
 .timeline-button {
   position: absolute;
   bottom: 20px;
-  right: 20px;
+  left: 20px;
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
@@ -24,6 +40,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   padding: 0.75rem;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .timeline-button:hover {
