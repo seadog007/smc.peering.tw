@@ -70,10 +70,15 @@ function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
+  const [mapCenter, setMapCenter] = useState<LatLngTuple>(
+    window.innerWidth < 768 ? [23.5, 121] : [23.7, 123]
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setMapCenter(mobile ? [23.5, 121] : [23.7, 123]);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -99,8 +104,6 @@ function App() {
   const handleOpenTimeline = () => setIsTimelineOpen(true);
   const handleCloseTimeline = () => setIsTimelineOpen(false);
 
-  // Example data
-  const mapCenter: LatLngTuple = [23.5, 121];
   const markers: any[] = [];
   const lines: any[] = [];
 

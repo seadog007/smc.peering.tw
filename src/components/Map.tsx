@@ -1,10 +1,10 @@
-import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react';
 import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
+import MapViewController from './MapViewController';
 import './Map.css';
 
 // Create a custom white dot icon
@@ -43,6 +43,7 @@ export default function Map({ center, markers, lines }: MapProps) {
         keyboard={false} // Disable keyboard navigation
         zoomSnap={0.1} // Snap to 0.1 zoom levels
       >
+        <MapViewController center={center} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
