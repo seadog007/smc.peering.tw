@@ -91,7 +91,7 @@ function App() {
   const handleCloseTimeline = () => setIsTimelineOpen(false);
 
   // Example data
-  const mapCenter: LatLngTuple = [24, 123]; // Center of Taiwan
+  const mapCenter: LatLngTuple = [24, 122.5]; // Center of Taiwan
   const markers = landingPoints.map(point => ({
     position: [point.coordinates[1], point.coordinates[0]] as LatLngTuple,
     title: point.name,

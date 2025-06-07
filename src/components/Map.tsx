@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react';
 import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
+import './Map.css';
 
 // Create a custom white dot icon
 const whiteDotIcon = new Icon({
@@ -31,7 +32,7 @@ export default function Map({ center, markers, lines }: MapProps) {
     <div style={{ width: '100%', height: '100%' }}>
       <MapContainer 
         center={center} // Center of Taiwan
-        zoom={7} // Zoom level to show whole Taiwan
+        zoom={7.5} // Zoom level to show whole Taiwan
         style={{ height: '100%', width: '100%' }}
         zoomControl={false} // Disable zoom controls
         dragging={false} // Disable dragging
@@ -40,6 +41,7 @@ export default function Map({ center, markers, lines }: MapProps) {
         scrollWheelZoom={false} // Disable scroll wheel zoom
         boxZoom={false} // Disable box zoom
         keyboard={false} // Disable keyboard navigation
+        zoomSnap={0.1} // Snap to 0.1 zoom levels
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
