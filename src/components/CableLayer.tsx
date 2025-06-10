@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { LatLngTuple } from 'leaflet';
+import { Polyline } from 'react-leaflet';
 
 interface CableSegment {
   id: string;
   hidden?: boolean;
   coordinates: [number, number][];
+  color?: string;
 }
 
 interface Cable {
@@ -72,10 +74,15 @@ export default function CableLayer() {
         // Swap coordinates from [longitude, latitude] to [latitude, longitude]
         const leafletCoordinates = segment.coordinates.map(([lon, lat]) => [lat, lon] as LatLngTuple);
         const polyline = L.polyline(leafletCoordinates, {
-          color: '#4a90e2',
+          color: segment.color || '#4a90e2',
           weight: 2,
-          opacity: 0.8,
-        }).bindPopup(`<b>${cable.name}</b><br>Segment: ${segment.id}`);
+          opacity: 0.7,
+        }).bindPopup(`<b>${cable.name}</b><br>Segment: ${segment.id}`)
+        .on('popupopen', function(e) {
+          var popup = e.popup;
+          var vc = `<b>${cable.name}</b><br>Segment: ${segment.id}<br>` + (popup.getLatLng()?.toString() || 'No coordinates available');
+          popup.setContent(vc);
+        });
 
         cableLayer.addLayer(polyline);
       });
@@ -91,4 +98,4 @@ export default function CableLayer() {
   }, [map, cables]);
 
   return null;
-} 
+}
