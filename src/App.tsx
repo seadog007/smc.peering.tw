@@ -104,13 +104,10 @@ function App() {
   const handleOpenTimeline = () => setIsTimelineOpen(true);
   const handleCloseTimeline = () => setIsTimelineOpen(false);
 
-  const markers: any[] = [];
-  const lines: any[] = [];
-
   return (
     <div className="app-container">
       <div className="map-section">
-        <Map center={mapCenter} markers={markers} lines={lines} />
+        <Map center={mapCenter} />
       </div>
       {!isMobile && (
         <button

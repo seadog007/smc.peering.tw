@@ -16,18 +16,9 @@ const whiteDotIcon = new Icon({
 
 interface MapProps {
   center: LatLngExpression;
-  markers: Array<{
-    position: LatLngExpression;
-    title: string;
-    customIcon?: Icon;
-  }>;
-  lines: Array<{
-    positions: LatLngExpression[];
-    color: string;
-  }>;
 }
 
-export default function Map({ center, markers, lines }: MapProps) {
+export default function Map({ center }: MapProps) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <MapContainer 
@@ -59,23 +50,7 @@ export default function Map({ center, markers, lines }: MapProps) {
             title={point.name}
           />
         ))}
-        
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            position={marker.position}
-            icon={marker.customIcon || whiteDotIcon}
-            title={marker.title}
-          />
-        ))}
-        
-        {lines.map((line, index) => (
-          <Polyline
-            key={index}
-            positions={line.positions}
-            pathOptions={{ color: line.color }}
-          />
-        ))}
+
       </MapContainer>
     </div>
   );
