@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -48,7 +48,9 @@ export default function Map({ center }: MapProps) {
             position={[point.coordinates[1], point.coordinates[0]]}
             icon={whiteDotIcon}
             title={point.name}
-          />
+          >
+            <Popup>{point.name}</Popup>
+          </Marker>
         ))}
 
       </MapContainer>
