@@ -1,0 +1,119 @@
+[
+  {
+    "date": "2024-04-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "nacs",
+    "segment": "nacs-seg-2",
+    "title": "F/RANL NACS 香港方向斷線",
+    "description": "於 23°58.1688′N 122°30.0804′E 處發生故障，影響香港方面流量",
+    "resolved_at": "2025-08-06T00:00:00+08:00"
+  },
+  {
+    "date": "2024-10-26T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "faster",
+    "segment": "faster-seg-6",
+    "title": "FASTER S6 斷線",
+    "description": "",
+    "resolved_at": "2025-01-26T00:00:00+08:00"
+  },
+  {
+    "date": "2025-01-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpe",
+    "segment": "tpe-seg-3s",
+    "title": "TPE S3S 斷線",
+    "description": "於25°22.7202'N 121°47.352'E 處發生故障",
+    "resolved_at": "2025-01-20T00:00:00+08:00"
+  },
+  {
+    "date": "2025-01-04T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-1",
+    "title": "F/RNAL NACS 日本方向斷線",
+    "description": "於 24°58.439'N 122°2.080'E 處發生故障，主要影響日本方面流量",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-01-11T01:58:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpkm3",
+    "segment": "tpkm3-mt",
+    "title": "台馬第三海纜(草漯-南竿) 24/24芯斷線",
+    "description": "於 25°5.197'N 121°5.416'E 處發生故障，2024/01/11 6 芯斷線，2024/01/15 13:36 全斷",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-01-22T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpkm2",
+    "segment": "tpkm2-mt",
+    "title": "台馬第二海纜(淡水-東引) 12/12芯斷線",
+    "description": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-01-23T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-d",
+    "title": "EAC1 D 段香港方向斷線",
+    "description": "於 22°26.5661'N 121°44.2585'E、23°27.9840'N 122°19.773'E 兩處發生故障，影響往香港與東南亞流量",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-02-05T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "faster",
+    "segment": "faster-seg-6",
+    "title": "FASTER S6 斷線",
+    "description": "於 25°18.140'N 122°03.705'E 處發生斷線",
+    "resolved_at": "2025-03-01T00:00:00+08:00"
+  },
+  {
+    "date": "2025-02-06T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "sjc2",
+    "segment": "sjc2-seg-5",
+    "title": "SJC2 S5東北亞方向斷線",
+    "description": "於 25°11.086'N 122°14.612'E 處發生故障，主要影響東北亞方向流量",
+    "resolved_at": "2025-03-26T00:00:00+08:00"
+  },
+  {
+    "date": "2025-02-25T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpkm3",
+    "segment": "tpkm3-hx",
+    "title": "台澎第三海纜(北門-馬公) 24/24芯斷線",
+    "description": "於 23°17.4756'N 120°1.2708'E 處發生故障",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-03-14T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpkm3",
+    "segment": "tpkm3-hx",
+    "title": "台澎第三海纜(北門-馬公) 24/24芯斷線",
+    "description": "於 23°21.3963'N 119°48.3221'E 處發生故障",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-03-27T10:03:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b1",
+    "title": "EAC2 2B1段 東南亞方向斷線",
+    "description": "於 23°28.1486'N 122°16.8922'E 處發生故障，影響東南亞與新加坡方面流量",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-04-29T15:05:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-7",
+    "title": "APCN2 中國方向斷線",
+    "description": "影響中國新加坡方面流量",
+    "resolved_at": "2025-05-16T09:56:00+08:00"
+  }
+]
