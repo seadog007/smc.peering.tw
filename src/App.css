@@ -13,11 +13,11 @@
 
 .incident-section {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 30px;
+  right: 30px;
   width: 30%;
   min-width: 400px;
-  height: calc(100% - 40px);
+  height: calc(100% - 60px);
   z-index: 1000;
 }
 
