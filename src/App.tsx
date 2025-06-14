@@ -2,6 +2,7 @@ import type { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
+import About from './components/About';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import LanguageSwitcher from './components/LanguageSwitcher';
@@ -19,6 +20,7 @@ const mobileMapCenter: LatLngTuple = [24, 121.1];
 function App() {
   const { t } = useTranslation();
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
@@ -54,6 +56,8 @@ function App() {
 
   const handleOpenTimeline = () => setIsTimelineOpen(true);
   const handleCloseTimeline = () => setIsTimelineOpen(false);
+  const handleOpenAbout = () => setIsAboutOpen(true);
+  const handleCloseAbout = () => setIsAboutOpen(false);
 
   return (
     <div className="app">
@@ -74,6 +78,17 @@ function App() {
               </svg>
             </button>
           )}
+          {!isMobile && (
+            <button
+              onClick={handleOpenAbout}
+              className="about-button"
+              title={t('about.show')}
+            >
+              <svg className="about-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          )}
           <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
             <IncidentList />
           </div>
@@ -87,6 +102,13 @@ function App() {
               startDate={timelineRange}
               endDate={now}
             />
+          </Modal>
+          <Modal
+            isOpen={isAboutOpen}
+            onClose={handleCloseAbout}
+            title={t('about.title')}
+          >
+            <About />
           </Modal>
         </div>
       </div>
