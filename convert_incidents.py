@@ -28,9 +28,10 @@ def convert_incidents():
     url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR4ufKCDRwgDT24QpIzJYAK8O5kF2jffqwpc6EdbRV2YZ4oHAXuX3SbWxpJTg7fdMLVWBbSKt9M57XR/pub?gid=0&single=true&output=tsv'
     
     try:
-        # Fetch the data
+        # Fetch the data with proper encoding
         response = requests.get(url)
         response.raise_for_status()
+        response.encoding = 'utf-8'  # Force UTF-8 encoding
         
         # Read TSV data
         tsv_data = StringIO(response.text)
@@ -46,11 +47,11 @@ def convert_incidents():
                     'status': row['status'],
                     'cableid': row['cableid'],
                     'segment': row['segment'],
-                    'description': row['description'],
+                    'description': row['description'].strip('"'),  # Remove any extra quotes
                     'resolved_at': row['resolved_at']
                 })
         
-        # Write to JSON file
+        # Write to JSON file with UTF-8 encoding
         with open('src/data/incidents.json', 'w', encoding='utf-8') as f:
             json.dump(filtered_incidents, f, indent=2, ensure_ascii=False)
         
