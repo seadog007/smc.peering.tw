@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './UptimeTimeline.css';
 
@@ -10,7 +10,7 @@ interface Cable {
 interface TimelineSegment {
   startTime: Date;
   endTime: Date;
-  status: 'online' | 'warning' | 'offline';
+  status: 'online' | 'disconnected' | 'partial_disconnected' | 'notice';
 }
 
 interface Incident {
@@ -91,7 +91,7 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
             newSegments[cableId].push({
               startTime: incidentStart,
               endTime: incidentEnd,
-              status: 'offline'
+              status: incident.status as 'disconnected' | 'partial_disconnected' | 'notice'
             });
             
             if (incidentEnd < onlineSegment.endTime) {
@@ -120,25 +120,29 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
     switch (status) {
       case 'online':
         return 'var(--color-uptime-online)';
-      case 'warning':
-        return 'var(--color-uptime-warning)';
-      case 'offline':
-        return 'var(--color-uptime-offline)';
+      case 'disconnected':
+        return 'var(--color-uptime-disconnected)';
+      case 'partial_disconnected':
+        return 'var(--color-uptime-partial-disconnected)';
+      case 'notice':
+        return 'var(--color-uptime-notice)';
       default:
-        return 'var(--color-uptime-offline)';
+        return 'var(--color-uptime-unknown)';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'online':
-        return 'Online';
-      case 'warning':
-        return 'Warning';
-      case 'offline':
-        return 'Offline';
+        return t('common.online');
+      case 'disconnected':
+        return t('common.disconnected');
+      case 'partial_disconnected':
+        return t('common.partial_disconnected');
+      case 'notice':
+        return t('common.notice');
       default:
-        return 'Unknown';
+        return t('common.unknown');
     }
   };
 

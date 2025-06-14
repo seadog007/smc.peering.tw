@@ -5,7 +5,12 @@
     "noActiveIncidents": "目前沒有進行中的事件",
     "noHistoricalIncidents": "沒有歷史事件",
     "showActive": "顯示發生中事件",
-    "showHistorical": "顯示歷史事件"
+    "showHistorical": "顯示歷史事件",
+    "online": "在線",
+    "disconnected": "斷線",
+    "partial_disconnected": "部分斷線",
+    "notice": "注意",
+    "unknown": "未知"
   },
   "incidents": {
     "title": "發生中事件",

@@ -1,7 +1,9 @@
 :root {
   --color-uptime-online: #22c55e;
-  --color-uptime-warning: #eab308;
-  --color-uptime-offline: #ef4444;
+  --color-uptime-disconnected: #ef4444;
+  --color-uptime-partial-disconnected: #f59e0b;
+  --color-uptime-notice: #a3be44;
+  --color-uptime-unknown: #6e6e6e;
 }
 
 .uptime-timeline {
@@ -120,12 +122,20 @@
   background-color: var(--color-uptime-online);
 }
 
-.legend-color.warning {
-  background-color: var(--color-uptime-warning);
+.legend-color.partial-disconnected {
+  background-color: var(--color-uptime-partial-disconnected);
 }
 
-.legend-color.offline {
-  background-color: var(--color-uptime-offline);
+.legend-color.disconnected {
+  background-color: var(--color-uptime-disconnected);
+}
+
+.legend-color.notice {
+  background-color: var(--color-uptime-notice);
+}
+
+.legend-color.unknown {
+  background-color: var(--color-uptime-unknown);
 }
 
 .legend-label {

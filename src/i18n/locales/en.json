@@ -5,7 +5,12 @@
     "noActiveIncidents": "No active incidents",
     "noHistoricalIncidents": "No historical incidents",
     "showActive": "Show Active",
-    "showHistorical": "Show Historical"
+    "showHistorical": "Show Historical",
+    "online": "Online",
+    "disconnected": "Disconnected",
+    "partial_disconnected": "Partial Disconnected",
+    "notice": "Notice",
+    "unknown": "Unknown"
   },
   "incidents": {
     "title": "Active Incidents",
