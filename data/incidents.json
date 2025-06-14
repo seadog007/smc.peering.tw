@@ -1,0 +1,20 @@
+[
+  {
+    "date": "2025-04-29T15:05:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-7",
+    "title": "APCN 中國方向斷線",
+    "description": "影響中國新加坡方面",
+    "resolved_at": "2025-05-16T09:56:00+08:00"
+  },
+  {
+    "date": "2025-01-05T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-hj-jp",
+    "title": "F/RNAL NACS 日本向斷線",
+    "description": "影響日本方面",
+    "resolved_at": ""
+  }
+]
