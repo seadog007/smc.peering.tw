@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: '0 */3 * * *'  # Run every 3 hours
   workflow_dispatch:  # Allow manual trigger
+  workflow_call:  # Allow being called by other workflows
 
 permissions:
   contents: write

@@ -36,4 +36,8 @@ jobs:
           folder: dist
           branch: gh-pages
           clean: true
-          token: ${{ secrets.GITHUB_TOKEN }} 
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  update-incidents:
+    needs: build
+    uses: ./.github/workflows/update-incidents.yml 
