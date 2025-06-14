@@ -30,6 +30,9 @@ jobs:
       - name: Create CNAME file
         run: echo "smc.peering.tw" > dist/CNAME
 
+      - name: Create indicator that bypass GitHub Pages Jekyll build
+        run: echo "---" > dist/.nojekyll
+
       - name: Deploy to branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
