@@ -155,7 +155,7 @@ export default function CableLayer() {
     const loadData = async () => {
       try {
         // Load incidents first
-        const incidentsResponse = await fetch('/src/data/incidents.json');
+        const incidentsResponse = await fetch('/data/incidents.json');
         const incidentsData = await incidentsResponse.json();
         setIncidents(incidentsData);
 

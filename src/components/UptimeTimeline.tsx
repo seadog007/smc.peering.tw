@@ -36,7 +36,7 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
 
   useEffect(() => {
     // Load incidents from JSON file
-    fetch('/src/data/incidents.json')
+    fetch('/data/incidents.json')
       .then(response => response.json())
       .then((data: Incident[]) => {
         setIncidents(data);

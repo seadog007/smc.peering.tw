@@ -33,6 +33,11 @@ jobs:
       - name: Checkout to gh-pages
         run: |
           git checkout gh-pages
+      
+      - name: Copy incidents.json to /data/incidents.json
+        run: |
+          mkdir -p data
+          mv incidents.json data/incidents.json
 
       - name: Commit and push if changed
         run: |

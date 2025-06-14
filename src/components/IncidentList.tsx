@@ -19,7 +19,7 @@ export default function IncidentList() {
 
   useEffect(() => {
     // Load incidents from JSON file
-    fetch('/src/data/incidents.json')
+    fetch('/data/incidents.json')
       .then(response => response.json())
       .then((data: Incident[]) => {
         // Sort incidents by date, most recent first
