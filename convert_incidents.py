@@ -47,6 +47,7 @@ def convert_incidents():
                     'status': row['status'],
                     'cableid': row['cableid'],
                     'segment': row['segment'],
+                    'title': row['title'],
                     'description': row['description'].strip('"'),  # Remove any extra quotes
                     'resolved_at': row['resolved_at']
                 })
