@@ -83,8 +83,6 @@ function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segm
 
   const getSegmentColor = (segment: Segment) => {
     // If segment has a color override, use it
-    console.log(cable.id, segment.id);
-    
     if (segment.color) {
       return segment.color;
     }
@@ -93,8 +91,6 @@ function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segm
     const activeIncidents = incidents.filter(incident => 
       incident.cableid === cable.id && !incident.resolved_at
     );
-    console.log(activeIncidents);
-    console.log(1);
 
     if (activeIncidents.length > 0 && cable.available_path) {
       // Get affected segments from active incidents
