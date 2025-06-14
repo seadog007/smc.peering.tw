@@ -13,17 +13,18 @@ interface Incident {
 
 export default function IncidentList() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [showHistorical, setShowHistorical] = useState(false);
 
   useEffect(() => {
     // Load incidents from JSON file
     fetch('/src/data/incidents.json')
       .then(response => response.json())
       .then((data: Incident[]) => {
-        // Filter for active incidents and sort by date, most recent first
-        const activeIncidents = data
-          .filter(incident => !incident.resolved_at)
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        setIncidents(activeIncidents);
+        // Sort incidents by date, most recent first
+        const sortedIncidents = data.sort((a, b) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setIncidents(sortedIncidents);
       })
       .catch(error => console.error('Error loading incidents:', error));
   }, []);
@@ -40,11 +41,25 @@ export default function IncidentList() {
     });
   };
 
+  const filteredIncidents = incidents.filter(incident => 
+    showHistorical ? incident.resolved_at : !incident.resolved_at
+  );
+
   return (
     <div className="incident-list">
-      <h2 className="incident-list-title">Active Incidents</h2>
+      <div className="incident-list-header">
+        <h2 className="incident-list-title">
+          {showHistorical ? 'Historical Incidents' : 'Active Incidents'}
+        </h2>
+        <button 
+          className="toggle-button"
+          onClick={() => setShowHistorical(!showHistorical)}
+        >
+          {showHistorical ? 'Show Active' : 'Show Historical'}
+        </button>
+      </div>
       <div className="incident-list-container">
-        {incidents.map((incident, index) => (
+        {filteredIncidents.map((incident, index) => (
           <div
             key={`${incident.cableid}-${incident.date}-${index}`}
             className="incident-card"
@@ -54,20 +69,27 @@ export default function IncidentList() {
                 {incident.title}
               </h3>
               <span className="incident-status status-active">
-                Active
+                {incident.resolved_at ? 'Resolved' : 'Active'}
               </span>
             </div>
             <div className="incident-timestamps">
               <p className="incident-timestamp">
                 Started: {formatDate(incident.date)}
               </p>
+              {incident.resolved_at && (
+                <p className="incident-timestamp">
+                  Resolved: {formatDate(incident.resolved_at)}
+                </p>
+              )}
             </div>
             <p className="incident-description">{incident.description}</p>
           </div>
         ))}
-        {incidents.length === 0 && (
+        {filteredIncidents.length === 0 && (
           <div className="incident-card">
-            <p className="incident-description">No active incidents</p>
+            <p className="incident-description">
+              {showHistorical ? 'No historical incidents' : 'No active incidents'}
+            </p>
           </div>
         )}
       </div>

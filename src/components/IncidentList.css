@@ -8,10 +8,30 @@
   border-radius: 0.5rem;
 }
 
+.incident-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .incident-list-title {
   font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+}
+
+.toggle-button {
+  padding: 0.5rem 1rem;
+  background-color: var(0,255,255,0.7);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.toggle-button:hover {
+  background-color: var(--color-primary-dark);
 }
 
 .incident-list-container {
