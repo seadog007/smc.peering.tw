@@ -1,101 +1,104 @@
-import { useEffect, useState } from 'react';
-import { useMap } from 'react-leaflet';
-import L from 'leaflet';
-import type { LatLngTuple } from 'leaflet';
-import { Polyline } from 'react-leaflet';
+import { useState, useEffect } from 'react';
+import { Polyline, Marker, Popup } from 'react-leaflet';
+import { Icon } from 'leaflet';
+import type { LatLngExpression, PopupEvent } from 'leaflet';
 
-interface CableSegment {
+// Re-use the white dot icon from Map.tsx
+const whiteDotIcon = new Icon({
+  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=',
+  iconSize: [12, 12],
+  iconAnchor: [6, 6]
+});
+
+interface Segment {
   id: string;
   hidden?: boolean;
-  coordinates: [number, number][];
+  coordinates: LatLngExpression[];
   color?: string;
+}
+
+interface Equipment {
+  id: string;
+  name: string;
+  coordinate: [number, number];
 }
 
 interface Cable {
   id: string;
   name: string;
-  segments: CableSegment[];
+  segments: Segment[];
+  equipments?: Equipment[];
+}
+
+// A new component to handle the dynamic popup content
+function InteractivePolyline({ cable, segment }: { cable: Cable; segment: Segment }) {
+    const [clickedLatLng, setClickedLatLng] = useState<string | null>(null);
+
+    const eventHandlers = {
+        popupopen: (e: PopupEvent) => {
+            const latlng = e.popup.getLatLng();
+            if (latlng) {
+                setClickedLatLng(`Lat: ${latlng.lat.toFixed(5)}, Lng: ${latlng.lng.toFixed(5)}`);
+            }
+        },
+        popupclose: () => {
+            setClickedLatLng(null);
+        }
+    };
+    
+    return (
+        <Polyline
+            positions={segment.coordinates.map(coord => (Array.isArray(coord) ? [coord[1], coord[0]] : coord))}
+            color={segment.color || 'blue'}
+            weight={2}
+            eventHandlers={eventHandlers}
+        >
+            <Popup>
+                <b>{cable.name}</b><br />
+                Segment: {segment.id}
+                {clickedLatLng && <><br />{clickedLatLng}</>}
+            </Popup>
+        </Polyline>
+    );
+}
+
+async function loadCables(): Promise<Cable[]> {
+  const modules = import.meta.glob('../data/cables/*.json');
+  const cablePromises = Object.values(modules).map(async (loader) => {
+    const module = await loader();
+    return (module as { default: Cable }).default;
+  });
+  return Promise.all(cablePromises);
 }
 
 export default function CableLayer() {
-  const map = useMap();
   const [cables, setCables] = useState<Cable[]>([]);
 
   useEffect(() => {
-    const loadCables = async () => {
-      console.log('Starting to load cable files...');
-      try {
-        // Dynamically import all JSON files from the cables directory
-        const cableFiles = import.meta.glob<{ default: Cable }>('/src/data/cables/*.json');
-        console.log('Found cable files:', Object.keys(cableFiles));
-        
-        const loadedCables: Cable[] = [];
-
-        for (const path in cableFiles) {
-          console.log('Loading cable file:', path);
-          const module = await cableFiles[path]();
-          console.log('Loaded cable data:', module.default);
-          loadedCables.push(module.default);
-        }
-
-        console.log('All cables loaded:', loadedCables);
-        setCables(loadedCables);
-      } catch (error) {
-        console.error('Error loading cable data:', error);
-      }
-    };
-
-    loadCables();
+    loadCables().then(setCables);
   }, []);
 
-  useEffect(() => {
-    console.log('Drawing effect triggered. Map:', !!map, 'Cables:', cables.length);
-    
-    if (!map || cables.length === 0) {
-      console.log('Skipping drawing - map or cables not ready');
-      return;
-    }
-
-    // Create a layer group for all cables
-    const cableLayer = L.layerGroup().addTo(map);
-    console.log('Created cable layer');
-
-    // Draw each cable
-    cables.forEach(cable => {
-      console.log('Drawing cable:', cable.name, 'with', cable.segments.length, 'segments');
-      cable.segments.forEach(segment => {
-        // Skip hidden segments
-        if (segment.hidden) {
-          console.log('Skipping hidden segment:', segment.id);
-          return;
-        }
-
-        console.log('Drawing segment:', segment.id, 'with', segment.coordinates.length, 'points');
-        // Swap coordinates from [longitude, latitude] to [latitude, longitude]
-        const leafletCoordinates = segment.coordinates.map(([lon, lat]) => [lat, lon] as LatLngTuple);
-        const polyline = L.polyline(leafletCoordinates, {
-          color: segment.color || '#4a90e2',
-          weight: 2,
-          opacity: 0.7,
-        }).bindPopup(`<b>${cable.name}</b><br>Segment: ${segment.id}`)
-        .on('popupopen', function(e) {
-          var popup = e.popup;
-          var vc = `<b>${cable.name}</b><br>Segment: ${segment.id}<br>` + (popup.getLatLng()?.toString() || 'No coordinates available');
-          popup.setContent(vc);
-        });
-
-        cableLayer.addLayer(polyline);
-      });
-    });
-
-    console.log('Finished drawing all cables');
-
-    // Cleanup function
-    return () => {
-      console.log('Cleaning up cable layer');
-      map.removeLayer(cableLayer);
-    };
-  }, [map, cables]);
-
-  return null;
+  return (
+    <>
+      {cables.map((cable) => (
+        <div key={cable.id}>
+          {cable.segments
+            .filter((segment) => !segment.hidden)
+            .map((segment) => (
+              <InteractivePolyline key={segment.id} cable={cable} segment={segment} />
+            ))}
+          {cable.equipments?.map((equip) => (
+            <Marker
+              key={equip.id}
+              position={[equip.coordinate[1], equip.coordinate[0]]}
+              icon={whiteDotIcon}
+              title={equip.name}
+            >
+              <Popup>{equip.name}</Popup>
+            </Marker>
+          ))}
+        </div>
+      ))}
+    </>
+  );
 }
