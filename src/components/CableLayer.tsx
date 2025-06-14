@@ -26,40 +26,119 @@ interface Equipment {
 interface Cable {
   id: string;
   name: string;
+  color?: string;
   segments: Segment[];
   equipments?: Equipment[];
+  available_path?: string[][];
+}
+
+interface Incident {
+  date: string;
+  status: string;
+  cableid: string;
+  segment: string;
+  title: string;
+  description: string;
+  resolved_at: string;
+}
+
+function markBroken(paths: string[][], inputNodes: string[]) {
+  const failedPaths = new Set();
+
+  // 將所有包含 inputNodes 的 path 存入 Set（避免重複）
+  for (const node of inputNodes) {
+    for (const path of paths) {
+      if (path.includes(node)) {
+        failedPaths.add(JSON.stringify(path)); // 使用 JSON 作為 Set 的 key
+      }
+    }
+  }
+
+  // 還原 Set 裡的 path 為 array
+  const failedPathsArray = Array.from(failedPaths).map(p => JSON.parse(p));
+
+  // 扁平化處理
+  const flatAll = paths.flat();
+  const flatFailed = failedPathsArray.flat();
+
+  // 找出所有出現在 failed path 中的節點
+  const failedNodesSet = new Set(flatFailed);
+
+  const out = [];
+  for (const node of failedNodesSet) {
+    const countAll = flatAll.filter(n => n === node).length;
+    const countFailed = flatFailed.filter(n => n === node).length;
+
+    if (countAll === countFailed) {
+      out.push(node);
+    }
+  }
+
+  return out.sort();
 }
 
 // A new component to handle the dynamic popup content
-function InteractivePolyline({ cable, segment }: { cable: Cable; segment: Segment }) {
-    const [clickedLatLng, setClickedLatLng] = useState<string | null>(null);
+function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segment: Segment; incidents: Incident[] }) {
+  const [clickedLatLng, setClickedLatLng] = useState<string | null>(null);
 
-    const eventHandlers = {
-        popupopen: (e: PopupEvent) => {
-            const latlng = e.popup.getLatLng();
-            if (latlng) {
-                setClickedLatLng(`Lat: ${latlng.lat.toFixed(5)}, Lng: ${latlng.lng.toFixed(5)}`);
-            }
-        },
-        popupclose: () => {
-            setClickedLatLng(null);
-        }
-    };
+  const getSegmentColor = (segment: Segment) => {
+    // If segment has a color override, use it
+    console.log(cable.id, segment.id);
     
-    return (
-        <Polyline
-            positions={segment.coordinates.map(coord => (Array.isArray(coord) ? [coord[1], coord[0]] : coord))}
-            color={segment.color || 'blue'}
-            weight={2}
-            eventHandlers={eventHandlers}
-        >
-            <Popup>
-                <b>{cable.name}</b><br />
-                Segment: {segment.id}
-                {clickedLatLng && <><br />{clickedLatLng}</>}
-            </Popup>
-        </Polyline>
+    if (segment.color) {
+      return segment.color;
+    }
+
+    // Get active incidents for this cable
+    const activeIncidents = incidents.filter(incident => 
+      incident.cableid === cable.id && !incident.resolved_at
     );
+    console.log(activeIncidents);
+    console.log(1);
+
+    if (activeIncidents.length > 0 && cable.available_path) {
+      // Get affected segments from active incidents
+      const affectedSegments = activeIncidents.map(incident => incident.segment);
+      
+      // Use markBroken to determine if this segment should be marked as broken
+      const brokenSegments = markBroken(cable.available_path, affectedSegments);
+      
+      // If this segment is in the broken segments list, color it red
+      if (brokenSegments.includes(segment.id)) {
+        return '#ff0000';
+      }
+    }
+
+    // Default color if no incidents or not affected
+    return cable.color || '#48A9FF';
+  };
+
+  const eventHandlers = {
+    popupopen: (e: PopupEvent) => {
+      const latlng = e.popup.getLatLng();
+      if (latlng) {
+        setClickedLatLng(`Lat: ${latlng.lat.toFixed(5)}, Lng: ${latlng.lng.toFixed(5)}`);
+      }
+    },
+    popupclose: () => {
+      setClickedLatLng(null);
+    }
+  };
+  
+  return (
+    <Polyline
+      positions={segment.coordinates.map(coord => (Array.isArray(coord) ? [coord[1], coord[0]] : coord))}
+      color={getSegmentColor(segment)}
+      weight={2}
+      eventHandlers={eventHandlers}
+    >
+      <Popup>
+        <b>{cable.name}</b><br />
+        Segment: {segment.id}
+        {clickedLatLng && <><br />{clickedLatLng}</>}
+      </Popup>
+    </Polyline>
+  );
 }
 
 async function loadCables(): Promise<Cable[]> {
@@ -73,10 +152,33 @@ async function loadCables(): Promise<Cable[]> {
 
 export default function CableLayer() {
   const [cables, setCables] = useState<Cable[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadCables().then(setCables);
+    const loadData = async () => {
+      try {
+        // Load incidents first
+        const incidentsResponse = await fetch('/src/data/incidents.json');
+        const incidentsData = await incidentsResponse.json();
+        setIncidents(incidentsData);
+
+        // Then load cables
+        const cablesData = await loadCables();
+        setCables(cablesData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
+
+  if (isLoading) {
+    return null; // Or a loading spinner if you prefer
+  }
 
   return (
     <>
@@ -85,7 +187,12 @@ export default function CableLayer() {
           {cable.segments
             .filter((segment) => !segment.hidden)
             .map((segment) => (
-              <InteractivePolyline key={segment.id} cable={cable} segment={segment} />
+              <InteractivePolyline 
+                key={segment.id} 
+                cable={cable} 
+                segment={segment} 
+                incidents={incidents}
+              />
             ))}
           {cable.equipments?.map((equip) => (
             <Marker
