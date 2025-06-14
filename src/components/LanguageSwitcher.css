@@ -1,0 +1,30 @@
+.language-switcher {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 1000;
+}
+
+.lang-button {
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  width: 70px;
+}
+
+.lang-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.lang-button.active {
+  background-color: rgba(0, 255, 255, 0.7);
+  border-color: rgba(0, 255, 255, 0.9);
+} 

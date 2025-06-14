@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './UptimeTimeline.css';
 
 interface Cable {
@@ -28,6 +29,7 @@ interface UptimeTimelineProps {
 }
 
 export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTimelineProps) {
+  const { t } = useTranslation();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [segments, setSegments] = useState<{ [cableId: string]: TimelineSegment[] }>({});
 

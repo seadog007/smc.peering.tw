@@ -4,13 +4,17 @@ import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import './App.css';
+import './i18n';
 
 // Sample timeline data for cables
 const now = new Date();
 const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
 function App() {
+  const { t } = useTranslation();
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
@@ -49,35 +53,40 @@ function App() {
   const handleCloseTimeline = () => setIsTimelineOpen(false);
 
   return (
-    <div className="app-container">
-      <div className="map-section">
-        <Map center={mapCenter} />
+    <div className="app">
+      <LanguageSwitcher />
+      <div className="app-content">
+        <div className="app-container">
+          <div className="map-section">
+            <Map center={mapCenter} />
+          </div>
+          {!isMobile && (
+            <button
+              onClick={handleOpenTimeline}
+              className="timeline-button"
+              title={t('timeline.show')}
+            >
+              <svg className="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </button>
+          )}
+          <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
+            <IncidentList />
+          </div>
+          <Modal
+            isOpen={isTimelineOpen}
+            onClose={handleCloseTimeline}
+            title={t('timeline.title')}
+          >
+            <UptimeTimeline
+              cables={cables}
+              startDate={timelineRange}
+              endDate={now}
+            />
+          </Modal>
+        </div>
       </div>
-      {!isMobile && (
-        <button
-          onClick={handleOpenTimeline}
-          className="timeline-button"
-          title="Show Uptime Timeline"
-        >
-          <svg className="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </button>
-      )}
-      <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
-        <IncidentList />
-      </div>
-      <Modal
-        isOpen={isTimelineOpen}
-        onClose={handleCloseTimeline}
-        title="Uptime Timeline"
-      >
-        <UptimeTimeline
-          cables={cables}
-          startDate={timelineRange}
-          endDate={now}
-        />
-      </Modal>
     </div>
   );
 }

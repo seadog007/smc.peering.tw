@@ -1,0 +1,20 @@
+{
+  "common": {
+    "active": "發生中",
+    "resolved": "已排除",
+    "noActiveIncidents": "目前沒有進行中的事件",
+    "noHistoricalIncidents": "沒有歷史事件",
+    "showActive": "顯示發生中事件",
+    "showHistorical": "顯示歷史事件"
+  },
+  "incidents": {
+    "title": "發生中事件",
+    "historicalTitle": "歷史事件",
+    "started_at": "開始時間",
+    "resolved_at": "排除時間"
+  },
+  "timeline": {
+    "title": "海纜狀態時間軸",
+    "show": "顯示海纜狀態時間軸"
+  }
+} 

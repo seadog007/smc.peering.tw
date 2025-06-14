@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './IncidentList.css';
 
 interface Incident {
@@ -12,6 +13,7 @@ interface Incident {
 }
 
 export default function IncidentList() {
+  const { t } = useTranslation();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [showHistorical, setShowHistorical] = useState(false);
 
@@ -49,13 +51,13 @@ export default function IncidentList() {
     <div className="incident-list">
       <div className="incident-list-header">
         <h2 className="incident-list-title">
-          {showHistorical ? 'Historical Incidents' : 'Active Incidents'}
+          {showHistorical ? t('incidents.historicalTitle') : t('incidents.title')}
         </h2>
         <button 
           className="toggle-button"
           onClick={() => setShowHistorical(!showHistorical)}
         >
-          {showHistorical ? 'Show Active' : 'Show Historical'}
+          {showHistorical ? t('common.showActive') : t('common.showHistorical')}
         </button>
       </div>
       <div className="incident-list-container">
@@ -69,16 +71,16 @@ export default function IncidentList() {
                 {incident.title}
               </h3>
               <span className={`incident-status ${incident.resolved_at ? 'status-resolved' : 'status-active'}`}>
-                {incident.resolved_at ? 'Resolved' : 'Active'}
+                {incident.resolved_at ? t('common.resolved') : t('common.active')}
               </span>
             </div>
             <div className="incident-timestamps">
               <p className="incident-timestamp">
-                Started: {formatDate(incident.date)}
+                {t('incidents.started_at')}: {formatDate(incident.date)}
               </p>
               {incident.resolved_at && (
                 <p className="incident-timestamp">
-                  Resolved: {formatDate(incident.resolved_at)}
+                  {t('incidents.resolved_at')}: {formatDate(incident.resolved_at)}
                 </p>
               )}
             </div>
@@ -88,7 +90,7 @@ export default function IncidentList() {
         {filteredIncidents.length === 0 && (
           <div className="incident-card">
             <p className="incident-description">
-              {showHistorical ? 'No historical incidents' : 'No active incidents'}
+              {showHistorical ? t('common.noHistoricalIncidents') : t('common.noActiveIncidents')}
             </p>
           </div>
         )}
