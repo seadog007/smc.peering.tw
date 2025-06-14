@@ -1,0 +1,4 @@
+[submodule "src/data"]
+	path = src/data
+	url = git@github.com:seadog007/tw-submarine-cable.git
+	branch = smc.peering.tw
