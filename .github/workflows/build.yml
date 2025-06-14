@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main  # or your default branch name
+  workflow_dispatch:  # Allow manual trigger
+  repository_dispatch:
+    types:
+      - build
 
 permissions:
   contents: write
