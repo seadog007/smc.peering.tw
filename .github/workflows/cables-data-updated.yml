@@ -1,0 +1,30 @@
+name: Cables Data Updated
+
+on:
+  workflow_dispatch:  # Allow manual trigger
+  repository_dispatch:
+    types:
+      - cables-data-updated
+
+jobs:
+  cables-data-updated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
+          submodules: true
+      
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+          git submodule update --remote
+
+      - name: Set Git user name and email
+        run: |
+          git config --local user.email "007seadog@gmail.com"
+          git config --local user.name "seadog007 with GitHub Action"
+          git commit -am "Update cables submodule"
+          git push origin main
