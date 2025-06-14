@@ -5,58 +5,94 @@
 }
 
 .uptime-timeline {
+  padding: 1rem;
+  background-color: var(--color-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  color: #fff;
-  height: 100%;
-  background-color: #1a1a1a;
-  padding: 1rem;
 }
 
-.cable-timeline {
+.timeline-content {
+  display: flex;
+  overflow: hidden;
+}
+
+.cable-names {
+  width: 120px;
+  flex-shrink: 0;
+  padding-right: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .cable-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #e5e5e5;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  text-align: right;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-rows {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.cable-timeline {
+  margin-bottom: 0.5rem;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .timeline-container {
-  width: 100%;
-  height: 1.5rem;
-  background-color: #2a2a2a;
-  border-radius: 0.25rem;
-  overflow: hidden;
+  flex: 1;
   position: relative;
+  height: 100%;
+  background-color: var(--color-timeline-background);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .timeline-segments {
-  display: flex;
-  height: 100%;
-  gap: 0.25rem;
   position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 .timeline-segment {
-  height: 100%;
   position: absolute;
+  height: 100%;
   transition: background-color 0.2s;
+}
+
+.timeline-segment:hover {
+  filter: brightness(1.1);
 }
 
 .timeline-axis {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: #a3a3a3;
-  padding: 0 0.5rem;
-  border-top: 1px solid #333;
-  padding-top: 0.5rem;
-  margin-top: auto;
+  margin-top: 0.5rem;
+  padding: 0 1rem 0 120px;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  position: relative;
+  left: 0;
+  right: 0;
 }
 
 .timeline-legend {

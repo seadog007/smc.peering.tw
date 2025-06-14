@@ -1,4 +1,3 @@
-import { Icon } from 'leaflet';
 import type { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
 import Map from './components/Map';
@@ -6,65 +5,10 @@ import UptimeTimeline from './components/UptimeTimeline';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import './App.css';
-import landingPoints from './data/landing-points.json';
-
-const sampleIncidents = [
-  {
-    id: '1',
-    title: 'Network Latency Issue',
-    timestamp: '2024-03-20 14:30',
-    status: 'active' as const,
-    description: 'Increased latency detected in the northern region.'
-  },
-];
-
-// Example custom marker icon
-const customIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-});
 
 // Sample timeline data for cables
 const now = new Date();
-const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-const timelineSegments = {
-  'apcn-2': [
-    {
-      startTime: oneHourAgo,
-      endTime: new Date(oneHourAgo.getTime() + 20 * 60 * 1000),
-      status: 'online' as const,
-    },
-    {
-      startTime: new Date(oneHourAgo.getTime() + 20 * 60 * 1000),
-      endTime: new Date(oneHourAgo.getTime() + 30 * 60 * 1000),
-      status: 'warning' as const,
-    },
-    {
-      startTime: new Date(oneHourAgo.getTime() + 30 * 60 * 1000),
-      endTime: now,
-      status: 'online' as const,
-    },
-  ],
-  'eac-c2c': [
-    {
-      startTime: oneHourAgo,
-      endTime: new Date(oneHourAgo.getTime() + 10 * 60 * 1000),
-      status: 'online' as const,
-    },
-    {
-      startTime: new Date(oneHourAgo.getTime() + 10 * 60 * 1000),
-      endTime: new Date(oneHourAgo.getTime() + 45 * 60 * 1000),
-      status: 'offline' as const,
-    },
-    {
-      startTime: new Date(oneHourAgo.getTime() + 45 * 60 * 1000),
-      endTime: now,
-      status: 'online' as const,
-    },
-  ]
-};
+const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
 function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
@@ -121,7 +65,7 @@ function App() {
         </button>
       )}
       <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
-        <IncidentList incidents={sampleIncidents} />
+        <IncidentList />
       </div>
       <Modal
         isOpen={isTimelineOpen}
@@ -130,8 +74,7 @@ function App() {
       >
         <UptimeTimeline
           cables={cables}
-          segments={timelineSegments}
-          startDate={oneHourAgo}
+          startDate={timelineRange}
           endDate={now}
         />
       </Modal>
