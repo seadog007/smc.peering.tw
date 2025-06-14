@@ -68,7 +68,7 @@ export default function IncidentList() {
               <h3 className="incident-title">
                 {incident.title}
               </h3>
-              <span className="incident-status status-active">
+              <span className={`incident-status ${incident.resolved_at ? 'status-resolved' : 'status-active'}`}>
                 {incident.resolved_at ? 'Resolved' : 'Active'}
               </span>
             </div>
