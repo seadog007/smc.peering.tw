@@ -23,13 +23,13 @@ export default function Map({ center }: MapProps) {
     <div style={{ width: '100%', height: '100%' }}>
       <MapContainer 
         center={center} // Center of Taiwan
-        zoom={7.5} // Zoom level to show whole Taiwan
+        zoom={7} // Zoom level to show whole Taiwan
         style={{ height: '100%', width: '100%' }}
         zoomControl={false} // Disable zoom controls
-        dragging={false} // Disable dragging
+        dragging={true} // Disable dragging
         touchZoom={false} // Disable touch zoom
         doubleClickZoom={false} // Disable double click zoom
-        scrollWheelZoom={false} // Disable scroll wheel zoom
+        scrollWheelZoom={true} // Disable scroll wheel zoom
         boxZoom={false} // Disable box zoom
         keyboard={false} // Disable keyboard navigation
         zoomSnap={0.1} // Snap to 0.1 zoom levels

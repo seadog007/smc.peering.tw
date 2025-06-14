@@ -12,6 +12,9 @@ import './i18n';
 // Sample timeline data for cables
 const now = new Date();
 const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+const desktopMapCenter: LatLngTuple = [24, 124.5];
+const midwidthMapCenter: LatLngTuple = [24, 123];
+const mobileMapCenter: LatLngTuple = [24, 121.1];
 
 function App() {
   const { t } = useTranslation();
@@ -19,14 +22,14 @@ function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
-    window.innerWidth < 768 ? [23.5, 121] : [23.7, 123]
+    window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter
   );
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      setMapCenter(mobile ? [23.5, 121] : [23.7, 123]);
+      setMapCenter(window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

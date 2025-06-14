@@ -16,7 +16,7 @@
 }
 
 .incident-list-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
 }
 
 .toggle-button {
@@ -55,11 +55,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.5rem;
 }
 
 .incident-title {
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 .incident-status {
@@ -79,10 +79,11 @@
 
 .incident-timestamp {
   color: #d1d5db;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .incident-description {
   color: #e5e7eb;
+  font-size: 0.75rem;
 } 
