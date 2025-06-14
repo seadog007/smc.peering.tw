@@ -43,7 +43,7 @@ interface Incident {
 }
 
 function markBroken(paths: string[][], inputNodes: string[]) {
-  const failedPaths = new Set();
+  const failedPaths = new Set<string>();
 
   // 將所有包含 inputNodes 的 path 存入 Set（避免重複）
   for (const node of inputNodes) {
@@ -55,7 +55,7 @@ function markBroken(paths: string[][], inputNodes: string[]) {
   }
 
   // 還原 Set 裡的 path 為 array
-  const failedPathsArray = Array.from(failedPaths).map(p => JSON.parse(p));
+  const failedPathsArray = Array.from(failedPaths).map(p => JSON.parse(p) as string[]);
 
   // 扁平化處理
   const flatAll = paths.flat();
