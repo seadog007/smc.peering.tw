@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -30,18 +32,20 @@ jobs:
       - name: Generate incidents.json
         run: python convert_incidents.py
 
-      - name: Checkout to gh-pages
+      - name: Setup gh-pages branch
         run: |
-          git checkout gh-pages
-      
-      - name: Copy incidents.json to /data/incidents.json
+          git fetch origin gh-pages || git checkout --orphan gh-pages
+          git checkout gh-pages || git checkout -b gh-pages
+          git pull origin gh-pages || true
+
+      - name: Update incidents.json
         run: |
           mkdir -p data
           mv incidents.json data/incidents.json
 
       - name: Commit and push if changed
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add src/data/incidents.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update incidents data" && git push) 
+          git config --local user.email "007seadog@gmail.com"
+          git config --local user.name "seadog007 with GitHub Action"
+          git add data/incidents.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update incidents data" && git push origin gh-pages) 
