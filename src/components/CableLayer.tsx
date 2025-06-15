@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Polyline, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import type { LatLngExpression, PopupEvent } from 'leaflet';
+import type { PopupEvent } from 'leaflet';
+import { useIncidents, type Incident } from '../hooks/useIncidents';
+import { useCable, type Cable, type Segment } from '../hooks/useCable';
 
 // Re-use the white dot icon from Map.tsx
 const whiteDotIcon = new Icon({
@@ -9,38 +11,6 @@ const whiteDotIcon = new Icon({
   iconSize: [12, 12],
   iconAnchor: [6, 6]
 });
-
-interface Segment {
-  id: string;
-  hidden?: boolean;
-  coordinates: LatLngExpression[];
-  color?: string;
-}
-
-interface Equipment {
-  id: string;
-  name: string;
-  coordinate: [number, number];
-}
-
-interface Cable {
-  id: string;
-  name: string;
-  color?: string;
-  segments: Segment[];
-  equipments?: Equipment[];
-  available_path?: string[][];
-}
-
-interface Incident {
-  date: string;
-  status: string;
-  cableid: string;
-  segment: string;
-  title: string;
-  description: string;
-  resolved_at: string;
-}
 
 function markBroken(paths: string[][], inputNodes: string[]) {
   const failedPaths = new Set<string>();
@@ -137,44 +107,9 @@ function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segm
   );
 }
 
-async function loadCables(): Promise<Cable[]> {
-  const modules = import.meta.glob('../data/cables/*.json');
-  const cablePromises = Object.values(modules).map(async (loader) => {
-    const module = await loader();
-    return (module as { default: Cable }).default;
-  });
-  return Promise.all(cablePromises);
-}
-
 export default function CableLayer() {
-  const [cables, setCables] = useState<Cable[]>([]);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load incidents first
-        const incidentsResponse = await fetch('/data/incidents.json');
-        const incidentsData = await incidentsResponse.json();
-        setIncidents(incidentsData);
-
-        // Then load cables
-        const cablesData = await loadCables();
-        setCables(cablesData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  if (isLoading) {
-    return null; // Or a loading spinner if you prefer
-  }
+  const incidents = useIncidents();
+  const cables = useCable();
 
   return (
     <>
