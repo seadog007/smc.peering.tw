@@ -5,7 +5,7 @@
     "cableid": "faster",
     "segment": "faster-seg-6",
     "title": "FASTER S6 斷線",
-    "description": "待補充",
+    "description": "於 25°14.218'N 122°15.002'E 處發生故障",
     "resolved_at": "2025-01-26T00:00:00+08:00"
   },
   {
@@ -31,17 +31,17 @@
     "status": "disconnected",
     "cableid": "twtm3",
     "segment": "twtm3-mt",
-    "title": "台馬第三海纜(草漯-南竿) 24/24芯斷線",
-    "description": "於 25°5.197'N 121°5.416'E 處發生故障，2024/01/11 6 芯斷線，2024/01/15 13:36 全斷",
+    "title": "台馬第三海纜(草漯-南竿)",
+    "description": "於 25°5.197'N 121°5.416'E 處發生故障 24/24芯斷線，2024/01/11 6 芯斷線，2024/01/15 13:36 全斷",
     "resolved_at": ""
   },
   {
     "date": "2025-01-22T00:00:00+08:00",
     "status": "disconnected",
-    "cableid": "tpkm2",
-    "segment": "tpkm2-mt",
-    "title": "台馬第二海纜(淡水-東引) 12/12芯斷線",
-    "description": "於 26°19.175'N 120°46.865'E 處發生故障",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬第二海纜(淡水-東引)",
+    "description": "於 26°19.175'N 120°46.865'E 處發生故障 12/12芯斷線",
     "resolved_at": ""
   },
   {
@@ -76,8 +76,8 @@
     "status": "disconnected",
     "cableid": "twtp3",
     "segment": "twtp3-ph",
-    "title": "台澎第三海纜(北門-馬公) 24/24芯斷線",
-    "description": "於 23°17.4756'N 120°1.2708'E 處發生故障",
+    "title": "台澎第三海纜(北門-馬公)",
+    "description": "於 23°17.4756'N 120°1.2708'E 處發生故障 24/24芯斷線",
     "resolved_at": ""
   },
   {
@@ -85,8 +85,8 @@
     "status": "disconnected",
     "cableid": "twtp3",
     "segment": "twtp3-ph",
-    "title": "台澎第三海纜(北門-馬公) 24/24芯斷線",
-    "description": "於 23°21.3963'N 119°48.3221'E 處發生故障",
+    "title": "台澎第三海纜(北門-馬公)",
+    "description": "於 23°21.3963'N 119°48.3221'E 處發生故障 24/24芯斷線",
     "resolved_at": ""
   },
   {
