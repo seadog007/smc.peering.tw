@@ -12,16 +12,13 @@
   "dependencies": {
     "@tanstack/react-query": "^5.80.6",
     "@types/leaflet": "^1.9.18",
-    "autoprefixer": "^10.4.21",
     "i18next": "^25.2.1",
     "i18next-browser-languagedetector": "^8.2.0",
     "leaflet": "^1.9.4",
-    "postcss": "^8.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-i18next": "^15.5.3",
     "react-leaflet": "^5.0.0",
-    "tailwindcss": "^4.1.8",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

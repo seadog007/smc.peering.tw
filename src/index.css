@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 * {
   margin: 0;
   padding: 0;
@@ -19,26 +15,35 @@ html, body, #root {
 }
 
 .timeline-container {
-  @apply w-full h-24 bg-gray-100 rounded-lg p-4;
+  width: 100%;
+  height: 6rem;
+  background-color: #f3f4f6; /* Tailwind bg-gray-100 */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+  padding: 1rem; /* Tailwind p-4 */
 }
 
 .timeline-segment {
-  @apply h-full rounded;
+  height: 100%;
+  border-radius: 0.25rem; /* Tailwind rounded */
 }
 
 .timeline-segment-online {
-  @apply bg-uptime-online;
+  background-color: var(--uptime-online); /* Replace with actual color if not using CSS vars */
 }
 
 .timeline-segment-warning {
-  @apply bg-uptime-warning;
+  background-color: var(--uptime-warning); /* Replace with actual color if not using CSS vars */
 }
 
 .timeline-segment-offline {
-  @apply bg-uptime-offline;
+  background-color: var(--uptime-offline); /* Replace with actual color if not using CSS vars */
 }
 
 :root {
+  --uptime-online: #22c55e;
+  --uptime-warning: #eab308;
+  --uptime-offline: #ef4444;
+
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
