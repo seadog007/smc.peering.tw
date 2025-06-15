@@ -7,7 +7,7 @@ import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import './App.css';
+import styles from './App.module.css';
 import './i18n';
 
 // Sample timeline data for cables
@@ -60,10 +60,10 @@ function App() {
   const handleCloseAbout = () => setIsAboutOpen(false);
 
   return (
-    <div className="app">
-      <div className="app-content">
-        <div className="app-container">
-          <div className="map-section">
+    <div className={styles['app-container']}>
+      <div className={styles['app-content']}>
+        <div className={styles['app-container']}>
+          <div className={styles['map-section']}>
             <Map center={mapCenter} />
           </div>
           {!isMobile && (
@@ -71,23 +71,23 @@ function App() {
           )}
           <button
             onClick={handleOpenTimeline}
-            className="timeline-button"
+            className={styles['timeline-button']}
             title={t('timeline.show')}
           >
-            <svg className="timeline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={styles['timeline-icon']} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </button>
           <button
             onClick={handleOpenAbout}
-            className="about-button"
+            className={styles['about-button']}
             title={t('about.show')}
           >
-            <svg className="about-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={styles['about-icon']} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
-          <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
+          <div className={isMobile ? `${styles['incident-section']} ${styles['full-width']}` : styles['incident-section']}>
             <IncidentList />
           </div>
           <Modal

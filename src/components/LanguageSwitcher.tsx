@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import './LanguageSwitcher.css';
+import styles from './LanguageSwitcher.module.css';
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -9,15 +9,15 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="language-switcher">
+    <div className={styles['language-switcher']}>
       <button
-        className={`lang-button ${i18n.language === 'en' ? 'active' : ''}`}
+        className={styles['lang-button'] + (i18n.language === 'en' ? ' ' + styles['active'] : '')}
         onClick={() => changeLanguage('en')}
       >
         EN
       </button>
       <button
-        className={`lang-button ${i18n.language === 'zh-TW' ? 'active' : ''}`}
+        className={styles['lang-button'] + (i18n.language === 'zh-TW' ? ' ' + styles['active'] : '')}
         onClick={() => changeLanguage('zh-TW')}
       >
         中文

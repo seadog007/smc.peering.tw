@@ -1,5 +1,5 @@
 import React from 'react';
-import './Modal.css';
+import styles from './Modal.module.css';
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,15 +12,15 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 className="modal-title">{title}</h2>
-          <button className="modal-close" onClick={onClose}>
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
+        <div className={styles['modal-header']}>
+          <h2 className={styles['modal-title']}>{title}</h2>
+          <button className={styles['modal-close']} onClick={onClose}>
             ×
           </button>
         </div>
-        <div className="modal-body">
+        <div className={styles['modal-body']}>
           {children}
         </div>
       </div>
