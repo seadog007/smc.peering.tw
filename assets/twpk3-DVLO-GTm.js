@@ -1,0 +1,1 @@
+const t="twpk3",s="TWPK3",n="#65BDFF",o=[],c=[],e=[],a={id:t,name:s,color:n,available_path:o,equipments:c,segments:e};export{o as available_path,n as color,a as default,c as equipments,t as id,s as name,e as segments};
