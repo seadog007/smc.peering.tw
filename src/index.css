@@ -9,41 +9,7 @@ html, body, #root {
   height: 100%;
 }
 
-.leaflet-container {
-  width: 100%;
-  height: 100%;
-}
-
-.timeline-container {
-  width: 100%;
-  height: 6rem;
-  background-color: #f3f4f6; /* Tailwind bg-gray-100 */
-  border-radius: 0.5rem; /* Tailwind rounded-lg */
-  padding: 1rem; /* Tailwind p-4 */
-}
-
-.timeline-segment {
-  height: 100%;
-  border-radius: 0.25rem; /* Tailwind rounded */
-}
-
-.timeline-segment-online {
-  background-color: var(--uptime-online); /* Replace with actual color if not using CSS vars */
-}
-
-.timeline-segment-warning {
-  background-color: var(--uptime-warning); /* Replace with actual color if not using CSS vars */
-}
-
-.timeline-segment-offline {
-  background-color: var(--uptime-offline); /* Replace with actual color if not using CSS vars */
-}
-
 :root {
-  --uptime-online: #22c55e;
-  --uptime-warning: #eab308;
-  --uptime-offline: #ef4444;
-
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
