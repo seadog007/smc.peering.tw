@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useIncidents } from '../hooks/useIncidents';
 import { useTimelineSegments } from '../hooks/useTimelineSegments';
-import './UptimeTimeline.css';
 import { useCable } from '../hooks/useCable';
+import './UptimeTimeline.css';
 
 interface UptimeTimelineProps {
   startDate: Date;
