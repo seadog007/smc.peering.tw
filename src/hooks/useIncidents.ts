@@ -15,7 +15,16 @@ export function useIncidents() {
   const { data: incidents } = useSuspenseQuery({
     queryKey: ["incidents"],
     queryFn: async (): Promise<Incident[]> => {
-      return await fetch("/data/incidents.json").then((res) => res.json());
+      try {
+        const res = await fetch("/data/incidents.json");
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+  
+        return await res.json();
+      } catch {
+        return [];
+      }
     },
   });
 
