@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import './IncidentList.css';
+import styles from './IncidentList.module.css';
 
 interface Incident {
   date: string;
@@ -53,34 +53,34 @@ export default function IncidentList() {
   );
 
   return (
-    <div className="incident-list">
-      <div className="incident-list-header">
-        <h2 className="incident-list-title">
+    <div className={styles['incident-list']}>
+      <div className={styles['incident-list-header']}>
+        <h2 className={styles['incident-list-title']}>
           {showHistorical ? t('incidents.historicalTitle') : t('incidents.title')}
         </h2>
         <button 
-          className="toggle-button"
+          className={styles['toggle-button']}
           onClick={() => setShowHistorical(!showHistorical)}
         >
           {showHistorical ? t('common.showActive') : t('common.showHistorical')}
         </button>
       </div>
-      <div className="incident-list-container">
+      <div className={styles['incident-list-container']}>
         {filteredIncidents.map((incident, index) => (
           <div
             key={`${incident.cableid}-${incident.date}-${index}`}
-            className="incident-card"
+            className={styles['incident-card']}
           >
-            <div className="incident-header">
-              <h3 className="incident-title">
+            <div className={styles['incident-header']}>
+              <h3 className={styles['incident-title']}>
                 {incident.title}
               </h3>
-              <span className={`incident-status ${incident.resolved_at ? 'status-resolved' : 'status-active'}`}>
+              <span className={styles['incident-status'] + ' ' + (incident.resolved_at ? styles['status-resolved'] : styles['status-active'])}>
                 {incident.resolved_at ? t('common.resolved') : t('common.active')}
               </span>
             </div>
-            <div className="incident-timestamps">
-              <p className="incident-timestamp">
+            <div className={styles['incident-timestamps']}>
+              <p className={styles['incident-timestamp']}>
                 {t('incidents.started_at')}: {formatDate(incident.date)}
               </p>
               {incident.reparing_at && (
@@ -89,17 +89,17 @@ export default function IncidentList() {
                 </p>
               )}
               {incident.resolved_at && (
-                <p className="incident-timestamp">
+                <p className={styles['incident-timestamp']}>
                   {t('incidents.resolved_at')}: {formatDate(incident.resolved_at)}
                 </p>
               )}
             </div>
-            <p className="incident-description">{incident.description}</p>
+            <p className={styles['incident-description']}>{incident.description}</p>
           </div>
         ))}
         {filteredIncidents.length === 0 && (
-          <div className="incident-card">
-            <p className="incident-description">
+          <div className={styles['incident-card']}>
+            <p className={styles['incident-description']}>
               {showHistorical ? t('common.noHistoricalIncidents') : t('common.noActiveIncidents')}
             </p>
           </div>

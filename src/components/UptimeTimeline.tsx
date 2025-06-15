@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import './UptimeTimeline.css';
+import styles from './UptimeTimeline.module.css';
 
 interface Cable {
   id: string;
@@ -168,19 +168,19 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
   };
 
   return (
-    <div className="uptime-timeline">
-      <div className="timeline-content">
-        <div className="cable-names">
+    <div className={styles['uptime-timeline']}>
+      <div className={styles['timeline-content']}>
+        <div className={styles['cable-names']}>
           {cables.map((cable) => (
-            <div key={cable.id} className="cable-name">{cable.name}</div>
+            <div key={cable.id} className={styles['cable-name']}>{cable.name}</div>
           ))}
         </div>
-        <div className="timeline-rows">
+        <div className={styles['timeline-rows']}>
           {cables.map((cable) => (
-            <div key={cable.id} className="cable-timeline">
-              <div className="timeline-row">
-                <div className="timeline-container">
-                  <div className="timeline-segments">
+            <div key={cable.id} className={styles['cable-timeline']}>
+              <div className={styles['timeline-row']}>
+                <div className={styles['timeline-container']}>
+                  <div className={styles['timeline-segments']}>
                     {(segments[cable.id] || []).map((segment, index) => {
                       const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
                       const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
@@ -194,7 +194,7 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
                       return (
                         <div
                           key={index}
-                          className="timeline-segment"
+                          className={styles['timeline-segment']}
                           style={{
                             left: `${start}%`,
                             width: `${width}%`,
@@ -212,7 +212,7 @@ ${incident ? `Description: ${incident.description}` : ''}`}
           ))}
         </div>
       </div>
-      <div className="timeline-axis">
+      <div className={styles['timeline-axis']}>
         <span>{formatDate(startDate)}</span>
         <span>{formatDate(new Date(startDate.getTime() + totalDuration / 2))}</span>
         <span>{formatDate(endDate)}</span>
