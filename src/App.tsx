@@ -1,6 +1,5 @@
 import type { LatLngTuple } from 'leaflet';
-import { useState, useEffect } from 'react';
-import { useCable } from './hooks/useCable';
+import { useState, useEffect, Suspense } from 'react';
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import About from './components/About';
@@ -23,7 +22,6 @@ function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const cables = useCable();
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
     window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter
   );
@@ -81,11 +79,12 @@ function App() {
             onClose={handleCloseTimeline}
             title={t('timeline.title')}
           >
+          <Suspense>
             <UptimeTimeline
-              cables={cables}
               startDate={timelineRange}
               endDate={now}
             />
+          </Suspense>
           </Modal>
           <Modal
             isOpen={isAboutOpen}

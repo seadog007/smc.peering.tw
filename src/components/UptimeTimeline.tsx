@@ -2,20 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { useIncidents } from '../hooks/useIncidents';
 import { useTimelineSegments } from '../hooks/useTimelineSegments';
 import './UptimeTimeline.css';
-
-interface Cable {
-  id: string;
-  name: string;
-}
+import { useCable } from '../hooks/useCable';
 
 interface UptimeTimelineProps {
-  cables: Cable[];
   startDate: Date;
   endDate: Date;
 }
 
-export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTimelineProps) {
+export default function UptimeTimeline({ startDate, endDate }: UptimeTimelineProps) {
   const { t } = useTranslation();
+  const cables = useCable();
   const incidents = useIncidents();
   const segments = useTimelineSegments({ cables, incidents, startDate, endDate });
 
