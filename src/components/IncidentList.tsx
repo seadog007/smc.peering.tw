@@ -9,6 +9,7 @@ interface Incident {
   segment: string;
   title: string;
   description: string;
+  reparing_at: string;
   resolved_at: string;
 }
 
@@ -33,13 +34,17 @@ export default function IncidentList() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+    const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
+    
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+      ...(isMidnight ? {} : {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
     });
   };
 
@@ -78,6 +83,11 @@ export default function IncidentList() {
               <p className="incident-timestamp">
                 {t('incidents.started_at')}: {formatDate(incident.date)}
               </p>
+              {incident.reparing_at && (
+                <p className="incident-timestamp">
+                  {t('incidents.reparing_at')}: {formatDate(incident.reparing_at)}
+                </p>
+              )}
               {incident.resolved_at && (
                 <p className="incident-timestamp">
                   {t('incidents.resolved_at')}: {formatDate(incident.resolved_at)}

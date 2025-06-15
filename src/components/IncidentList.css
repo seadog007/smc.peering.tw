@@ -80,10 +80,10 @@
 .incident-timestamp {
   color: #d1d5db;
   font-size: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 .incident-description {
   color: #e5e7eb;
   font-size: 0.75rem;
+  margin-top: 0.5rem;
 } 

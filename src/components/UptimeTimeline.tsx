@@ -153,6 +153,20 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
     });
   };
 
+  const formatDateTime = (date: Date) => {
+    const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      ...(isMidnight ? {} : {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    });
+  };
+
   return (
     <div className="uptime-timeline">
       <div className="timeline-content">
@@ -186,7 +200,7 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
                             width: `${width}%`,
                             backgroundColor: getStatusColor(segment.status),
                           }}
-                          title={`${getStatusLabel(segment.status)}: ${segment.startTime.toLocaleString()} - ${segment.endTime.toLocaleString()}
+                          title={`${getStatusLabel(segment.status)}: ${formatDateTime(segment.startTime)} - ${formatDateTime(segment.endTime)}
 ${incident ? `Description: ${incident.description}` : ''}`}
                         />
                       );

@@ -49,6 +49,7 @@ def convert_incidents():
                     'segment': row['segment'],
                     'title': row['title'],
                     'description': row['description'].strip('"'),  # Remove any extra quotes
+                    'reparing_at': row['reparing_at'],
                     'resolved_at': row['resolved_at']
                 })
         

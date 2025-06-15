@@ -16,6 +16,7 @@
     "title": "Active Incidents",
     "historicalTitle": "Historical Incidents",
     "started_at": "Started at",
+    "reparing_at": "Estimated Reparing at",
     "resolved_at": "Resolved at"
   },
   "timeline": {
