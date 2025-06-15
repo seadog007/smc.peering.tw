@@ -72,7 +72,9 @@ function App() {
             </button>
           )}
           <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
-            <IncidentList />
+            <Suspense>
+              <IncidentList />
+            </Suspense>
           </div>
           <Modal
             isOpen={isTimelineOpen}
