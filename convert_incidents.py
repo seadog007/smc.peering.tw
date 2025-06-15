@@ -5,7 +5,7 @@ import pytz
 import requests
 from io import StringIO
 
-def is_within_six_months(date_str):
+def is_within_specific_days(date_str, days):
     if not date_str:
         return False
     
@@ -19,9 +19,9 @@ def is_within_six_months(date_str):
     
     # Get current time in UTC
     now = datetime.now(pytz.UTC)
-    six_months_ago = now - timedelta(days=180)
+    specific_date = now - timedelta(days=days)
     
-    return date >= six_months_ago
+    return date >= specific_date
 
 def convert_incidents():
     # URL from incident.py
@@ -41,7 +41,7 @@ def convert_incidents():
         filtered_incidents = []
         for row in reader:
             # Check if either date or resolved_at is within 6 months
-            if is_within_six_months(row['date']) or is_within_six_months(row['resolved_at']):
+            if is_within_specific_days(row['date'], 365*2) or is_within_specific_days(row['resolved_at'], 365*2):
                 filtered_incidents.append({
                     'date': row['date'],
                     'status': row['status'],
