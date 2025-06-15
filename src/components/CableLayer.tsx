@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Polyline, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression, PopupEvent } from 'leaflet';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useIncidents, type Incident } from '../hooks/useIncidents';
 
 // Re-use the white dot icon from Map.tsx
 const whiteDotIcon = new Icon({
@@ -30,16 +32,6 @@ interface Cable {
   segments: Segment[];
   equipments?: Equipment[];
   available_path?: string[][];
-}
-
-interface Incident {
-  date: string;
-  status: string;
-  cableid: string;
-  segment: string;
-  title: string;
-  description: string;
-  resolved_at: string;
 }
 
 function markBroken(paths: string[][], inputNodes: string[]) {
@@ -147,34 +139,14 @@ async function loadCables(): Promise<Cable[]> {
 }
 
 export default function CableLayer() {
-  const [cables, setCables] = useState<Cable[]>([]);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const incidents = useIncidents();
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load incidents first
-        const incidentsResponse = await fetch('/data/incidents.json');
-        const incidentsData = await incidentsResponse.json();
-        setIncidents(incidentsData);
-
-        // Then load cables
-        const cablesData = await loadCables();
-        setCables(cablesData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  if (isLoading) {
-    return null; // Or a loading spinner if you prefer
-  }
+  const { data: cables } = useSuspenseQuery({
+    queryKey: ['cables'],
+    queryFn: async (): Promise<Cable[]> => {
+      return await loadCables();
+    },
+  });
 
   return (
     <>

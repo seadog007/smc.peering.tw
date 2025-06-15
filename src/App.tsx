@@ -1,5 +1,6 @@
 import type { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
+import { useCable } from './hooks/useCable';
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import About from './components/About';
@@ -22,7 +23,7 @@ function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
+  const cables = useCable();
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
     window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter
   );
@@ -35,23 +36,6 @@ function App() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    // Dynamically import cable data to pass to timeline
-    const loadCables = async () => {
-      const cableFiles = import.meta.glob<{ default: { id: string, name: string } }>('/src/data/cables/*.json');
-      const loadedCables = [];
-      for (const path in cableFiles) {
-        const module = await cableFiles[path]();
-        loadedCables.push({
-          id: module.default.id,
-          name: module.default.name
-        });
-      }
-      setCables(loadedCables);
-    };
-    loadCables();
   }, []);
 
   const handleOpenTimeline = () => setIsTimelineOpen(true);

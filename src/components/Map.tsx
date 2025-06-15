@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression } from 'leaflet';
@@ -39,7 +40,9 @@ export default function Map({ center }: MapProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
-        <CableLayer />
+        <Suspense>
+          <CableLayer />
+        </Suspense>
         
         {/* Render landing points */}
         {landingPoints.map((point) => (

@@ -1,36 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useIncidents } from '../hooks/useIncidents';
 import './IncidentList.css';
-
-interface Incident {
-  date: string;
-  status: string;
-  cableid: string;
-  segment: string;
-  title: string;
-  description: string;
-  reparing_at: string;
-  resolved_at: string;
-}
 
 export default function IncidentList() {
   const { t } = useTranslation();
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const incidents = useIncidents();
   const [showHistorical, setShowHistorical] = useState(false);
-
-  useEffect(() => {
-    // Load incidents from JSON file
-    fetch('/data/incidents.json')
-      .then(response => response.json())
-      .then((data: Incident[]) => {
-        // Sort incidents by date, most recent first
-        const sortedIncidents = data.sort((a, b) => 
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        setIncidents(sortedIncidents);
-      })
-      .catch(error => console.error('Error loading incidents:', error));
-  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
