@@ -298,5 +298,15 @@
     "description": "影響中國新加坡方面流量",
     "reparing_at": "",
     "resolved_at": "2025-05-16T09:56:00+08:00"
+  },
+  {
+    "date": "2025-06-15T02:26:12+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "",
+    "title": "EAC1 斷線",
+    "description": "陸上段斷線，影響香港方面流量",
+    "reparing_at": "",
+    "resolved_at": "2025-06-15T21:04:11+08:00"
   }
 ]
