@@ -33,5 +33,22 @@
     "techstack": "使用 Typescript 語言搭配 Vite 和 React 框架作為前端，後端使用 Google Spreadsheet 管理資料，以 Github Action 自動更新資料轉為靜態格式部署在 GitHub Pages 上，含資料整理總耗時約一週。",
     "github": "GitHub 專案連結：<a href='https://github.com/seadog007/smc.peering.tw/'>地圖 (公開)</a>、<a href='https://github.com/seadog007/tw-submarine-cable/'>海纜資料 (非公開)</a>",
     "sponsor": "本專案部分資料由 <a href='https://www.twds.com.tw/'>TWDS</a> 其子專案 <a href='https://stuix.io/'>STUIX</a> 提供<br>TWDS 致力於推動國內 Peering 生態，避免流量需繞出國再繞回國的窘境，也引進許多國外網路快取服務來幫助建立 Peering 生態。相關專案贊助連結如下：<a href='https://sponsor.twds.com.tw/'>TWDS 贊助連結</a>"
+  },
+  "version": {
+    "history": "版本歷史",
+    "version": {
+      "1.0.0": {
+        "date": "2025-06-15",
+        "changes": ["初始版本"]
+      },
+      "1.0.1": {
+        "date": "2025-06-16",
+        "changes": ["UI 改善", "新增預計維修時間和障礙排除時間"]
+      },
+      "1.1.0": {
+        "date": "2025-06-18",
+        "changes": ["新增版本歷史"]
+      }
+    }
   }
 } 

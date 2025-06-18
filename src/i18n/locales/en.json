@@ -33,5 +33,22 @@
     "techstack": "The project is developed using Typescript, Vite, and React, and uses Google Spreadsheet for data management. The data is automatically updated and converted to static format using Github Action, and deployed on GitHub Pages. The data collection and conversion took about one week.",
     "github": "GitHub Repository: <a href='https://github.com/seadog007/smc.peering.tw/'>Map (Public)</a>, <a href='https://github.com/seadog007/tw-submarine-cable/'>Cable Data (Private)</a>",
     "sponsor": "This project is sponsored by <a href='https://www.twds.com.tw/'>TWDS</a> and its sub-project <a href='https://stuix.io/'>STUIX</a><br>TWDS aims to promote the Peering ecosystem in Taiwan, avoiding the situation where traffic needs to be routed out of the country and then back to the country. We also introduce lots of forgien network cache to help establish the Peering ecosystem in Taiwan. The sponsor link of related projects is <a href='https://sponsor.twds.com.tw/'>TWDS Sponsor Link</a>"
+  },
+  "version": {
+    "history": "Version History",
+    "version": {
+      "1.0.0": {
+        "date": "2025-06-15",
+        "changes": ["Initial release"]
+      },
+      "1.0.1": {
+        "date": "2025-06-16",
+        "changes": ["UI Improvements", "Added Estimated Reparing Time and Resolved Time"]
+      },
+      "1.1.0": {
+        "date": "2025-06-18",
+        "changes": ["Added Version History"]
+        }
+    }
   }
 } 
