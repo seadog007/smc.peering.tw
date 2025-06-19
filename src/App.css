@@ -23,14 +23,14 @@
 
 .timeline-button {
   position: absolute;
-  bottom: 20px;
+  top: calc(100dvh - 70px);
   left: 80px;
   z-index: 1100;
   background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px #00000033, 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   padding: 0.75rem;
   transition: background-color 0.2s;
   cursor: pointer;
@@ -48,7 +48,8 @@
 
 .about-button {
   position: absolute;
-  bottom: 20px;
+  top: calc(100dvh - 70px);
+  padding-bottom: env(safe-area-inset-bottom);
   left: 20px;
   z-index: 1100;
   background-color: rgba(0, 0, 0, 0.7);
@@ -80,7 +81,8 @@
 
 .incident-button {
   position: absolute;
-  bottom: 20px;
+  top: calc(100dvh - 70px);
+  padding-bottom: env(safe-area-inset-bottom);
   left: 140px;
   z-index: 1100;
   background-color: rgba(0, 0, 0, 0.7);

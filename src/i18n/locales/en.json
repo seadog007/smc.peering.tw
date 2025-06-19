@@ -58,6 +58,10 @@
       "1.2.0": {
         "date": "2025-06-19",
         "changes": ["Added Mobile Version Map"]
+      },
+      "1.2.1": {
+        "date": "2025-06-19",
+        "changes": ["Fixed Mobile Button Position"]
       }
     }
   }
