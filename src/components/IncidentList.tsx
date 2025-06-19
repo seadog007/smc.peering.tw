@@ -56,7 +56,7 @@ export default function IncidentList() {
     <div className="incident-list">
       <div className="incident-list-header">
         <h2 className="incident-list-title">
-          {showHistorical ? t('incidents.historicalTitle') : t('incidents.title')}
+          {showHistorical ? t('incidents.historicalTitle') : t('incidents.activeTitle')}
         </h2>
         <button 
           className="toggle-button"

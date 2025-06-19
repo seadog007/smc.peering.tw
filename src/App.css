@@ -21,14 +21,6 @@
   z-index: 1000;
 }
 
-.incident-section.full-width {
-  width: 100%;
-  height: 100%;
-  top: 0;
-  right: 0;
-  border-radius: 0;
-}
-
 .timeline-button {
   position: absolute;
   bottom: 20px;
@@ -84,4 +76,25 @@
   top: 20px;
   right: 20px;
   z-index: 1000;
+}
+
+.incident-button {
+  position: absolute;
+  bottom: 20px;
+  left: 140px;
+  z-index: 1100;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.incident-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
 }

@@ -13,11 +13,13 @@
     "unknown": "Unknown"
   },
   "incidents": {
-    "title": "Active Incidents",
+    "title": "Incidents List",
+    "activeTitle": "Active Incidents",
     "historicalTitle": "Historical Incidents",
     "started_at": "Started at",
     "reparing_at": "Estimated Reparing at",
-    "resolved_at": "Resolved at"
+    "resolved_at": "Resolved at",
+    "show": "Show Incidents"
   },
   "timeline": {
     "title": "Cables Uptime Timeline",
@@ -52,6 +54,10 @@
       "1.1.1": {
         "date": "2025-06-18",
         "changes": ["Added EAC1 Segment E Cable Data"]
+      },
+      "1.2.0": {
+        "date": "2025-06-19",
+        "changes": ["Added Mobile Version Map"]
       }
     }
   }

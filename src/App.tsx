@@ -21,6 +21,7 @@ function App() {
   const { t } = useTranslation();
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isIncidentOpen, setIsIncidentOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
@@ -58,7 +59,8 @@ function App() {
   const handleCloseTimeline = () => setIsTimelineOpen(false);
   const handleOpenAbout = () => setIsAboutOpen(true);
   const handleCloseAbout = () => setIsAboutOpen(false);
-
+  const handleOpenIncident = () => setIsIncidentOpen(true);
+  const handleCloseIncident = () => setIsIncidentOpen(false);
   return (
     <div className="app">
       <div className="app-content">
@@ -66,9 +68,16 @@ function App() {
           <div className="map-section">
             <Map center={mapCenter} />
           </div>
-          {!isMobile && (
-            <LanguageSwitcher />
-          )}
+          <LanguageSwitcher />
+          <button
+            onClick={handleOpenIncident}
+            className="incident-button"
+            title={t('incident.show')}
+          >
+            <svg className="incident-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </button>
           <button
             onClick={handleOpenTimeline}
             className="timeline-button"
@@ -87,9 +96,20 @@ function App() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
+          {!isMobile && (
           <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
-            <IncidentList />
-          </div>
+              <IncidentList />
+            </div>
+          )}
+          {isMobile && (
+            <Modal
+              isOpen={isIncidentOpen}
+              onClose={handleCloseIncident}
+              title={t('incidents.title')}
+            >
+              <IncidentList />
+            </Modal>
+          )}
           <Modal
             isOpen={isTimelineOpen}
             onClose={handleCloseTimeline}

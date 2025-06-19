@@ -13,7 +13,8 @@
     "unknown": "未知"
   },
   "incidents": {
-    "title": "發生中事件",
+    "title": "事件列表",
+    "activeTitle": "發生中事件",
     "historicalTitle": "歷史事件",
     "started_at": "開始時間",
     "reparing_at": "預計維修時間",
@@ -52,6 +53,10 @@
       "1.1.1": {
         "date": "2025-06-18",
         "changes": ["新增 EAC1 Segment E 海纜資料"]
+      },
+      "1.2.0": {
+        "date": "2025-06-19",
+        "changes": ["讓行動裝置也能看到地圖"]
       }
     }
   }
