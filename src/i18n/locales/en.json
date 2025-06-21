@@ -62,6 +62,10 @@
       "1.2.1": {
         "date": "2025-06-19",
         "changes": ["Fixed Mobile Button Position"]
+      },
+      "1.2.2": {
+        "date": "2025-06-21",
+        "changes": ["Added NCP S5, S6, S1.4 Cable Data"]
       }
     }
   }
