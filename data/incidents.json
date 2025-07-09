@@ -285,7 +285,7 @@
     "cableid": "apcn2",
     "segment": "apcn2-seg-7",
     "title": "APCN2 中國方向斷線",
-    "description": "影響中國新加坡方面流量",
+    "description": "影響中國方面流量",
     "reparing_at": "",
     "resolved_at": "2025-05-16T09:56:00+08:00"
   },
