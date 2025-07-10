@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Polyline, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression, PopupEvent } from 'leaflet';
@@ -80,6 +80,8 @@ function markBroken(paths: string[][], inputNodes: string[]) {
 // A new component to handle the dynamic popup content
 function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segment: Segment; incidents: Incident[] }) {
   const [clickedLatLng, setClickedLatLng] = useState<string | null>(null);
+  const polylineRef = useRef<any>(null);
+  const hoverPopupRef = useRef<any>(null);
 
   const getSegmentColor = (segment: Segment) => {
     // If segment has a color override, use it
@@ -118,20 +120,34 @@ function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segm
     },
     popupclose: () => {
       setClickedLatLng(null);
+    },
+    mouseover: (e: any) => {
+      const L = (window as any).L;
+      hoverPopupRef.current = L.popup({
+        closeButton: false,
+        autoClose: false,
+        closeOnClick: false
+      })
+      .setLatLng(e.latlng)
+      .setContent(`<b>${cable.name}</b><br />Segment: ${segment.id}<br />Lat: ${e.latlng.lat.toFixed(5)}, Lng: ${e.latlng.lng.toFixed(5)}`)
+      .openOn(polylineRef.current._map);
+    },
+    mouseout: () => {
+      if (hoverPopupRef.current) {
+        hoverPopupRef.current.remove();
+        hoverPopupRef.current = null;
+      }
     }
   };
   
   return (
     <Polyline
+      ref={polylineRef}
       positions={segment.coordinates.map(coord => (Array.isArray(coord) ? [coord[1], coord[0]] : coord))}
       color={getSegmentColor(segment)}
       weight={2}
       eventHandlers={eventHandlers}
     >
-      <Tooltip>
-        <b>{cable.name}</b><br />
-        Segment: {segment.id}
-      </Tooltip>
       <Popup>
         <b>{cable.name}</b><br />
         Segment: {segment.id}
