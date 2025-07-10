@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Polyline, Marker, Popup, Tooltip } from 'react-leaflet';
+import { Polyline, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression, PopupEvent } from 'leaflet';
 
