@@ -66,6 +66,10 @@
       "1.2.2": {
         "date": "2025-06-21",
         "changes": ["Added NCP S5, S6, S1.4 Cable Data"]
+      },
+      "1.2.3": {
+        "date": "2025-07-11",
+        "changes": ["Added Hover Info when mouse is on the cable"]
       }
     }
   }
