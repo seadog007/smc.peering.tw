@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Polyline, Marker, Popup } from 'react-leaflet';
+import { Polyline, Marker, Popup, Tooltip } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import type { LatLngExpression, PopupEvent } from 'leaflet';
 
@@ -128,6 +128,10 @@ function InteractivePolyline({ cable, segment, incidents }: { cable: Cable; segm
       weight={2}
       eventHandlers={eventHandlers}
     >
+      <Tooltip>
+        <b>{cable.name}</b><br />
+        Segment: {segment.id}
+      </Tooltip>
       <Popup>
         <b>{cable.name}</b><br />
         Segment: {segment.id}
