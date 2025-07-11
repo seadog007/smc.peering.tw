@@ -168,6 +168,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v1.2.4** (2025-07-12): Added TSE1 Cable Data
+- **v1.2.3** (2025-07-11): Added Hover Function 
 - **v1.2.2** (2025-06-21): Added NCP S5, S6, S1.4 Cable Data
 - **v1.2.1** (2025-06-19): Fixed Mobile Button Position
 - **v1.2.0** (2025-06-19): Added Mobile Version Map
