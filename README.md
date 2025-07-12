@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v1.2.5** (2025-07-12): Updated APCN2 to accurate version
 - **v1.2.4** (2025-07-12): Added TSE1 Cable Data
 - **v1.2.3** (2025-07-11): Added Hover Function 
 - **v1.2.2** (2025-06-21): Added NCP S5, S6, S1.4 Cable Data

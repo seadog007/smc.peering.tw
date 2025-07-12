@@ -74,6 +74,10 @@
       "1.2.4": {
         "date": "2025-07-12",
         "changes": ["Added TSE-1 Cable Data"]
+      },
+      "1.2.5": {
+        "date": "2025-07-12",
+        "changes": ["Updated APCN2 to accurate version"]
       }
     }
   }
