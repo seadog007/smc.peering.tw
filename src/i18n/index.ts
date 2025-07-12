@@ -9,6 +9,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
+    supportedLngs: ['en', 'zh-TW'],
     resources: {
       en: {
         translation: enTranslations
