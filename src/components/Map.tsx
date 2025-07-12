@@ -24,15 +24,17 @@ export default function Map({ center }: MapProps) {
       <MapContainer 
         center={center} // Center of Taiwan
         zoom={7} // Zoom level to show whole Taiwan
+        minZoom={4} // Min zoom level
+        maxZoom={9} // Max zoom level
         style={{ height: '100%', width: '100%' }}
-        zoomControl={false} // Disable zoom controls
-        dragging={true} // Disable dragging
-        touchZoom={false} // Disable touch zoom
+        zoomControl={false} // Disable default zoom controls
+        dragging={true} // Enable dragging
+        touchZoom={true} // Enable touch zoom for mobile
         doubleClickZoom={false} // Disable double click zoom
-        scrollWheelZoom={true} // Disable scroll wheel zoom
+        scrollWheelZoom={true} // Enable scroll wheel zoom
         boxZoom={false} // Disable box zoom
         keyboard={false} // Disable keyboard navigation
-        zoomSnap={0.1} // Snap to 0.1 zoom levels
+        zoomSnap={1} // Snap to 1 zoom levels
       >
         <MapViewController center={center} />
         <TileLayer
