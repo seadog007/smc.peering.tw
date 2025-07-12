@@ -12,6 +12,12 @@
     "notice": "Notice",
     "unknown": "Unknown"
   },
+  "warning": {
+    "title": "Important Notice",
+    "message": "This map displays real-time status of Taiwan's submarine cables. The information shown is for reference purposes only and may not reflect the most current status. Please refer to official sources for critical network decisions.",
+    "acknowledge": "I Understand",
+    "dontShowAgain": "Don't show this warning again"
+  },
   "incidents": {
     "title": "Incidents List",
     "activeTitle": "Active Incidents",

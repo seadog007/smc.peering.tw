@@ -12,6 +12,12 @@
     "notice": "注意",
     "unknown": "未知"
   },
+  "warning": {
+    "title": "重要提醒",
+    "message": "本網站顯示台灣海纜的即時狀態。所顯示的資訊僅供參考，可能無法反映最新狀態。如需進行關鍵網路決策，請參考官方來源。",
+    "acknowledge": "我了解",
+    "dontShowAgain": "不再顯示此警告"
+  },
   "incidents": {
     "title": "事件列表",
     "activeTitle": "發生中事件",

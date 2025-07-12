@@ -100,3 +100,60 @@
   height: 1.5rem;
   color: #fff;
 }
+
+.warning-content {
+  margin-top: 1rem;
+  text-align: center;
+  color: #fff;
+}
+
+.warning-content p {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.warning-checkbox {
+  margin-bottom: 1.5rem;
+}
+
+.warning-checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.warning-checkbox input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #007bff;
+  cursor: pointer;
+}
+
+.warning-checkbox span {
+  user-select: none;
+}
+
+.warning-acknowledge-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.warning-acknowledge-btn:hover {
+  background-color: #0056b3;
+}
+
+.warning-acknowledge-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}

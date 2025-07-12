@@ -22,6 +22,8 @@ function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isIncidentOpen, setIsIncidentOpen] = useState(false);
+  const [isWarningOpen, setIsWarningOpen] = useState(false);
+  const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
   const [mapCenter, setMapCenter] = useState<LatLngTuple>(
@@ -36,6 +38,14 @@ function App() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Check if user has seen the warning before
+    const hasSeenWarning = localStorage.getItem('hasSeenWarning');
+    if (!hasSeenWarning) {
+      setIsWarningOpen(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -61,6 +71,12 @@ function App() {
   const handleCloseAbout = () => setIsAboutOpen(false);
   const handleOpenIncident = () => setIsIncidentOpen(true);
   const handleCloseIncident = () => setIsIncidentOpen(false);
+  const handleCloseWarning = () => {
+    setIsWarningOpen(false);
+    if (dontShowWarningAgain) {
+      localStorage.setItem('hasSeenWarning', 'true');
+    }
+  };
   return (
     <div className="app">
       <div className="app-content">
@@ -129,6 +145,32 @@ function App() {
             title={t('about.title')}
           >
             <About />
+          </Modal>
+          <Modal
+            isOpen={isWarningOpen}
+            onClose={handleCloseWarning}
+            title={t('warning.title')}
+            maxWidth="550px"
+          >
+            <div className="warning-content">
+              <p>{t('warning.message')}</p>
+              <div className="warning-checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={dontShowWarningAgain}
+                    onChange={(e) => setDontShowWarningAgain(e.target.checked)}
+                  />
+                  <span>{t('warning.dontShowAgain')}</span>
+                </label>
+              </div>
+              <button 
+                className="warning-acknowledge-btn"
+                onClick={handleCloseWarning}
+              >
+                {t('warning.acknowledge')}
+              </button>
+            </div>
           </Modal>
         </div>
       </div>
