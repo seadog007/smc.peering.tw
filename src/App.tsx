@@ -153,7 +153,7 @@ function App() {
             maxWidth="550px"
           >
             <div className="warning-content">
-              <p>{t('warning.message')}</p>
+              <p dangerouslySetInnerHTML={{ __html: t('warning.message') }} />
               <div className="warning-checkbox">
                 <label>
                   <input
