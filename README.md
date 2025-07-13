@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v1.3.0** (2025-07-13): Fixed Button Layer, Improved Map Usability, Added Important Notice Window aka Disclaimer, Fixed Initial Language Setting, Added Monitoring Data Sources
 - **v1.2.6** (2025-07-12): Updated C2C, Added Seg 2C, 3A
 - **v1.2.5** (2025-07-12): Updated APCN2 to accurate version
 - **v1.2.4** (2025-07-12): Added TSE1 Cable Data
