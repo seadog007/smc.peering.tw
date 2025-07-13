@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v1.3.1** (2025-07-14): Added SEO Related Settings, Updated TM2, TM3, TP3 Cable Data
 - **v1.3.0** (2025-07-13): Fixed Button Layer, Improved Map Usability, Added Important Notice Window aka Disclaimer, Fixed Initial Language Setting, Added Monitoring Data Sources
 - **v1.2.6** (2025-07-12): Updated C2C, Added Seg 2C, 3A
 - **v1.2.5** (2025-07-12): Updated APCN2 to accurate version
@@ -180,4 +181,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **v1.1.0** (2025-06-18): Added Version History
 - **v1.0.1** (2025-06-16): UI Improvements, Added Estimated Repairing Time and Resolved Time
 - **v1.0.0** (2025-06-15): Initial release
- 
