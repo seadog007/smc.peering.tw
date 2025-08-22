@@ -315,8 +315,8 @@
     "cableid": "frnal-nacs",
     "segment": "nacs-seg-2",
     "title": "F/RNAL NACS 香港方向斷線",
-    "description": "待補充，嚴重影響香港方面流量，迂迴至日本方面，導致日本方面流量阻塞",
-    "reparing_at": "",
+    "description": "21°17.0500'N 115°49.9479'Е 處發生障礙，嚴重影響香港方面流量，迂迴至日本方面，導致日本方面流量阻塞",
+    "reparing_at": "2025-08-20T00:00:00+08:00",
     "resolved_at": ""
   },
   {
@@ -348,5 +348,15 @@
     "description": "香港端路上段障礙，影響部分電信跨國傳輸",
     "reparing_at": "",
     "resolved_at": "2025-08-17T01:25:00+08:00"
+  },
+  {
+    "date": "2025-08-22T06:07:28+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-d",
+    "title": "EAC1 斷線",
+    "description": "影響香港方面流量",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
