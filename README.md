@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v1.3.3** (2025-08-22): Added SJC2 S4 Cable Data
 - **v1.3.2** (2025-07-14): Fixed cable data build script
 - **v1.3.1** (2025-07-14): Added SEO Related Settings, Updated TM2, TM3, TP3 Cable Data
 - **v1.3.0** (2025-07-13): Fixed Button Layer, Improved Map Usability, Added Important Notice Window aka Disclaimer, Fixed Initial Language Setting, Added Monitoring Data Sources
