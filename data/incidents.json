@@ -340,6 +340,16 @@
     "resolved_at": "2025-07-11T02:29:14+08:00"
   },
   {
+    "date": "2025-08-05T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-a",
+    "title": "EAC1 排定維護",
+    "description": "排定維護，更換 Repeater x2，影響日本方面流量",
+    "reparing_at": "2025-08-21T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
     "date": "2025-08-16T15:06:00+08:00",
     "status": "partial_disconnected",
     "cableid": "eac1",
