@@ -334,7 +334,7 @@
     "status": "disconnected",
     "cableid": "eac1",
     "segment": "eac1-seg-d",
-    "title": "EAC1 斷線",
+    "title": "EAC1 香港方向斷線",
     "description": "陸上段排定改接維護（台北市士林區文昌橋），嚴重影響香港方面流量，重複斷線連線多次（02:20:30、02:25:04、02:25:51），因備援所用 C2C 先行離線，導致後續國際 ISP 未成功應變及通知下游廠商，最終導致 23,493 個 /24 （6,014,208個 IPv4 位置）從網際網路離線，約佔台灣總 IPv4 數量 17.2%",
     "reparing_at": "",
     "resolved_at": "2025-07-11T02:29:14+08:00"
@@ -344,7 +344,7 @@
     "status": "disconnected",
     "cableid": "eac1",
     "segment": "eac1-seg-a",
-    "title": "EAC1 排定維護",
+    "title": "EAC1 日本方向排定維護",
     "description": "排定維護，更換 Repeater x2，影響日本方面流量",
     "reparing_at": "2025-08-21T00:00:00+08:00",
     "resolved_at": ""
@@ -354,7 +354,7 @@
     "status": "partial_disconnected",
     "cableid": "eac1",
     "segment": "",
-    "title": "EAC1 斷線",
+    "title": "EAC1 香港方向斷線",
     "description": "香港端路上段障礙，影響部分電信跨國傳輸",
     "reparing_at": "",
     "resolved_at": "2025-08-17T01:25:00+08:00"
@@ -364,7 +364,7 @@
     "status": "disconnected",
     "cableid": "eac1",
     "segment": "eac1-seg-d",
-    "title": "EAC1 斷線",
+    "title": "EAC1 香港方向斷線",
     "description": "影響香港方面流量",
     "reparing_at": "",
     "resolved_at": ""
