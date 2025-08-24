@@ -364,8 +364,8 @@
     "status": "partial_disconnected",
     "cableid": "eac1",
     "segment": "",
-    "title": "EAC1 香港方向斷線",
-    "description": "台灣某電信業者傳輸失效，影響部分 Tier 2 / End ISP 香港方面流量",
+    "title": "EAC1 香港方向部分斷線",
+    "description": "台灣某電信業者傳輸失效，影響部分 ISP 香港方面流量：RETN、CMI 等",
     "reparing_at": "",
     "resolved_at": ""
   }
