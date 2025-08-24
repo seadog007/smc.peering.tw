@@ -361,11 +361,11 @@
   },
   {
     "date": "2025-08-22T06:07:28+08:00",
-    "status": "disconnected",
+    "status": "partial_disconnected",
     "cableid": "eac1",
-    "segment": "eac1-seg-d",
+    "segment": "",
     "title": "EAC1 香港方向斷線",
-    "description": "影響香港方面流量",
+    "description": "台灣某電信業者傳輸失效，影響部分 Tier 2 / End ISP 香港方面流量",
     "reparing_at": "",
     "resolved_at": ""
   }
