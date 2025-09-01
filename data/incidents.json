@@ -381,7 +381,7 @@
   },
   {
     "date": "2025-09-01T16:07:24+08:00",
-    "status": "disconnected",
+    "status": "partial_disconnected",
     "cableid": "eac2",
     "segment": "eac2-seg-2b2",
     "title": "EAC2 東南亞方向斷線",
