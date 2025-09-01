@@ -368,5 +368,15 @@
     "description": "傳輸失效，影響部分 ISP 香港方面流量：RETN、CMI 等。部分傳輸維持正常服務",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2025-09-01T16:07:24+08:00",
+    "status": "disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b2",
+    "title": "EAC2 東南亞方向斷線",
+    "description": "菲律賓新加坡區段斷線，影響台灣往新加坡流量",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
