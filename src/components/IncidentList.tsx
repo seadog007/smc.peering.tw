@@ -20,17 +20,27 @@ export default function IncidentList() {
 
   useEffect(() => {
     // Load incidents from JSON file
-    fetch('/data/incidents.json')
-      .then((response) => response.json())
-      .then((data: Incident[]) => {
-        // Sort incidents by date, most recent first
-        const sortedIncidents = data.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
-        setIncidents(sortedIncidents);
-      })
-      .catch((error) => console.error('Error loading incidents:', error));
+    void import('../data/incidents.json').then((incidentsData) => {
+      const sortedIncidents = incidentsData.default.sort((a: Incident, b: Incident) =>
+        new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
+      setIncidents(sortedIncidents);
+    });
   }, []);
+
+  // useEffect(() => {
+  //   // Load incidents from JSON file
+  //   fetch('/data/incidents.json')
+  //     .then((response) => response.json())
+  //     .then((data: Incident[]) => {
+  //       // Sort incidents by date, most recent first
+  //       const sortedIncidents = data.sort((a, b) =>
+  //         new Date(b.date).getTime() - new Date(a.date).getTime(),
+  //       );
+  //       setIncidents(sortedIncidents);
+  //     })
+  //     .catch((error) => console.error('Error loading incidents:', error));
+  // }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -51,7 +61,7 @@ export default function IncidentList() {
   };
 
   const filteredIncidents = incidents.filter((incident) =>
-    showHistorical ? incident.resolved_at : !incident.resolved_at,
+    showHistorical ? (incident.resolved_at && incident.resolved_at !== '') : (!incident.resolved_at || incident.resolved_at === ''),
   );
 
   return (
@@ -77,8 +87,8 @@ export default function IncidentList() {
               <h3 className="incident-title">
                 {incident.title}
               </h3>
-              <span className={`incident-status ${incident.resolved_at ? 'status-resolved' : 'status-active'}`}>
-                {incident.resolved_at ? t('common.resolved') : t('common.active')}
+              <span className={`incident-status ${(incident.resolved_at && incident.resolved_at !== '') ? 'status-resolved' : 'status-active'}`}>
+                {(incident.resolved_at && incident.resolved_at !== '') ? t('common.resolved') : t('common.active')}
               </span>
             </div>
             <div className="incident-timestamps">
@@ -87,14 +97,14 @@ export default function IncidentList() {
                 :
                 {formatDate(incident.date)}
               </p>
-              {incident.reparing_at && (
+              {incident.reparing_at && incident.reparing_at !== '' && (
                 <p className="incident-timestamp">
                   {t('incidents.reparing_at')}
                   :
                   {formatDate(incident.reparing_at)}
                 </p>
               )}
-              {incident.resolved_at && (
+              {incident.resolved_at && incident.resolved_at !== '' && (
                 <p className="incident-timestamp">
                   {t('incidents.resolved_at')}
                   :

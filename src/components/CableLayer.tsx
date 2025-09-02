@@ -75,12 +75,11 @@ function markBroken(paths: string[][], inputNodes: string[]) {
 
 function getSegmentStatus(segment: Segment, cable: Cable, incidents: Incident[]) {
   const activeIncidents = incidents.filter((incident) =>
-    incident.cableid === cable.id && !incident.resolved_at,
+    incident.cableid === cable.id && (!incident.resolved_at || incident.resolved_at === ''),
   );
 
   if (activeIncidents.length > 0 && cable.available_path) {
     const affectedSegments = activeIncidents.map((incident) => incident.segment);
-
     const brokenSegments = markBroken(cable.available_path, affectedSegments);
 
     if (brokenSegments.includes(segment.id)) {
@@ -96,10 +95,17 @@ function getSegmentColor(segment: Segment, cable: Cable, incidents: Incident[]) 
     return segment.color;
   }
 
-  const status = getSegmentStatus(segment, cable, incidents);
+  const activeIncidents = incidents.filter((incident) =>
+    incident.cableid === cable.id && (!incident.resolved_at || incident.resolved_at === ''),
+  );
 
-  if (status === 'broken') {
-    return '#ff0000';
+  if (activeIncidents.length > 0 && cable.available_path) {
+    const affectedSegments = activeIncidents.map((incident) => incident.segment);
+    const brokenSegments = markBroken(cable.available_path, affectedSegments);
+
+    if (brokenSegments.includes(segment.id)) {
+      return '#ff0000';
+    }
   }
 
   return cable.color || '#48A9FF';
@@ -181,10 +187,10 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
             sourcesAdded.current.add(sourceId);
           }
 
-          if (!layersAdded.current.has(layerId)) {
-            const status = getSegmentStatus(segment, cable, incidents);
-            const color = getSegmentColor(segment, cable, incidents);
+          const status = getSegmentStatus(segment, cable, incidents);
+          const color = getSegmentColor(segment, cable, incidents);
 
+          if (!layersAdded.current.has(layerId)) {
             map.addLayer({
               id: layerId,
               type: 'line',
@@ -197,6 +203,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
                 'line-color': color,
                 'line-width': status === 'broken' ? 1.5 : 2,
                 'line-opacity': status === 'broken' ? 0.3 : 1,
+                ...(status === 'broken' && { 'line-dasharray': [2, 3] }),
               },
             });
 
@@ -205,7 +212,31 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
             if (status === 'normal') {
               normalCableLayers.push(layerId);
             }
+          }
+          else {
+            // 層已存在，更新其樣式
+            if (map.getLayer(layerId)) {
+              map.setPaintProperty(layerId, 'line-color', color);
+              map.setPaintProperty(layerId, 'line-width', status === 'broken' ? 1.5 : 2);
+              map.setPaintProperty(layerId, 'line-opacity', status === 'broken' ? 0.3 : 1);
 
+              if (status === 'broken') {
+                map.setPaintProperty(layerId, 'line-dasharray', [2, 3]);
+              }
+              else {
+                // 移除虛線樣式，恢復實線
+                map.setPaintProperty(layerId, 'line-dasharray', null);
+              }
+            }
+
+            // 如果狀態是正常且不在動畫列表中，添加到動畫列表
+            if (status === 'normal' && !normalCableLayers.includes(layerId)) {
+              normalCableLayers.push(layerId);
+            }
+          }
+
+          // 只在圖層首次創建時添加事件監聽器
+          if (!layersAdded.current.has(`${layerId}-events`)) {
             map.on('click', layerId, (e) => {
               const coordinates = e.lngLat;
               const properties = e.features?.[0]?.properties;
@@ -247,6 +278,9 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
             map.on('mouseleave', layerId, () => {
               map.getCanvas().style.cursor = '';
             });
+
+            // 標記事件監聽器已添加
+            layersAdded.current.add(`${layerId}-events`);
           }
         });
 
@@ -316,7 +350,12 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
 
         normalCableLayers.forEach((layerId) => {
           if (map.getLayer(layerId)) {
-            map.setPaintProperty(layerId, 'line-opacity', opacity);
+            // 檢查這個層是否仍然應該被動畫化（不是斷線狀態）
+            const currentOpacity = map.getPaintProperty(layerId, 'line-opacity');
+            // 只有透明度不是 0.3（斷線透明度）的層才進行動畫
+            if (currentOpacity !== 0.3) {
+              map.setPaintProperty(layerId, 'line-opacity', opacity);
+            }
           }
         });
 
