@@ -1,37 +1,9 @@
 import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-// import landingPoints from '../data/landing-points.json';
+import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
 import './Map.css';
-
-const landingPoints = [
-  {
-    id: 'tp-1',
-    name: '頭城',
-    coordinates: [121.8234, 24.8597]
-  },
-  {
-    id: 'tp-2',
-    name: '淡水',
-    coordinates: [121.4408, 25.1699]
-  },
-  {
-    id: 'tp-3',
-    name: '八里',
-    coordinates: [121.3985, 25.1537]
-  },
-  {
-    id: 'tp-4',
-    name: '枋山',
-    coordinates: [120.6563, 22.2603]
-  },
-  {
-    id: 'tp-5',
-    name: '屏東',
-    coordinates: [120.4885, 22.6697]
-  }
-];
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -124,7 +96,7 @@ export default function Map() {
     if (!map.current) return;
 
     map.current.on('load', () => {
-      landingPoints.forEach((point) => {
+      landingPoints.forEach((point:{id:string, name:string, coordinates:[number, number]}) => {
         const el = document.createElement('div');
         el.className = 'landing-point-marker';
         el.style.width = '12px';
