@@ -12,6 +12,11 @@
     "notice": "Notice",
     "unknown": "Unknown"
   },
+  "filter": {
+    "all": "Mixed",
+    "normal": "Normal",
+    "broken": "Broken"
+  },
   "warning": {
     "title": "Important Notice",
     "message": "This map is a dynamic submarine cable map dedicated to providing the most up-to-date status on submarine cables connected to Taiwan.<br><br>The data presented on this site is derived from publicly available intelligence sources and multiple third-party monitoring systems (including but not limited to routing information, packet latency, and packet loss rates). Through analysis and inference, it identifies potential disruptions in submarine communication cables.<br><br>Please note that the website may not reflect the most current or accurate status. The information provided is for reference only and should be verified with the official sources of each submarine cable.<br><br>If you are interested in contributing information, please refer to the contact details available in the \"About\" window located at the bottom left corner.",

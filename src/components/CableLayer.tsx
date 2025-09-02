@@ -122,9 +122,10 @@ async function loadCables(): Promise<Cable[]> {
 
 interface CableLayerProps {
   map: MapLibreMap | null;
+  cableFilter?: 'all' | 'normal' | 'broken';
 }
 
-const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
+const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilter = 'all' }) => {
   const [cables, setCables] = useState<Cable[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -165,6 +166,14 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
           const sourceId = `cable-${cable.id}-segment-${segment.id}`;
           const layerId = `cable-layer-${cable.id}-segment-${segment.id}`;
 
+          const status = getSegmentStatus(segment, cable, incidents);
+          const color = getSegmentColor(segment, cable, incidents);
+
+          // Apply cable filter
+          const shouldShow = cableFilter === 'all' || 
+            (cableFilter === 'normal' && status === 'normal') ||
+            (cableFilter === 'broken' && status === 'broken');
+
           if (!sourcesAdded.current.has(sourceId)) {
             const coordinates = segment.coordinates;
 
@@ -187,9 +196,6 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
             sourcesAdded.current.add(sourceId);
           }
 
-          const status = getSegmentStatus(segment, cable, incidents);
-          const color = getSegmentColor(segment, cable, incidents);
-
           if (!layersAdded.current.has(layerId)) {
             map.addLayer({
               id: layerId,
@@ -198,6 +204,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
               layout: {
                 'line-join': 'round',
                 'line-cap': 'round',
+                'visibility': shouldShow ? 'visible' : 'none',
               },
               paint: {
                 'line-color': color,
@@ -209,28 +216,32 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
 
             layersAdded.current.add(layerId);
 
-            if (status === 'normal') {
+            if (status === 'normal' && shouldShow) {
               normalCableLayers.push(layerId);
             }
           }
           else {
-            // 層已存在，更新其樣式
+            // 層已存在，更新其樣式和可見性
             if (map.getLayer(layerId)) {
-              map.setPaintProperty(layerId, 'line-color', color);
-              map.setPaintProperty(layerId, 'line-width', status === 'broken' ? 1.5 : 2);
-              map.setPaintProperty(layerId, 'line-opacity', status === 'broken' ? 0.3 : 1);
+              map.setLayoutProperty(layerId, 'visibility', shouldShow ? 'visible' : 'none');
+              
+              if (shouldShow) {
+                map.setPaintProperty(layerId, 'line-color', color);
+                map.setPaintProperty(layerId, 'line-width', status === 'broken' ? 1.5 : 2);
+                map.setPaintProperty(layerId, 'line-opacity', status === 'broken' ? 0.3 : 1);
 
-              if (status === 'broken') {
-                map.setPaintProperty(layerId, 'line-dasharray', [2, 3]);
-              }
-              else {
-                // 移除虛線樣式，恢復實線
-                map.setPaintProperty(layerId, 'line-dasharray', null);
+                if (status === 'broken') {
+                  map.setPaintProperty(layerId, 'line-dasharray', [2, 3]);
+                }
+                else {
+                  // 移除虛線樣式，恢復實線
+                  map.setPaintProperty(layerId, 'line-dasharray', null);
+                }
               }
             }
 
-            // 如果狀態是正常且不在動畫列表中，添加到動畫列表
-            if (status === 'normal' && !normalCableLayers.includes(layerId)) {
+            // 如果狀態是正常且可見且不在動畫列表中，添加到動畫列表
+            if (status === 'normal' && shouldShow && !normalCableLayers.includes(layerId)) {
               normalCableLayers.push(layerId);
             }
           }
@@ -370,7 +381,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [map, cables, incidents, isLoading]);
+  }, [map, cables, incidents, isLoading, cableFilter]);
 
   return null;
 });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Languages } from 'lucide-react';
+import { Languages, Eye } from 'lucide-react';
 
 import {
   Select,
@@ -33,6 +33,7 @@ function App() {
   const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string; name: string }[]>([]);
+  const [cableFilter, setCableFilter] = useState<'all' | 'normal' | 'broken'>('all');
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,20 +88,26 @@ function App() {
     }
   };
 
+  const handleCableFilterChange = (value: string) => {
+    if (value.startsWith('filter-')) {
+      setCableFilter(value.replace('filter-', '') as 'all' | 'normal' | 'broken');
+    }
+  };
+
   return (
     <div className="app select-none">
       <div className="app-content">
         <div className="app-container">
           <div className="map-section">
-            <Map />
+            <Map cableFilter={cableFilter} />
           </div>
           <div className="control-panel">
             <TechClock />
             <div className="selector-container">
-              <Select onValueChange={handleLanguageChange}>
+              <Select onValueChange={handleLanguageChange} value={`lang-${i18n.language}`}>
                 <SelectTrigger className="control-select">
                   <Languages className="select-icon" />
-                  <SelectValue placeholder={i18n.language === 'en' ? 'EN' : '中文'} />
+                  <SelectValue placeholder="Language" />
                 </SelectTrigger>
                 <SelectContent className="control-select-content">
                   <SelectItem value="lang-en" className="control-select-item">
@@ -108,6 +115,23 @@ function App() {
                   </SelectItem>
                   <SelectItem value="lang-zh-TW" className="control-select-item">
                     繁體中文
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Select onValueChange={handleCableFilterChange} value={`filter-${cableFilter}`}>
+                <SelectTrigger className="control-select">
+                  <Eye className="select-icon" />
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent className="control-select-content">
+                  <SelectItem value="filter-all" className="control-select-item">
+                    {t('filter.all') || '混合'}
+                  </SelectItem>
+                  <SelectItem value="filter-normal" className="control-select-item">
+                    {t('filter.normal') || '正常'}
+                  </SelectItem>
+                  <SelectItem value="filter-broken" className="control-select-item">
+                    {t('filter.broken') || '斷線'}
                   </SelectItem>
                 </SelectContent>
               </Select>

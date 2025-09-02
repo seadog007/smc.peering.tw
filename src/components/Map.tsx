@@ -6,7 +6,11 @@ import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
 import './Map.css';
 
-export default function Map() {
+interface MapProps {
+  cableFilter?: 'all' | 'normal' | 'broken';
+}
+
+export default function Map({ cableFilter = 'all' }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const cableLayerRef = useRef<HTMLDivElement>(null);
@@ -159,7 +163,7 @@ export default function Map() {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      {mapLoaded && map.current && <CableLayer ref={cableLayerRef} map={map.current} />}
+      {mapLoaded && map.current && <CableLayer ref={cableLayerRef} map={map.current} cableFilter={cableFilter} />}
     </div>
   );
 }
