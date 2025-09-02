@@ -1,61 +1,184 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Icon } from 'leaflet';
-import type { LatLngExpression } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import landingPoints from '../data/landing-points.json';
+import { useEffect, useRef } from 'react';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+// import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
-import MapViewController from './MapViewController';
 import './Map.css';
 
-// Create a custom white dot icon
-const whiteDotIcon = new Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iNiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=',
-  iconSize: [12, 12],
-  iconAnchor: [6, 6]
-});
+const landingPoints = [
+  {
+    id: 'tp-1',
+    name: '頭城',
+    coordinates: [121.8234, 24.8597]
+  },
+  {
+    id: 'tp-2',
+    name: '淡水',
+    coordinates: [121.4408, 25.1699]
+  },
+  {
+    id: 'tp-3',
+    name: '八里',
+    coordinates: [121.3985, 25.1537]
+  },
+  {
+    id: 'tp-4',
+    name: '枋山',
+    coordinates: [120.6563, 22.2603]
+  },
+  {
+    id: 'tp-5',
+    name: '屏東',
+    coordinates: [120.4885, 22.6697]
+  }
+];
 
-interface MapProps {
-  center: LatLngExpression;
-}
+export default function Map() {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<maplibregl.Map | null>(null);
+  const cableLayerRef = useRef<any>(null);
 
-export default function Map({ center }: MapProps) {
+  useEffect(() => {
+    if (map.current) return;
+    if (!mapContainer.current) return;
+
+    map.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: {
+        version: 8,
+        sources: {
+          map: {
+            type: 'vector',
+            url: 'https://lb.exptech.dev/api/v1/map/tiles/tiles.json',
+          },
+        },
+        layers: [
+          {
+            id: 'background',
+            type: 'background',
+            paint: {
+              'background-color': '#1f2025',
+            },
+          },
+          {
+            'id': 'county',
+            'type': 'fill',
+            'source': 'map',
+            'source-layer': 'city',
+            'paint': {
+              'fill-color':'#3F4045',
+              'fill-opacity': 1,
+            },
+          },
+          {
+            'id': 'town',
+            'type': 'fill',
+            'source': 'map',
+            'source-layer': 'town',
+            'paint': {
+              'fill-color':  '#3F4045',
+              'fill-opacity': 1,
+            },
+          },
+          {
+            'id': 'county-outline',
+            'source': 'map',
+            'source-layer': 'city',
+            'type': 'line',
+            'paint': {
+              'line-color':  '#a9b4bc',
+            },
+          },
+          {
+            'id': 'global',
+            'type': 'fill',
+            'source': 'map',
+            'source-layer': 'global',
+            'paint': {
+              'fill-color':  '#3F4045',
+              'fill-opacity': 1,
+            },
+          }
+        ]
+      },
+      center: [121.6, 23.5],
+      zoom: 6.8,
+      minZoom: 4,
+      maxZoom: 12,
+      doubleClickZoom: false,
+      keyboard: false,
+      attributionControl: false
+    });
+
+    // Add navigation controls
+    // map.current.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+  }, []);
+
+  useEffect(() => {
+    if (map.current) {
+      map.current.fitBounds([[118.0, 21.2], [124.0, 25.8]],{ padding: 20, duration: 0 });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    map.current.on('load', () => {
+      landingPoints.forEach((point) => {
+        const el = document.createElement('div');
+        el.className = 'landing-point-marker';
+        el.style.width = '12px';
+        el.style.height = '12px';
+        el.style.borderRadius = '50%';
+        el.style.backgroundColor = '#ffffff';
+        el.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.6)';
+        el.style.cursor = 'pointer';
+        
+        new maplibregl.Marker({ 
+          element: el, 
+          anchor: 'center',
+          pitchAlignment: 'viewport',
+          rotationAlignment: 'viewport'
+        })
+          .setLngLat([point.coordinates[0], point.coordinates[1]])
+          .addTo(map.current!);
+
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          
+          new maplibregl.Popup({
+            offset: 25,
+            closeButton: true,
+            closeOnClick: false,
+            className: 'landing-point-popup'
+          })
+          .setLngLat([point.coordinates[0], point.coordinates[1]])
+          .setHTML(`
+            <div style="padding: 8px 12px; min-width: 120px;">
+              <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold;">
+                ${point.name}
+              </h3>
+              <p style="margin: 0; color: #a9b4bc; font-size: 12px;">
+                海纜登陸點
+              </p>
+              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
+                <p style="margin: 0; color: #6b7280; font-size: 11px;">
+                  ${point.coordinates[1].toFixed(4)}°N, ${point.coordinates[0].toFixed(4)}°E
+                </p>
+              </div>
+            </div>
+          `)
+          .addTo(map.current!);
+        });
+      });
+    });
+  }, []);
+
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
-      <MapContainer 
-        center={center} // Center of Taiwan
-        zoom={7} // Zoom level to show whole Taiwan
-        minZoom={4} // Min zoom level
-        maxZoom={9} // Max zoom level
-        style={{ height: '100%', width: '100%' }}
-        zoomControl={false} // Disable default zoom controls
-        dragging={true} // Enable dragging
-        touchZoom={true} // Enable touch zoom for mobile
-        doubleClickZoom={false} // Disable double click zoom
-        scrollWheelZoom={true} // Enable scroll wheel zoom
-        boxZoom={false} // Disable box zoom
-        keyboard={false} // Disable keyboard navigation
-        zoomSnap={1} // Snap to 1 zoom levels
-      >
-        <MapViewController center={center} />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        />
-        <CableLayer />
-        
-        {/* Render landing points */}
-        {landingPoints.map((point) => (
-          <Marker
-            key={point.id}
-            position={[point.coordinates[1], point.coordinates[0]]}
-            icon={whiteDotIcon}
-            title={point.name}
-          >
-            <Popup>{point.name}</Popup>
-          </Marker>
-        ))}
-
-      </MapContainer>
+      <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+      <CableLayer ref={cableLayerRef} map={map.current} />
     </div>
   );
 } 
