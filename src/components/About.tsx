@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import './About.css';
 
-interface VersionHistory {
-  [key: string]: {
-    date: string;
-    changes: string[];
-  };
-}
+type VersionHistory = Record<string, {
+  date: string;
+  changes: string[];
+}>;
 
 export default function About() {
   const { t } = useTranslation();
@@ -18,11 +16,16 @@ export default function About() {
         <br />
         {Object.entries(versionHistory).reverse().map(([version, versionData]) => (
           <div key={version}>
-            <p><b>{version}</b>: {versionData.date}</p>
+            <p>
+              <b>{version}</b>
+              :
+              {' '}
+              {versionData.date}
+            </p>
             <ul>
-            {Object.entries(versionData.changes).map(([change, changeData]) => (
-              <li key={change}>{changeData}</li>
-            ))}
+              {Object.entries(versionData.changes).map(([change, changeData]) => (
+                <li key={change}>{changeData}</li>
+              ))}
             </ul>
           </div>
         ))}
@@ -30,8 +33,8 @@ export default function About() {
     );
   };
   return (
-    <div>
-      <div className="about">
+    <div className="about-container">
+      <div className="about-section">
         <p dangerouslySetInnerHTML={{ __html: t('about.description') }} />
         <br />
         <p dangerouslySetInnerHTML={{ __html: t('about.developer') }} />
@@ -46,7 +49,7 @@ export default function About() {
         <p dangerouslySetInnerHTML={{ __html: t('about.github') }} />
       </div>
       <br />
-    {genVersionHistory()}
+      {genVersionHistory()}
     </div>
   );
-} 
+}

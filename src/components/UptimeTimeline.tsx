@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import * as Tooltip from '@radix-ui/react-tooltip';
+
+import { ScrollArea } from '@/components/ui/scroll-area';
 import './UptimeTimeline.css';
 
 interface Cable {
@@ -31,87 +34,77 @@ interface UptimeTimelineProps {
 export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTimelineProps) {
   const { t } = useTranslation();
   const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [segments, setSegments] = useState<{ [cableId: string]: TimelineSegment[] }>({});
-
+  const [segments, setSegments] = useState<Record<string, TimelineSegment[]>>({});
 
   useEffect(() => {
-    // Load incidents from JSON file
     fetch('/data/incidents.json')
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data: Incident[]) => {
         setIncidents(data);
-        
-        // Convert incidents to timeline segments
-        const newSegments: { [cableId: string]: TimelineSegment[] } = {};
-        
-        // Initialize all cables as online for the entire period
-        cables.forEach(cable => {
+
+        const newSegments: Record<string, TimelineSegment[]> = {};
+
+        cables.forEach((cable) => {
           newSegments[cable.id] = [{
             startTime: startDate,
             endTime: endDate,
-            status: 'online'
+            status: 'online',
           }];
         });
 
-        // Add offline segments for incidents
-        data.forEach(incident => {
+        data.forEach((incident) => {
           const cableId = incident.cableid;
           if (!newSegments[cableId]) {
             newSegments[cableId] = [{
               startTime: startDate,
               endTime: endDate,
-              status: 'online'
+              status: 'online',
             }];
           }
 
-          // Find the online segment that contains this incident
-          const onlineSegment = newSegments[cableId].find(seg => 
-            seg.status === 'online' && 
-            new Date(incident.date) >= seg.startTime && 
-            new Date(incident.date) <= seg.endTime
+          const onlineSegment = newSegments[cableId].find((seg) =>
+            seg.status === 'online'
+            && new Date(incident.date) >= seg.startTime
+            && new Date(incident.date) <= seg.endTime,
           );
 
           if (onlineSegment) {
-            // Split the online segment into three parts: before, during, and after the incident
             const incidentStart = new Date(incident.date);
             const incidentEnd = incident.resolved_at ? new Date(incident.resolved_at) : endDate;
-            
-            // Remove the original online segment
-            newSegments[cableId] = newSegments[cableId].filter(seg => seg !== onlineSegment);
-            
-            // Add the three new segments
+
+            newSegments[cableId] = newSegments[cableId].filter((seg) => seg !== onlineSegment);
+
             if (incidentStart > onlineSegment.startTime) {
               newSegments[cableId].push({
                 startTime: onlineSegment.startTime,
                 endTime: incidentStart,
-                status: 'online'
+                status: 'online',
               });
             }
-            
+
             newSegments[cableId].push({
               startTime: incidentStart,
               endTime: incidentEnd,
-              status: incident.status as 'disconnected' | 'partial_disconnected' | 'notice'
+              status: incident.status as 'disconnected' | 'partial_disconnected' | 'notice',
             });
-            
+
             if (incidentEnd < onlineSegment.endTime) {
               newSegments[cableId].push({
                 startTime: incidentEnd,
                 endTime: onlineSegment.endTime,
-                status: 'online'
+                status: 'online',
               });
             }
           }
         });
 
-        // Sort segments by start time for each cable
-        Object.keys(newSegments).forEach(cableId => {
+        Object.keys(newSegments).forEach((cableId) => {
           newSegments[cableId].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
         });
 
         setSegments(newSegments);
       })
-      .catch(error => console.error('Error loading incidents:', error));
+      .catch((error) => console.error('Error loading incidents:', error));
   }, [cables, startDate, endDate]);
 
   const totalDuration = endDate.getTime() - startDate.getTime();
@@ -149,7 +142,7 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -159,64 +152,92 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      ...(isMidnight ? {} : {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+      ...(isMidnight
+        ? {}
+        : {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }),
     });
   };
 
   return (
-    <div className="uptime-timeline">
-      <div className="timeline-content">
-        <div className="cable-names">
-          {cables.map((cable) => (
-            <div key={cable.id} className="cable-name">{cable.name}</div>
-          ))}
-        </div>
-        <div className="timeline-rows">
-          {cables.map((cable) => (
-            <div key={cable.id} className="cable-timeline">
-              <div className="timeline-row">
-                <div className="timeline-container">
-                  <div className="timeline-segments">
-                    {(segments[cable.id] || []).map((segment, index) => {
-                      const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
-                      const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
+    <Tooltip.Provider delayDuration={200}>
+      <div className="uptime-timeline">
+        <ScrollArea className="timeline-scroll-area">
+          <div className="timeline-content">
+            <div className="cable-names">
+              {cables.map((cable) => (
+                <div key={cable.id} className="cable-name">{cable.name}</div>
+              ))}
+            </div>
+            <div className="timeline-rows">
+              {cables.map((cable) => (
+                <div key={cable.id} className="cable-timeline">
+                  <div className="timeline-row">
+                    <div className="timeline-container">
+                      <div className="timeline-segments">
+                        {(segments[cable.id] || []).map((segment, index) => {
+                          const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
+                          const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
 
-                      // Find the corresponding incident for this segment
-                      const incident = incidents.find(inc => 
-                        inc.cableid === cable.id && 
-                        new Date(inc.date).getTime() === segment.startTime.getTime()
-                      );
+                          const incident = incidents.find((inc) =>
+                            inc.cableid === cable.id
+                            && new Date(inc.date).getTime() === segment.startTime.getTime(),
+                          );
 
-                      return (
-                        <div
-                          key={index}
-                          className="timeline-segment"
-                          style={{
-                            left: `${start}%`,
-                            width: `${width}%`,
-                            backgroundColor: getStatusColor(segment.status),
-                          }}
-                          title={`${getStatusLabel(segment.status)}: ${formatDateTime(segment.startTime)} - ${formatDateTime(segment.endTime)}
-${incident ? `Description: ${incident.description}` : ''}`}
-                        />
-                      );
-                    })}
+                          return (
+                            <Tooltip.Root key={index}>
+                              <Tooltip.Trigger asChild>
+                                <div
+                                  className="timeline-segment"
+                                  style={{
+                                    left: `${start}%`,
+                                    width: `${width}%`,
+                                    backgroundColor: getStatusColor(segment.status),
+                                  }}
+                                />
+                              </Tooltip.Trigger>
+                              <Tooltip.Portal>
+                                <Tooltip.Content
+                                  className="timeline-tooltip"
+                                  sideOffset={5}
+                                >
+                                  <div className="tooltip-content">
+                                    <div className="tooltip-status">{getStatusLabel(segment.status)}</div>
+                                    <div className="tooltip-dates">
+                                      {formatDateTime(segment.startTime)}
+                                      {' '}
+                                      -
+                                      {formatDateTime(segment.endTime)}
+                                    </div>
+                                    {incident && (
+                                      <div className="tooltip-description">
+                                        {incident.description}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <Tooltip.Arrow className="tooltip-arrow" />
+                                </Tooltip.Content>
+                              </Tooltip.Portal>
+                            </Tooltip.Root>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </ScrollArea>
+        <div className="timeline-axis">
+          <span>{formatDate(startDate)}</span>
+          <span>{formatDate(new Date(startDate.getTime() + totalDuration / 2))}</span>
+          <span>{formatDate(endDate)}</span>
         </div>
       </div>
-      <div className="timeline-axis">
-        <span>{formatDate(startDate)}</span>
-        <span>{formatDate(new Date(startDate.getTime() + totalDuration / 2))}</span>
-        <span>{formatDate(endDate)}</span>
-      </div>
-    </div>
+    </Tooltip.Provider>
   );
-} 
+}

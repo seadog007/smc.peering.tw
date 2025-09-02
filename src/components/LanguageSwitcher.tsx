@@ -1,27 +1,40 @@
 import { useTranslation } from 'react-i18next';
+import { Globe } from 'lucide-react';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import './LanguageSwitcher.css';
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+    void i18n.changeLanguage(lng);
   };
 
   return (
     <div className="language-switcher">
-      <button
-        className={`lang-button ${i18n.language === 'en' ? 'active' : ''}`}
-        onClick={() => changeLanguage('en')}
-      >
-        EN
-      </button>
-      <button
-        className={`lang-button ${i18n.language === 'zh-TW' ? 'active' : ''}`}
-        onClick={() => changeLanguage('zh-TW')}
-      >
-        中文
-      </button>
+      <Select value={i18n.language} onValueChange={changeLanguage}>
+        <SelectTrigger className="language-select-trigger">
+          <Globe className="language-icon" />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="language-select-content">
+          <SelectItem value="en" className="language-select-item">
+            <span className="language-flag">🇺🇸</span>
+            English
+          </SelectItem>
+          <SelectItem value="zh-TW" className="language-select-item">
+            <span className="language-flag">🇹🇼</span>
+            繁體中文
+          </SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
-} 
+}
