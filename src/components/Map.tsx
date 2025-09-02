@@ -9,6 +9,7 @@ export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const cableLayerRef = useRef<any>(null);
+  const popupRef = useRef<maplibregl.Popup | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
@@ -123,20 +124,26 @@ export default function Map() {
         el.addEventListener('click', (e) => {
           e.stopPropagation();
           
-          new maplibregl.Popup({
+          // Close existing popup if any
+          if (popupRef.current) {
+            popupRef.current.remove();
+          }
+          
+          popupRef.current = new maplibregl.Popup({
             offset: 25,
             closeButton: true,
             closeOnClick: false,
-            className: 'landing-point-popup'
+            className: 'landing-point-popup',
+            maxWidth: '250px'
           })
           .setLngLat([point.coordinates[0], point.coordinates[1]])
           .setHTML(`
-            <div style="padding: 8px 12px; min-width: 150px; white-space: nowrap;">
-              <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold; white-space: normal;">
+            <div style="padding: 10px 12px;">
+              <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #48A9FF; font-size: 14px; font-weight: bold; word-wrap: break-word;">
                 ${point.name}
               </h3>
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
-                <p style="margin: 0; color: #6b7280; font-size: 11px;">
+                <p style="margin: 0; color: #6b7280; font-size: 11px; white-space: nowrap;">
                   ${point.coordinates[1].toFixed(4)}°N, ${point.coordinates[0].toFixed(4)}°E
                 </p>
               </div>
