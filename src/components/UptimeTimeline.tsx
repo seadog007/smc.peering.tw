@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
-import { Calendar, Clock, Activity, Grid, BarChart3 } from 'lucide-react';
+import { BarChart3, Calendar, Clock, Grid } from 'lucide-react';
 import './UptimeTimeline.css';
 
 interface Cable {
@@ -41,16 +41,13 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
   const [selectedCable, setSelectedCable] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load incidents from JSON file
     fetch('/data/incidents.json')
       .then((response) => response.json())
       .then((data: Incident[]) => {
         setIncidents(data);
 
-        // Convert incidents to timeline segments
         const newSegments: Record<string, TimelineSegment[]> = {};
 
-        // Initialize all cables as online for the entire period
         cables.forEach((cable) => {
           newSegments[cable.id] = [{
             startTime: startDate,
@@ -70,7 +67,6 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
             }];
           }
 
-          // Find the online segment that contains this incident
           const onlineSegment = newSegments[cableId].find((seg) =>
             seg.status === 'online'
             && new Date(incident.date) >= seg.startTime
@@ -78,14 +74,11 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
           );
 
           if (onlineSegment) {
-            // Split the online segment into three parts: before, during, and after the incident
             const incidentStart = new Date(incident.date);
             const incidentEnd = incident.resolved_at ? new Date(incident.resolved_at) : endDate;
 
-            // Remove the original online segment
             newSegments[cableId] = newSegments[cableId].filter((seg) => seg !== onlineSegment);
 
-            // Add the three new segments
             if (incidentStart > onlineSegment.startTime) {
               newSegments[cableId].push({
                 startTime: onlineSegment.startTime,
@@ -110,7 +103,6 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
           }
         });
 
-        // Sort segments by start time for each cable
         Object.keys(newSegments).forEach((cableId) => {
           newSegments[cableId].sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
         });
@@ -177,87 +169,81 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
 
   const generateCalendarData = () => {
     if (!selectedCable) return [];
-    
+
     const cableSegments = segments[selectedCable] || [];
     const months = [];
-    
-    // Generate months between start and end date
+
     const current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
     const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-    
+
     while (current <= end) {
       const year = current.getFullYear();
       const month = current.getMonth();
-      
-      // Get first day of month and last day of month
+
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
-      
-      // Get the day of week for the first day (0 = Sunday, 1 = Monday, etc.)
+
       const firstDayOfWeek = firstDay.getDay();
-      
-      // Create calendar grid for this month
+
       const days = [];
-      
-      // Add empty cells for days before the first day of the month
+
       for (let i = 0; i < firstDayOfWeek; i++) {
         days.push(null);
       }
-      
-      // Add all days of the month
+
       for (let day = 1; day <= lastDay.getDate(); day++) {
         const date = new Date(year, month, day);
         const dayStart = new Date(date);
         dayStart.setHours(0, 0, 0, 0);
         const dayEnd = new Date(date);
         dayEnd.setHours(23, 59, 59, 999);
-        
-        // Find the most severe status for this day
+
         let dayStatus = 'online';
-        let dayIncidents: Incident[] = [];
-        
-        // Only check if the day is within our date range
+        const dayIncidents: Incident[] = [];
+
         if (date >= startDate && date <= endDate) {
           for (const segment of cableSegments) {
             if (segment.startTime <= dayEnd && segment.endTime >= dayStart) {
               if (segment.status === 'disconnected') {
                 dayStatus = 'disconnected';
-              } else if (segment.status === 'partial_disconnected' && dayStatus !== 'disconnected') {
+              }
+              else if (segment.status === 'partial_disconnected' && dayStatus !== 'disconnected') {
                 dayStatus = 'partial_disconnected';
-              } else if (segment.status === 'notice' && dayStatus === 'online') {
+              }
+              else if (segment.status === 'notice' && dayStatus === 'online') {
                 dayStatus = 'notice';
               }
-              
-              // Find corresponding incidents for this day
+
               const dayIncident = incidents.filter((incident) =>
-                incident.cableid === selectedCable &&
-                new Date(incident.date) >= dayStart &&
-                new Date(incident.date) <= dayEnd
+                incident.cableid === selectedCable
+                && new Date(incident.date) >= dayStart
+                && new Date(incident.date) <= dayEnd,
               );
               dayIncidents.push(...dayIncident);
             }
           }
-        } else {
+        }
+        else {
           dayStatus = 'outside-range';
         }
-        
+
         days.push({
           date,
           status: dayStatus,
           incidents: dayIncidents,
         });
       }
-      
+
       months.push({
         year,
         month,
         monthName: firstDay.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
         days,
       });
-      
+
       current.setMonth(current.getMonth() + 1);
     }
-    
+
     return months;
   };
 
@@ -266,7 +252,6 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
   return (
     <Tooltip.Provider>
       <div className="uptime-timeline">
-        {/* Controls */}
         <div className="timeline-controls-bar">
           <div className="view-mode-switch">
             <button
@@ -302,11 +287,16 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
           )}
           <div className="timeline-period">
             <Calendar className="timeline-period-icon" />
-            <span>{formatDate(startDate)} - {formatDate(endDate)}</span>
+            <span>
+              {formatDate(startDate)}
+              {' '}
+              -
+              {' '}
+              {formatDate(endDate)}
+            </span>
           </div>
         </div>
 
-        {/* Legend */}
         <div className="timeline-legend">
           <div className="legend-item">
             <div className="legend-color" style={{ backgroundColor: getStatusColor('online') }} />
@@ -326,194 +316,213 @@ export default function UptimeTimeline({ cables, startDate, endDate }: UptimeTim
           </div>
         </div>
 
-        {/* Content */}
-        {viewMode === 'timeline' ? (
-          <>
-            {/* Timeline Content */}
-            <ScrollArea.Root className="timeline-scroll-area">
-              <ScrollArea.Viewport className="timeline-viewport">
-                <div className="timeline-content">
-                  <div className="cable-names">
-                    {cables.map((cable) => (
-                      <div key={cable.id} className="cable-name">
-                        <span className="cable-name-text">{cable.name}</span>
-                        <span className="cable-id">({cable.id.toUpperCase()})</span>
+        {viewMode === 'timeline'
+          ? (
+              <>
+                <ScrollArea.Root className="timeline-scroll-area">
+                  <ScrollArea.Viewport className="timeline-viewport">
+                    <div className="timeline-content">
+                      <div className="cable-names">
+                        {cables.map((cable) => (
+                          <div key={cable.id} className="cable-name">
+                            <span className="cable-name-text">{cable.name}</span>
+                            <span className="cable-id">
+                              (
+                              {cable.id.toUpperCase()}
+                              )
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="timeline-rows">
-                    {cables.map((cable) => (
-                      <div key={cable.id} className="cable-timeline">
-                        <div className="timeline-row">
-                          <div className="timeline-container">
-                            <div className="timeline-segments">
-                              {(segments[cable.id] || []).map((segment, index) => {
-                                const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
-                                const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
+                      <div className="timeline-rows">
+                        {cables.map((cable) => (
+                          <div key={cable.id} className="cable-timeline">
+                            <div className="timeline-row">
+                              <div className="timeline-container">
+                                <div className="timeline-segments">
+                                  {(segments[cable.id] || []).map((segment, index) => {
+                                    const start = ((segment.startTime.getTime() - startDate.getTime()) / totalDuration) * 100;
+                                    const width = ((segment.endTime.getTime() - segment.startTime.getTime()) / totalDuration) * 100;
 
-                                // Find the corresponding incident for this segment
-                                const incident = incidents.find((inc) =>
-                                  inc.cableid === cable.id
-                                  && new Date(inc.date).getTime() === segment.startTime.getTime(),
-                                );
+                                    const incident = incidents.find((inc) =>
+                                      inc.cableid === cable.id
+                                      && new Date(inc.date).getTime() === segment.startTime.getTime(),
+                                    );
 
-                                const duration = segment.endTime.getTime() - segment.startTime.getTime();
-                                const durationDays = Math.ceil(duration / (1000 * 60 * 60 * 24));
+                                    const duration = segment.endTime.getTime() - segment.startTime.getTime();
+                                    const durationDays = Math.ceil(duration / (1000 * 60 * 60 * 24));
 
-                                return (
-                                  <Tooltip.Root key={index}>
-                                    <Tooltip.Trigger asChild>
-                                      <div
-                                        className={`timeline-segment timeline-segment-${segment.status}`}
-                                        style={{
-                                          left: `${start}%`,
-                                          width: `${width}%`,
-                                          backgroundColor: getStatusColor(segment.status),
-                                        }}
-                                      />
-                                    </Tooltip.Trigger>
-                                    <Tooltip.Portal>
-                                      <Tooltip.Content className="timeline-tooltip" sideOffset={5}>
-                                        <div className="tooltip-content">
-                                          <div className="tooltip-header">
-                                            <div className="tooltip-status">
-                                              <div 
-                                                className="tooltip-status-indicator" 
-                                                style={{ backgroundColor: getStatusColor(segment.status) }}
-                                              />
-                                              {getStatusLabel(segment.status)}
+                                    return (
+                                      <Tooltip.Root key={index}>
+                                        <Tooltip.Trigger asChild>
+                                          <div
+                                            className={`timeline-segment timeline-segment-${segment.status}`}
+                                            style={{
+                                              left: `${start}%`,
+                                              width: `${width}%`,
+                                              backgroundColor: getStatusColor(segment.status),
+                                            }}
+                                          />
+                                        </Tooltip.Trigger>
+                                        <Tooltip.Portal>
+                                          <Tooltip.Content className="timeline-tooltip" sideOffset={5}>
+                                            <div className="tooltip-content">
+                                              <div className="tooltip-header">
+                                                <div className="tooltip-status">
+                                                  <div
+                                                    className="tooltip-status-indicator"
+                                                    style={{ backgroundColor: getStatusColor(segment.status) }}
+                                                  />
+                                                  {getStatusLabel(segment.status)}
+                                                </div>
+                                                <span className="tooltip-duration">
+                                                  {durationDays}
+                                                  {' '}
+                                                  days
+                                                </span>
+                                              </div>
+                                              <div className="tooltip-period">
+                                                <Clock className="tooltip-icon" />
+                                                <span>
+                                                  {formatDateTime(segment.startTime)}
+                                                  {' '}
+                                                  -
+                                                  {' '}
+                                                  {formatDateTime(segment.endTime)}
+                                                </span>
+                                              </div>
+                                              {incident && (
+                                                <div className="tooltip-description">
+                                                  <p>{incident.description}</p>
+                                                </div>
+                                              )}
                                             </div>
-                                            <span className="tooltip-duration">{durationDays} days</span>
-                                          </div>
-                                          <div className="tooltip-period">
-                                            <Clock className="tooltip-icon" />
-                                            <span>{formatDateTime(segment.startTime)} - {formatDateTime(segment.endTime)}</span>
-                                          </div>
-                                          {incident && (
-                                            <div className="tooltip-description">
-                                              <p>{incident.description}</p>
-                                            </div>
-                                          )}
-                                        </div>
-                                        <Tooltip.Arrow className="timeline-tooltip-arrow" />
-                                      </Tooltip.Content>
-                                    </Tooltip.Portal>
-                                  </Tooltip.Root>
-                                );
-                              })}
+                                            <Tooltip.Arrow className="timeline-tooltip-arrow" />
+                                          </Tooltip.Content>
+                                        </Tooltip.Portal>
+                                      </Tooltip.Root>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollArea.Viewport>
-              <ScrollArea.Scrollbar className="timeline-scrollbar" orientation="horizontal">
-                <ScrollArea.Thumb className="timeline-scroll-thumb" />
-              </ScrollArea.Scrollbar>
-            </ScrollArea.Root>
+                    </div>
+                  </ScrollArea.Viewport>
+                  <ScrollArea.Scrollbar className="timeline-scrollbar" orientation="horizontal">
+                    <ScrollArea.Thumb className="timeline-scroll-thumb" />
+                  </ScrollArea.Scrollbar>
+                </ScrollArea.Root>
 
-            {/* Timeline Axis */}
-            <div className="timeline-axis">
-              <span className="axis-label">{formatDate(startDate)}</span>
-              <span className="axis-label axis-label-middle">{formatDate(new Date(startDate.getTime() + totalDuration / 2))}</span>
-              <span className="axis-label">{formatDate(endDate)}</span>
-            </div>
-          </>
-        ) : (
-          /* Calendar Heatmap Content */
-          <ScrollArea.Root className="timeline-scroll-area">
-            <ScrollArea.Viewport className="timeline-viewport">
-              <div className="heatmap-content">
-                {selectedCable ? (
-                  <>
-                    <div className="heatmap-header">
-                      <h4 className="heatmap-cable-name">
-                        {cables.find(c => c.id === selectedCable)?.name} ({selectedCable.toUpperCase()})
-                      </h4>
-                    </div>
-                    <div className="calendar-months">
-                      {calendarData.map((monthData, monthIndex) => (
-                        <div key={monthIndex} className="calendar-month">
-                          <h5 className="month-header">{monthData.monthName}</h5>
-                          <div className="calendar-weekdays">
-                            <div className="weekday-header">Sun</div>
-                            <div className="weekday-header">Mon</div>
-                            <div className="weekday-header">Tue</div>
-                            <div className="weekday-header">Wed</div>
-                            <div className="weekday-header">Thu</div>
-                            <div className="weekday-header">Fri</div>
-                            <div className="weekday-header">Sat</div>
-                          </div>
-                          <div className="calendar-grid">
-                            {monthData.days.map((day, dayIndex) => (
-                              <div key={dayIndex} className="calendar-cell">
-                                {day ? (
-                                  <Tooltip.Root>
-                                    <Tooltip.Trigger asChild>
-                                      <div
-                                        className={`calendar-day calendar-day-${day.status}`}
-                                        style={{
-                                          backgroundColor: day.status === 'outside-range' 
-                                            ? 'rgba(107, 114, 128, 0.3)' 
-                                            : getStatusColor(day.status),
-                                        }}
-                                      >
-                                        <span className="day-number">{day.date.getDate()}</span>
+                <div className="timeline-axis">
+                  <span className="axis-label">{formatDate(startDate)}</span>
+                  <span className="axis-label axis-label-middle">{formatDate(new Date(startDate.getTime() + totalDuration / 2))}</span>
+                  <span className="axis-label">{formatDate(endDate)}</span>
+                </div>
+              </>
+            )
+          : (
+              <ScrollArea.Root className="timeline-scroll-area">
+                <ScrollArea.Viewport className="timeline-viewport">
+                  <div className="heatmap-content">
+                    {selectedCable
+                      ? (
+                          <>
+                            <div className="heatmap-header">
+                              <h4 className="heatmap-cable-name">
+                                {cables.find((c) => c.id === selectedCable)?.name}
+                                {' '}
+                                (
+                                {selectedCable.toUpperCase()}
+                                )
+                              </h4>
+                            </div>
+                            <div className="calendar-months">
+                              {calendarData.map((monthData, monthIndex) => (
+                                <div key={monthIndex} className="calendar-month">
+                                  <h5 className="month-header">{monthData.monthName}</h5>
+                                  <div className="calendar-weekdays">
+                                    <div className="weekday-header">Sun</div>
+                                    <div className="weekday-header">Mon</div>
+                                    <div className="weekday-header">Tue</div>
+                                    <div className="weekday-header">Wed</div>
+                                    <div className="weekday-header">Thu</div>
+                                    <div className="weekday-header">Fri</div>
+                                    <div className="weekday-header">Sat</div>
+                                  </div>
+                                  <div className="calendar-grid">
+                                    {monthData.days.map((day, dayIndex) => (
+                                      <div key={dayIndex} className="calendar-cell">
+                                        {day
+                                          ? (
+                                              <Tooltip.Root>
+                                                <Tooltip.Trigger asChild>
+                                                  <div
+                                                    className={`calendar-day calendar-day-${day.status}`}
+                                                    style={{
+                                                      backgroundColor: day.status === 'outside-range'
+                                                        ? 'rgba(107, 114, 128, 0.3)'
+                                                        : getStatusColor(day.status),
+                                                    }}
+                                                  >
+                                                    <span className="day-number">{day.date.getDate()}</span>
+                                                  </div>
+                                                </Tooltip.Trigger>
+                                                <Tooltip.Portal>
+                                                  <Tooltip.Content className="timeline-tooltip" sideOffset={5}>
+                                                    <div className="tooltip-content">
+                                                      <div className="tooltip-header">
+                                                        <div className="tooltip-status">
+                                                          <div
+                                                            className="tooltip-status-indicator"
+                                                            style={{
+                                                              backgroundColor: day.status === 'outside-range'
+                                                                ? 'rgba(107, 114, 128, 0.5)'
+                                                                : getStatusColor(day.status),
+                                                            }}
+                                                          />
+                                                          {day.status === 'outside-range' ? 'Out of Range' : getStatusLabel(day.status)}
+                                                        </div>
+                                                      </div>
+                                                      <div className="tooltip-period">
+                                                        <Calendar className="tooltip-icon" />
+                                                        <span>{day.date.toLocaleDateString()}</span>
+                                                      </div>
+                                                      {day.incidents.length > 0 && (
+                                                        <div className="tooltip-description">
+                                                          {day.incidents.map((incident, i) => (
+                                                            <p key={i}>{incident.description}</p>
+                                                          ))}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                    <Tooltip.Arrow className="timeline-tooltip-arrow" />
+                                                  </Tooltip.Content>
+                                                </Tooltip.Portal>
+                                              </Tooltip.Root>
+                                            )
+                                          : (
+                                              <div className="calendar-day-empty"></div>
+                                            )}
                                       </div>
-                                    </Tooltip.Trigger>
-                                    <Tooltip.Portal>
-                                      <Tooltip.Content className="timeline-tooltip" sideOffset={5}>
-                                        <div className="tooltip-content">
-                                          <div className="tooltip-header">
-                                            <div className="tooltip-status">
-                                              <div 
-                                                className="tooltip-status-indicator" 
-                                                style={{ 
-                                                  backgroundColor: day.status === 'outside-range' 
-                                                    ? 'rgba(107, 114, 128, 0.5)' 
-                                                    : getStatusColor(day.status) 
-                                                }}
-                                              />
-                                              {day.status === 'outside-range' ? 'Out of Range' : getStatusLabel(day.status)}
-                                            </div>
-                                          </div>
-                                          <div className="tooltip-period">
-                                            <Calendar className="tooltip-icon" />
-                                            <span>{day.date.toLocaleDateString()}</span>
-                                          </div>
-                                          {day.incidents.length > 0 && (
-                                            <div className="tooltip-description">
-                                              {day.incidents.map((incident, i) => (
-                                                <p key={i}>{incident.description}</p>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                        <Tooltip.Arrow className="timeline-tooltip-arrow" />
-                                      </Tooltip.Content>
-                                    </Tooltip.Portal>
-                                  </Tooltip.Root>
-                                ) : (
-                                  <div className="calendar-day-empty"></div>
-                                )}
-                              </div>
-                            ))}
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )
+                      : (
+                          <div className="heatmap-placeholder">
+                            <p>Please select a cable to view its calendar heatmap</p>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="heatmap-placeholder">
-                    <p>Please select a cable to view its calendar heatmap</p>
+                        )}
                   </div>
-                )}
-              </div>
-            </ScrollArea.Viewport>
-          </ScrollArea.Root>
-        )}
+                </ScrollArea.Viewport>
+              </ScrollArea.Root>
+            )}
       </div>
     </Tooltip.Provider>
   );
