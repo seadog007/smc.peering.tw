@@ -210,12 +210,27 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
                 popupRef.current.remove();
               }
 
-              popupRef.current = new maplibregl.Popup()
+              popupRef.current = new maplibregl.Popup({
+                offset: 25,
+                closeButton: true,
+                closeOnClick: false,
+                className: 'landing-point-popup'
+              })
                 .setLngLat(coordinates)
                 .setHTML(`
-                  <b>${properties?.cableName}</b><br/>
-                  Segment: ${properties?.segmentId}<br/>
-                  Lat: ${coordinates.lat.toFixed(5)}, Lng: ${coordinates.lng.toFixed(5)}
+                  <div style="padding: 8px 12px; min-width: 150px; white-space: nowrap;">
+                    <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold; white-space: normal;">
+                      ${properties?.cableName}
+                    </h3>
+                    <p style="margin: 0 0 4px 0; color: #a9b4bc; font-size: 12px;">
+                      Segment: ${properties?.segmentId}
+                    </p>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
+                      <p style="margin: 0; color: #6b7280; font-size: 11px;">
+                        ${coordinates.lat.toFixed(4)}°N, ${coordinates.lng.toFixed(4)}°E
+                      </p>
+                    </div>
+                  </div>
                 `)
                 .addTo(map);
             });
@@ -265,10 +280,15 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
             })
               .setLngLat(equip.coordinate)
               .setHTML(`
-                <div style="padding: 8px 12px; min-width: 120px;">
-                  <h3 style="margin: 0; color: #48A9FF; font-size: 14px; font-weight: bold;">
+                <div style="padding: 8px 12px; min-width: 150px; white-space: nowrap;">
+                  <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold; white-space: normal;">
                     ${equip.name}
                   </h3>
+                  <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
+                    <p style="margin: 0; color: #6b7280; font-size: 11px;">
+                      ${equip.coordinate[1].toFixed(4)}°N, ${equip.coordinate[0].toFixed(4)}°E
+                    </p>
+                  </div>
                 </div>
               `)
               .addTo(map);
