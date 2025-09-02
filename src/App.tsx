@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Languages, Eye } from 'lucide-react';
+import { Eye, Languages } from 'lucide-react';
 
 import {
   Select,

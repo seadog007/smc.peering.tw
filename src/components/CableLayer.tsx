@@ -170,9 +170,9 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
           const color = getSegmentColor(segment, cable, incidents);
 
           // Apply cable filter
-          const shouldShow = cableFilter === 'all' || 
-            (cableFilter === 'normal' && status === 'normal') ||
-            (cableFilter === 'broken' && status === 'broken');
+          const shouldShow = cableFilter === 'all'
+            || (cableFilter === 'normal' && status === 'normal')
+            || (cableFilter === 'broken' && status === 'broken');
 
           if (!sourcesAdded.current.has(sourceId)) {
             const coordinates = segment.coordinates;
@@ -224,7 +224,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
             // 層已存在，更新其樣式和可見性
             if (map.getLayer(layerId)) {
               map.setLayoutProperty(layerId, 'visibility', shouldShow ? 'visible' : 'none');
-              
+
               if (shouldShow) {
                 map.setPaintProperty(layerId, 'line-color', color);
                 map.setPaintProperty(layerId, 'line-width', status === 'broken' ? 1.5 : 2);
