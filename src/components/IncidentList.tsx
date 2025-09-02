@@ -20,27 +20,17 @@ export default function IncidentList() {
 
   useEffect(() => {
     // Load incidents from JSON file
-    void import('../data/incidents.json').then((incidentsData) => {
-      const sortedIncidents = incidentsData.default.sort((a: Incident, b: Incident) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-      setIncidents(sortedIncidents);
-    });
+    fetch('/data/incidents.json')
+      .then((response) => response.json())
+      .then((data: Incident[]) => {
+        // Sort incidents by date, most recent first
+        const sortedIncidents = data.sort((a, b) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime(),
+        );
+        setIncidents(sortedIncidents);
+      })
+      .catch((error) => console.error('Error loading incidents:', error));
   }, []);
-
-  // useEffect(() => {
-  //   // Load incidents from JSON file
-  //   fetch('/data/incidents.json')
-  //     .then((response) => response.json())
-  //     .then((data: Incident[]) => {
-  //       // Sort incidents by date, most recent first
-  //       const sortedIncidents = data.sort((a, b) =>
-  //         new Date(b.date).getTime() - new Date(a.date).getTime(),
-  //       );
-  //       setIncidents(sortedIncidents);
-  //     })
-  //     .catch((error) => console.error('Error loading incidents:', error));
-  // }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
