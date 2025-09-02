@@ -9,7 +9,7 @@ import './Map.css';
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const cableLayerRef = useRef<unknown>(null);
+  const cableLayerRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
