@@ -21,6 +21,7 @@ export default function Map({ cableFilter = 'all' }: MapProps) {
   const cableLayerRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     if (map.current) return;
@@ -104,9 +105,14 @@ export default function Map({ cableFilter = 'all' }: MapProps) {
 
   useEffect(() => {
     if (map.current) {
-      map.current.fitBounds([[117, 20], [130, 28]], { padding: 20, duration: 0 });
+      if (isMobile) {
+        map.current.fitBounds([[118, 21.2], [124, 25.8]], { padding: 20, duration: 0 });
+      }
+      else {
+        map.current.fitBounds([[117, 20], [130, 28]], { padding: 20, duration: 0 });
+      }
     }
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     if (!map.current) return;
