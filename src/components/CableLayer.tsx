@@ -213,7 +213,6 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
                 paint: {
                   'line-color': color,
                   'line-width': 12,
-                  'line-opacity': 0.3,
                   'line-blur': 8,
                 },
               });
@@ -233,7 +232,6 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
               paint: {
                 'line-color': color,
                 'line-width': status !== 'broken' ? 1.5 : 2,
-                'line-opacity': status !== 'broken' ? 0.3 : 1,
               },
             });
 
