@@ -1,5 +1,6 @@
+import * as maplibregl from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+
 import 'maplibre-gl/dist/maplibre-gl.css';
 import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
@@ -8,7 +9,7 @@ import './Map.css';
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const cableLayerRef = useRef<any>(null);
+  const cableLayerRef = useRef<unknown>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
@@ -40,7 +41,7 @@ export default function Map() {
             'source': 'map',
             'source-layer': 'city',
             'paint': {
-              'fill-color':'#3F4045',
+              'fill-color': '#3F4045',
               'fill-opacity': 1,
             },
           },
@@ -50,7 +51,7 @@ export default function Map() {
             'source': 'map',
             'source-layer': 'town',
             'paint': {
-              'fill-color':  '#3F4045',
+              'fill-color': '#3F4045',
               'fill-opacity': 1,
             },
           },
@@ -60,7 +61,7 @@ export default function Map() {
             'source-layer': 'city',
             'type': 'line',
             'paint': {
-              'line-color':  '#a9b4bc',
+              'line-color': '#a9b4bc',
             },
           },
           {
@@ -69,11 +70,11 @@ export default function Map() {
             'source': 'map',
             'source-layer': 'global',
             'paint': {
-              'fill-color':  '#3F4045',
+              'fill-color': '#3F4045',
               'fill-opacity': 1,
             },
-          }
-        ]
+          },
+        ],
       },
       center: [121.6, 23.5],
       zoom: 6.8,
@@ -81,12 +82,12 @@ export default function Map() {
       maxZoom: 12,
       doubleClickZoom: false,
       keyboard: false,
-      attributionControl: false
+      attributionControl: false,
     });
 
     // Add navigation controls
     // map.current.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-    
+
     map.current.on('load', () => {
       setMapLoaded(true);
     });
@@ -94,7 +95,7 @@ export default function Map() {
 
   useEffect(() => {
     if (map.current) {
-      map.current.fitBounds([[118.0, 21.2], [124.0, 25.8]],{ padding: 20, duration: 0 });
+      map.current.fitBounds([[118, 21.2], [124, 25.8]], { padding: 20, duration: 0 });
     }
   }, []);
 
@@ -102,7 +103,7 @@ export default function Map() {
     if (!map.current) return;
 
     map.current.on('load', () => {
-      landingPoints.forEach((point) => {
+      for (const point of landingPoints) {
         const el = document.createElement('div');
         el.className = 'landing-point-marker';
         el.style.width = '12px';
@@ -111,33 +112,33 @@ export default function Map() {
         el.style.backgroundColor = '#ffffff';
         el.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.6)';
         el.style.cursor = 'pointer';
-        
-        new maplibregl.Marker({ 
-          element: el, 
+
+        new maplibregl.Marker({
+          element: el,
           anchor: 'center',
           pitchAlignment: 'viewport',
-          rotationAlignment: 'viewport'
+          rotationAlignment: 'viewport',
         })
           .setLngLat([point.coordinates[0], point.coordinates[1]])
           .addTo(map.current!);
 
         el.addEventListener('click', (e) => {
           e.stopPropagation();
-          
+
           // Close existing popup if any
           if (popupRef.current) {
             popupRef.current.remove();
           }
-          
+
           popupRef.current = new maplibregl.Popup({
             offset: 25,
             closeButton: true,
             closeOnClick: false,
             className: 'landing-point-popup',
-            maxWidth: '250px'
+            maxWidth: '250px',
           })
-          .setLngLat([point.coordinates[0], point.coordinates[1]])
-          .setHTML(`
+            .setLngLat([point.coordinates[0], point.coordinates[1]])
+            .setHTML(`
             <div style="padding: 10px 12px;">
               <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #48A9FF; font-size: 14px; font-weight: bold; word-wrap: break-word;">
                 ${point.name}
@@ -149,12 +150,11 @@ export default function Map() {
               </div>
             </div>
           `)
-          .addTo(map.current!);
+            .addTo(map.current!);
         });
-      });
+      }
     });
   }, []);
-
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -162,4 +162,4 @@ export default function Map() {
       {mapLoaded && map.current && <CableLayer ref={cableLayerRef} map={map.current} />}
     </div>
   );
-} 
+}

@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef, forwardRef } from 'react';
-import maplibregl from 'maplibre-gl';
-import type { Map as MapLibreMap } from 'maplibre-gl';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import * as maplibregl from 'maplibre-gl';
+
 import incidentsData from '../data/incidents.json';
+
+import type { Map as MapLibreMap } from 'maplibre-gl';
 import './CableLayer.css';
 
 interface Segment {
@@ -49,7 +51,7 @@ function markBroken(paths: string[][], inputNodes: string[]) {
   }
 
   // 還原 Set 裡的 path 為 array
-  const failedPathsArray = Array.from(failedPaths).map(p => JSON.parse(p) as string[]);
+  const failedPathsArray = Array.from(failedPaths).map((p) => JSON.parse(p) as string[]);
 
   // 扁平化處理
   const flatAll = paths.flat();
@@ -60,8 +62,8 @@ function markBroken(paths: string[][], inputNodes: string[]) {
 
   const out = [];
   for (const node of failedNodesSet) {
-    const countAll = flatAll.filter(n => n === node).length;
-    const countFailed = flatFailed.filter(n => n === node).length;
+    const countAll = flatAll.filter((n) => n === node).length;
+    const countFailed = flatFailed.filter((n) => n === node).length;
 
     if (countAll === countFailed) {
       out.push(node);
@@ -72,15 +74,15 @@ function markBroken(paths: string[][], inputNodes: string[]) {
 }
 
 function getSegmentStatus(segment: Segment, cable: Cable, incidents: Incident[]) {
-  const activeIncidents = incidents.filter(incident => 
-    incident.cableid === cable.id && !incident.resolved_at
+  const activeIncidents = incidents.filter((incident) =>
+    incident.cableid === cable.id && !incident.resolved_at,
   );
 
   if (activeIncidents.length > 0 && cable.available_path) {
-    const affectedSegments = activeIncidents.map(incident => incident.segment);
-    
+    const affectedSegments = activeIncidents.map((incident) => incident.segment);
+
     const brokenSegments = markBroken(cable.available_path, affectedSegments);
-    
+
     if (brokenSegments.includes(segment.id)) {
       return 'broken';
     }
@@ -95,11 +97,11 @@ function getSegmentColor(segment: Segment, cable: Cable, incidents: Incident[]) 
   }
 
   const status = getSegmentStatus(segment, cable, incidents);
-  
+
   if (status === 'broken') {
     return '#ff0000';
   }
-  
+
   return cable.color || '#48A9FF';
 }
 
@@ -116,7 +118,7 @@ interface CableLayerProps {
   map: MapLibreMap | null;
 }
 
-const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
+const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map }) => {
   const [cables, setCables] = useState<Cable[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -133,19 +135,21 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
 
         const cablesData = await loadCables();
         setCables(cablesData);
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error loading data:', error);
-      } finally {
+      }
+      finally {
         setIsLoading(false);
       }
     };
 
-    loadData();
+    void loadData();
   }, []);
 
   useEffect(() => {
     if (!map || isLoading || cables.length === 0) return;
-    
+
     const normalCableLayers: string[] = [];
 
     cables.forEach((cable) => {
@@ -157,7 +161,7 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
 
           if (!sourcesAdded.current.has(sourceId)) {
             const coordinates = segment.coordinates;
-            
+
             map.addSource(sourceId, {
               type: 'geojson',
               data: {
@@ -165,13 +169,13 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
                 properties: {
                   cableName: cable.name,
                   segmentId: segment.id,
-                  cableId: cable.id
+                  cableId: cable.id,
                 },
                 geometry: {
                   type: 'LineString',
-                  coordinates
-                }
-              }
+                  coordinates,
+                },
+              },
             });
 
             sourcesAdded.current.add(sourceId);
@@ -180,24 +184,24 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
           if (!layersAdded.current.has(layerId)) {
             const status = getSegmentStatus(segment, cable, incidents);
             const color = getSegmentColor(segment, cable, incidents);
-            
+
             map.addLayer({
               id: layerId,
               type: 'line',
               source: sourceId,
               layout: {
                 'line-join': 'round',
-                'line-cap': 'round'
+                'line-cap': 'round',
               },
               paint: {
                 'line-color': color,
                 'line-width': status === 'broken' ? 1.5 : 2,
-                'line-opacity': status === 'broken' ? 0.3 : 1
-              }
+                'line-opacity': status === 'broken' ? 0.3 : 1,
+              },
             });
 
             layersAdded.current.add(layerId);
-            
+
             if (status === 'normal') {
               normalCableLayers.push(layerId);
             }
@@ -205,7 +209,7 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
             map.on('click', layerId, (e) => {
               const coordinates = e.lngLat;
               const properties = e.features?.[0]?.properties;
-              
+
               if (popupRef.current) {
                 popupRef.current.remove();
               }
@@ -215,7 +219,7 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
                 closeButton: true,
                 closeOnClick: false,
                 className: 'landing-point-popup',
-                maxWidth: '250px'
+                maxWidth: '250px',
               })
                 .setLngLat(coordinates)
                 .setHTML(`
@@ -248,7 +252,7 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
 
       cable.equipments?.forEach((equip) => {
         const markerId = `marker-${equip.id}`;
-        
+
         if (!markersAdded.current.has(markerId)) {
           const el = document.createElement('div');
           el.className = 'equipment-marker landing-point-marker';
@@ -259,11 +263,11 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
           el.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.6)';
           el.style.cursor = 'pointer';
 
-          new maplibregl.Marker({ 
-            element: el, 
+          new maplibregl.Marker({
+            element: el,
             anchor: 'center',
             pitchAlignment: 'viewport',
-            rotationAlignment: 'viewport'
+            rotationAlignment: 'viewport',
           })
             .setLngLat(equip.coordinate)
             .addTo(map);
@@ -278,7 +282,7 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
               closeButton: true,
               closeOnClick: false,
               className: 'landing-point-popup',
-              maxWidth: '250px'
+              maxWidth: '250px',
             })
               .setLngLat(equip.coordinate)
               .setHTML(`
@@ -300,28 +304,28 @@ const CableLayer = forwardRef<any, CableLayerProps>(({ map }) => {
         }
       });
     });
-    
+
     if (normalCableLayers.length > 0) {
       let startTime: number | null = null;
-      
+
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
         const progress = (timestamp - startTime) / 3000;
-        
+
         const opacity = 0.7 + 0.3 * Math.sin(progress * Math.PI * 2);
-        
-        normalCableLayers.forEach(layerId => {
+
+        normalCableLayers.forEach((layerId) => {
           if (map.getLayer(layerId)) {
             map.setPaintProperty(layerId, 'line-opacity', opacity);
           }
         });
-        
+
         animationFrameRef.current = requestAnimationFrame(animate);
       };
-      
+
       animationFrameRef.current = requestAnimationFrame(animate);
     }
-    
+
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);

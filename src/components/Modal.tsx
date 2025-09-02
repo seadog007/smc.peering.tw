@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import './Modal.css';
 
 interface ModalProps {
@@ -27,4 +27,4 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = '90
       </div>
     </div>
   );
-} 
+}

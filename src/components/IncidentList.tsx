@@ -21,35 +21,37 @@ export default function IncidentList() {
   useEffect(() => {
     // Load incidents from JSON file
     fetch('/data/incidents.json')
-      .then(response => response.json())
+      .then((response) => response.json())
       .then((data: Incident[]) => {
         // Sort incidents by date, most recent first
-        const sortedIncidents = data.sort((a, b) => 
-          new Date(b.date).getTime() - new Date(a.date).getTime()
+        const sortedIncidents = data.sort((a, b) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
         setIncidents(sortedIncidents);
       })
-      .catch(error => console.error('Error loading incidents:', error));
+      .catch((error) => console.error('Error loading incidents:', error));
   }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
-    
+
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      ...(isMidnight ? {} : {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+      ...(isMidnight
+        ? {}
+        : {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }),
     });
   };
 
-  const filteredIncidents = incidents.filter(incident => 
-    showHistorical ? incident.resolved_at : !incident.resolved_at
+  const filteredIncidents = incidents.filter((incident) =>
+    showHistorical ? incident.resolved_at : !incident.resolved_at,
   );
 
   return (
@@ -58,7 +60,7 @@ export default function IncidentList() {
         <h2 className="incident-list-title">
           {showHistorical ? t('incidents.historicalTitle') : t('incidents.activeTitle')}
         </h2>
-        <button 
+        <button
           className="toggle-button"
           onClick={() => setShowHistorical(!showHistorical)}
         >
@@ -81,16 +83,22 @@ export default function IncidentList() {
             </div>
             <div className="incident-timestamps">
               <p className="incident-timestamp">
-                {t('incidents.started_at')}: {formatDate(incident.date)}
+                {t('incidents.started_at')}
+                :
+                {formatDate(incident.date)}
               </p>
               {incident.reparing_at && (
                 <p className="incident-timestamp">
-                  {t('incidents.reparing_at')}: {formatDate(incident.reparing_at)}
+                  {t('incidents.reparing_at')}
+                  :
+                  {formatDate(incident.reparing_at)}
                 </p>
               )}
               {incident.resolved_at && (
                 <p className="incident-timestamp">
-                  {t('incidents.resolved_at')}: {formatDate(incident.resolved_at)}
+                  {t('incidents.resolved_at')}
+                  :
+                  {formatDate(incident.resolved_at)}
                 </p>
               )}
             </div>
@@ -107,4 +115,4 @@ export default function IncidentList() {
       </div>
     </div>
   );
-} 
+}

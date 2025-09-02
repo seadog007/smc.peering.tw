@@ -1,11 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Languages } from 'lucide-react';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import About from './components/About';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import { useTranslation } from 'react-i18next';
+import TechClock from './components/TechClock';
+
 import './App.css';
 import './i18n';
 
@@ -14,14 +25,14 @@ const now = new Date();
 const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isIncidentOpen, setIsIncidentOpen] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
+  const [cables, setCables] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,18 +54,18 @@ function App() {
   useEffect(() => {
     // Dynamically import cable data to pass to timeline
     const loadCables = async () => {
-      const cableFiles = import.meta.glob<{ default: { id: string, name: string } }>('/src/data/cables/*.json');
+      const cableFiles = import.meta.glob<{ default: { id: string; name: string } }>('/src/data/cables/*.json');
       const loadedCables = [];
       for (const path in cableFiles) {
         const module = await cableFiles[path]();
         loadedCables.push({
           id: module.default.id,
-          name: module.default.name
+          name: module.default.name,
         });
       }
       setCables(loadedCables);
     };
-    loadCables();
+    void loadCables();
   }, []);
 
   const handleOpenTimeline = () => setIsTimelineOpen(true);
@@ -69,14 +80,39 @@ function App() {
       localStorage.setItem('hasSeenWarning', 'true');
     }
   };
+
+  const handleLanguageChange = (value: string) => {
+    if (value.startsWith('lang-')) {
+      void i18n.changeLanguage(value.replace('lang-', ''));
+    }
+  };
+
   return (
-    <div className="app">
+    <div className="app select-none">
       <div className="app-content">
         <div className="app-container">
           <div className="map-section">
-            <Map/>
+            <Map />
           </div>
-          <LanguageSwitcher />
+          <div className="control-panel">
+            <TechClock />
+            <div className="selector-container">
+              <Select onValueChange={handleLanguageChange}>
+                <SelectTrigger className="control-select">
+                  <Languages className="select-icon" />
+                  <SelectValue placeholder={i18n.language === 'en' ? 'EN' : '中文'} />
+                </SelectTrigger>
+                <SelectContent className="control-select-content">
+                  <SelectItem value="lang-en" className="control-select-item">
+                    English
+                  </SelectItem>
+                  <SelectItem value="lang-zh-TW" className="control-select-item">
+                    繁體中文
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           {isMobile && (
             <button
               onClick={handleOpenIncident}
@@ -107,7 +143,7 @@ function App() {
             </svg>
           </button>
           {!isMobile && (
-          <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
+            <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
               <IncidentList />
             </div>
           )}
@@ -156,7 +192,7 @@ function App() {
                   <span>{t('warning.dontShowAgain')}</span>
                 </label>
               </div>
-              <button 
+              <button
                 className="warning-acknowledge-btn"
                 onClick={handleCloseWarning}
               >
