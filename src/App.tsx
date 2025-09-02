@@ -1,40 +1,44 @@
-import type { LatLngTuple } from 'leaflet';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Eye, Languages } from 'lucide-react';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
 import About from './components/About';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import { useTranslation } from 'react-i18next';
+import TechClock from './components/TechClock';
+
 import './App.css';
 import './i18n';
 
 // Sample timeline data for cables
 const now = new Date();
 const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-const desktopMapCenter: LatLngTuple = [24, 124.5];
-const midwidthMapCenter: LatLngTuple = [24, 123];
-const mobileMapCenter: LatLngTuple = [24, 121.1];
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isIncidentOpen, setIsIncidentOpen] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
-  const [mapCenter, setMapCenter] = useState<LatLngTuple>(
-    window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter
-  );
+  const [cables, setCables] = useState<{ id: string; name: string }[]>([]);
+  const [cableFilter, setCableFilter] = useState<'all' | 'normal' | 'broken'>('all');
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      setMapCenter(window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -51,18 +55,18 @@ function App() {
   useEffect(() => {
     // Dynamically import cable data to pass to timeline
     const loadCables = async () => {
-      const cableFiles = import.meta.glob<{ default: { id: string, name: string } }>('/src/data/cables/*.json');
+      const cableFiles = import.meta.glob<{ default: { id: string; name: string } }>('/src/data/cables/*.json');
       const loadedCables = [];
       for (const path in cableFiles) {
         const module = await cableFiles[path]();
         loadedCables.push({
           id: module.default.id,
-          name: module.default.name
+          name: module.default.name,
         });
       }
       setCables(loadedCables);
     };
-    loadCables();
+    void loadCables();
   }, []);
 
   const handleOpenTimeline = () => setIsTimelineOpen(true);
@@ -77,14 +81,62 @@ function App() {
       localStorage.setItem('hasSeenWarning', 'true');
     }
   };
+
+  const handleLanguageChange = (value: string) => {
+    if (value.startsWith('lang-')) {
+      void i18n.changeLanguage(value.replace('lang-', ''));
+    }
+  };
+
+  const handleCableFilterChange = (value: string) => {
+    if (value.startsWith('filter-')) {
+      setCableFilter(value.replace('filter-', '') as 'all' | 'normal' | 'broken');
+    }
+  };
+
   return (
-    <div className="app">
+    <div className="app select-none">
       <div className="app-content">
         <div className="app-container">
           <div className="map-section">
-            <Map center={mapCenter} />
+            <Map cableFilter={cableFilter} />
           </div>
-          <LanguageSwitcher />
+          <div className="control-panel">
+            <TechClock />
+            <div className="selector-container horizontal">
+              <Select onValueChange={handleLanguageChange} value={`lang-${i18n.language}`}>
+                <SelectTrigger className="control-select">
+                  <Languages className="select-icon" />
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent className="control-select-content">
+                  <SelectItem value="lang-en" className="control-select-item">
+                    English
+                  </SelectItem>
+                  <SelectItem value="lang-zh-TW" className="control-select-item">
+                    繁體中文
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Select onValueChange={handleCableFilterChange} value={`filter-${cableFilter}`}>
+                <SelectTrigger className="control-select">
+                  <Eye className="select-icon" />
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent className="control-select-content">
+                  <SelectItem value="filter-all" className="control-select-item">
+                    {t('filter.all') || '混合'}
+                  </SelectItem>
+                  <SelectItem value="filter-normal" className="control-select-item">
+                    {t('filter.normal') || '正常'}
+                  </SelectItem>
+                  <SelectItem value="filter-broken" className="control-select-item">
+                    {t('filter.broken') || '斷線'}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           {isMobile && (
             <button
               onClick={handleOpenIncident}
@@ -115,7 +167,7 @@ function App() {
             </svg>
           </button>
           {!isMobile && (
-          <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
+            <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
               <IncidentList />
             </div>
           )}
@@ -164,7 +216,7 @@ function App() {
                   <span>{t('warning.dontShowAgain')}</span>
                 </label>
               </div>
-              <button 
+              <button
                 className="warning-acknowledge-btn"
                 onClick={handleCloseWarning}
               >
