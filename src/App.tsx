@@ -1,4 +1,3 @@
-import type { LatLngTuple } from 'leaflet';
 import { useState, useEffect } from 'react';
 import Map from './components/Map';
 import UptimeTimeline from './components/UptimeTimeline';
@@ -13,9 +12,6 @@ import './i18n';
 // Sample timeline data for cables
 const now = new Date();
 const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-const desktopMapCenter: LatLngTuple = [24, 124.5];
-const midwidthMapCenter: LatLngTuple = [24, 123];
-const mobileMapCenter: LatLngTuple = [24, 121.1];
 
 function App() {
   const { t } = useTranslation();
@@ -26,15 +22,11 @@ function App() {
   const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [cables, setCables] = useState<{ id: string, name: string }[]>([]);
-  const [mapCenter, setMapCenter] = useState<LatLngTuple>(
-    window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter
-  );
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      setMapCenter(window.innerWidth < 768 ? mobileMapCenter : window.innerWidth < 1024 ? midwidthMapCenter : desktopMapCenter);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -82,7 +74,7 @@ function App() {
       <div className="app-content">
         <div className="app-container">
           <div className="map-section">
-            <Map center={mapCenter} />
+            <Map/>
           </div>
           <LanguageSwitcher />
           {isMobile && (
