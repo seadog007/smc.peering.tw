@@ -72,6 +72,31 @@
   color: #fff;
 }
 
+.topology-button {
+  position: absolute;
+  top: calc(100dvh - 70px);
+  left: 200px;
+  z-index: 900;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.topology-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.topology-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+}
+
 .incident-list-container-outer {
   position: absolute;
   top: 20px;

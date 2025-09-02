@@ -6,6 +6,7 @@ import About from './components/About';
 import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import TopologyView from './components/TopologyView';
 import { useTranslation } from 'react-i18next';
 import './App.css';
 import './i18n';
@@ -22,6 +23,7 @@ function App() {
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isIncidentOpen, setIsIncidentOpen] = useState(false);
+  const [isTopologyOpen, setIsTopologyOpen] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [dontShowWarningAgain, setDontShowWarningAgain] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -71,6 +73,8 @@ function App() {
   const handleCloseAbout = () => setIsAboutOpen(false);
   const handleOpenIncident = () => setIsIncidentOpen(true);
   const handleCloseIncident = () => setIsIncidentOpen(false);
+  const handleOpenTopology = () => setIsTopologyOpen(true);
+  const handleCloseTopology = () => setIsTopologyOpen(false);
   const handleCloseWarning = () => {
     setIsWarningOpen(false);
     if (dontShowWarningAgain) {
@@ -114,6 +118,15 @@ function App() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
+          <button
+            onClick={handleOpenTopology}
+            className="topology-button"
+            title="Network Topology"
+          >
+            <svg className="topology-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </button>
           {!isMobile && (
           <div className={`incident-section ${isMobile ? 'full-width' : ''}`}>
               <IncidentList />
@@ -145,6 +158,14 @@ function App() {
             title={t('about.title')}
           >
             <About />
+          </Modal>
+          <Modal
+            isOpen={isTopologyOpen}
+            onClose={handleCloseTopology}
+            title="Network Topology"
+            maxWidth="800px"
+          >
+            <TopologyView />
           </Modal>
           <Modal
             isOpen={isWarningOpen}
