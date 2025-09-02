@@ -21,6 +21,10 @@
   flex-direction: column;
 }
 
+.modal-content.full-height {
+  height: 90vh;
+}
+
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -30,7 +34,7 @@
 }
 
 .modal-title {
-  color: #fff;
+  color: #E8F5E8;
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
@@ -39,7 +43,7 @@
 .modal-close {
   background: none;
   border: none;
-  color: #fff;
+  color: #E8F5E8;
   cursor: pointer;
   padding: 0.5rem;
   font-size: 1.5rem;
@@ -47,7 +51,7 @@
 }
 
 .modal-close:hover {
-  color: #ccc;
+  color: #419A1C;
 }
 
 .modal-body {

@@ -43,7 +43,7 @@
 .timeline-icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: #fff;
+  color: #E8F5E8;
 }
 
 .about-button {
@@ -69,7 +69,7 @@
 .about-icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: #fff;
+  color: #E8F5E8;
 }
 
 .incident-list-container-outer {
@@ -98,13 +98,13 @@
 .incident-icon {
   width: 1.5rem;
   height: 1.5rem;
-  color: #fff;
+  color: #E8F5E8;
 }
 
 .warning-content {
   margin-top: 1rem;
   text-align: center;
-  color: #fff;
+  color: #E8F5E8;
 }
 
 .warning-content p {
@@ -121,7 +121,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #fff;
+  color: #E8F5E8;
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -129,7 +129,7 @@
 .warning-checkbox input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
-  accent-color: #007bff;
+  accent-color: #419A1C;
   cursor: pointer;
 }
 
@@ -138,8 +138,8 @@
 }
 
 .warning-acknowledge-btn {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #419A1C;
+  color: #E8F5E8;
   border: none;
   border-radius: 0.375rem;
   padding: 0.75rem 1.5rem;
@@ -150,12 +150,12 @@
 }
 
 .warning-acknowledge-btn:hover {
-  background-color: #0056b3;
+  background-color: #2D6A13;
 }
 
 .warning-acknowledge-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(65, 154, 28, 0.25);
 }
 
 .control-panel {
@@ -180,43 +180,43 @@
 }
 
 .control-select {
-  background: rgba(30, 50, 90, 0.9) !important;
+  background: rgba(20, 40, 20, 0.9) !important;
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  border: 1px solid rgba(65, 154, 28, 0.3) !important;
   border-radius: 0.5rem !important;
-  color: #dbeafe !important;
+  color: #E8F5E8 !important;
   min-width: 100px;
   padding: 0.5rem 0.75rem !important;
   font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 8px rgba(65, 154, 28, 0.1);
+  font-family: 'Noto Sans TC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .control-select:hover {
-  border-color: rgba(59, 130, 246, 0.5) !important;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  border-color: rgba(45, 106, 19, 0.5) !important;
+  box-shadow: 0 4px 12px rgba(45, 106, 19, 0.15);
 }
 
 .select-icon {
   width: 0.9rem;
   height: 0.9rem;
-  color: #60a5fa;
+  color: #419A1C;
   margin-right: 0.5rem;
 }
 
 .control-select-content {
-  background: rgba(25, 40, 80, 0.95) !important;
+  background: rgba(15, 30, 15, 0.95) !important;
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  border: 1px solid rgba(65, 154, 28, 0.3) !important;
   border-radius: 0.5rem !important;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   padding: 0.25rem;
 }
 
 .control-select-item {
-  color: #dbeafe !important;
+  color: #E8F5E8 !important;
   padding: 0.5rem 0.75rem !important;
   border-radius: 0.375rem !important;
   display: flex;
@@ -225,21 +225,21 @@
   transition: all 0.2s ease;
   font-size: 0.9rem;
   font-weight: 500;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Noto Sans TC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .control-select-item:hover {
-  background: rgba(59, 130, 246, 0.1) !important;
-  color: #93c5fd !important;
+  background: rgba(65, 154, 28, 0.1) !important;
+  color: #C5E4C5 !important;
 }
 
 .control-select-item[data-state="checked"] {
-  background: rgba(59, 130, 246, 0.2) !important;
-  color: #60a5fa !important;
+  background: rgba(65, 154, 28, 0.2) !important;
+  color: #419A1C !important;
 }
 
 .item-icon {
   width: 0.8rem;
   height: 0.8rem;
-  color: #60a5fa;
+  color: #419A1C;
 }

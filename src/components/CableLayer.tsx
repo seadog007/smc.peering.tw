@@ -284,14 +284,14 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
                 .setLngLat(coordinates)
                 .setHTML(`
                   <div style="padding: 10px 12px;">
-                    <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #48A9FF; font-size: 14px; font-weight: bold; word-wrap: break-word;">
+                    <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #419A1C; font-size: 14px; font-weight: bold; word-wrap: break-word;">
                       ${properties?.cableName}
                     </h3>
-                    <p style="margin: 0 0 4px 0; color: #a9b4bc; font-size: 12px;">
+                    <p style="margin: 0 0 4px 0; color: #E8F5E8; font-size: 12px;">
                       Segment: ${properties?.segmentId}
                     </p>
                     <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
-                      <p style="margin: 0; color: #6b7280; font-size: 11px; white-space: nowrap;">
+                      <p style="margin: 0; color: #E8F5E8; font-size: 11px; white-space: nowrap;">
                         ${coordinates.lat.toFixed(4)}°N, ${coordinates.lng.toFixed(4)}°E
                       </p>
                     </div>
@@ -349,11 +349,11 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
               .setLngLat(equip.coordinate)
               .setHTML(`
                 <div style="padding: 10px 12px;">
-                  <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #48A9FF; font-size: 14px; font-weight: bold; word-wrap: break-word;">
+                  <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #419A1C; font-size: 14px; font-weight: bold; word-wrap: break-word;">
                     ${equip.name}
                   </h3>
                   <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
-                    <p style="margin: 0; color: #6b7280; font-size: 11px; white-space: nowrap;">
+                    <p style="margin: 0; color: #E8F5E8; font-size: 11px; white-space: nowrap;">
                       ${equip.coordinate[1].toFixed(4)}°N, ${equip.coordinate[0].toFixed(4)}°E
                     </p>
                   </div>

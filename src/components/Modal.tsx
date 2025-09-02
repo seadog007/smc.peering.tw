@@ -7,14 +7,18 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   maxWidth?: string;
+  fullHeight?: boolean;
 }
 
-export default function Modal({ isOpen, onClose, title, children, maxWidth = '90vw' }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, maxWidth = '90vw', fullHeight = true }: ModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth }}>
+      <div
+        className={`modal-content ${fullHeight ? 'full-height' : ''}`}
+        style={{ maxWidth }}
+      >
         <div className="modal-header">
           <h2 className="modal-title">{title}</h2>
           <button className="modal-close" onClick={onClose}>

@@ -203,6 +203,7 @@ function App() {
             onClose={handleCloseWarning}
             title={t('warning.title')}
             maxWidth="550px"
+            fullHeight={false}
           >
             <div className="warning-content">
               <p dangerouslySetInnerHTML={{ __html: t('warning.message') }} />
