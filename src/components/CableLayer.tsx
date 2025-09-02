@@ -258,19 +258,6 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
 
             if (map.getLayer(layerId)) {
               map.setLayoutProperty(layerId, 'visibility', shouldShow ? 'visible' : 'none');
-
-              if (shouldShow) {
-                map.setPaintProperty(layerId, 'line-color', color);
-                map.setPaintProperty(layerId, 'line-width', status === 'broken' ? 2 : 1.5);
-                map.setPaintProperty(layerId, 'line-opacity', status === 'broken' ? 1 : 0.3);
-
-                if (status === 'broken') {
-                  map.setPaintProperty(layerId, 'line-dasharray', [2, 3]);
-                }
-                else {
-                  map.setPaintProperty(layerId, 'line-dasharray', null);
-                }
-              }
             }
 
             if (status === 'normal' && shouldShow && !normalCableLayers.includes(layerId)) {

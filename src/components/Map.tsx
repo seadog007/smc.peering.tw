@@ -6,6 +6,11 @@ import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
 import './Map.css';
 
+interface LandingPoint {
+  name: string;
+  coordinates: [number, number];
+}
+
 interface MapProps {
   cableFilter?: 'all' | 'normal' | 'broken';
 }
@@ -107,7 +112,8 @@ export default function Map({ cableFilter = 'all' }: MapProps) {
     if (!map.current) return;
 
     map.current.on('load', () => {
-      for (const point of landingPoints) {
+      const typedLandingPoints = landingPoints as unknown as LandingPoint[];
+      for (const point of typedLandingPoints) {
         const el = document.createElement('div');
         el.className = 'landing-point-marker';
         el.style.width = '12px';
