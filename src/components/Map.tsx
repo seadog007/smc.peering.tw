@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import landingPoints from '../data/landing-points.json';
@@ -9,6 +9,7 @@ export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const cableLayerRef = useRef<any>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (map.current) return;
@@ -84,6 +85,10 @@ export default function Map() {
 
     // Add navigation controls
     // map.current.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    
+    map.current.on('load', () => {
+      setMapLoaded(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -96,7 +101,7 @@ export default function Map() {
     if (!map.current) return;
 
     map.current.on('load', () => {
-      landingPoints.forEach((point:{id:string, name:string, coordinates:[number, number]}) => {
+      landingPoints.forEach((point) => {
         const el = document.createElement('div');
         el.className = 'landing-point-marker';
         el.style.width = '12px';
@@ -126,13 +131,10 @@ export default function Map() {
           })
           .setLngLat([point.coordinates[0], point.coordinates[1]])
           .setHTML(`
-            <div style="padding: 8px 12px; min-width: 120px;">
-              <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold;">
+            <div style="padding: 8px 12px; min-width: 150px; white-space: nowrap;">
+              <h3 style="margin: 0 0 8px 0; color: #48A9FF; font-size: 14px; font-weight: bold; white-space: normal;">
                 ${point.name}
               </h3>
-              <p style="margin: 0; color: #a9b4bc; font-size: 12px;">
-                海纜登陸點
-              </p>
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
                 <p style="margin: 0; color: #6b7280; font-size: 11px;">
                   ${point.coordinates[1].toFixed(4)}°N, ${point.coordinates[0].toFixed(4)}°E
@@ -150,7 +152,7 @@ export default function Map() {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      <CableLayer ref={cableLayerRef} map={map.current} />
+      {mapLoaded && map.current && <CableLayer ref={cableLayerRef} map={map.current} />}
     </div>
   );
 } 
