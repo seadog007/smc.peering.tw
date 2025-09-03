@@ -130,7 +130,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
   const layersAdded = useRef<Set<string>>(new Set());
   const markersAdded = useRef<Set<string>>(new Set());
   const popupRef = useRef<maplibregl.Popup | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
+  //const animationFrameRef = useRef<number | null>(null);
   const brokenCableGlowLayers = useRef<string[]>([]);
 
   useEffect(() => {
@@ -367,10 +367,10 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
       });
     });
 
-    if (normalCableLayers.length > 0 || brokenCableGlowLayers.current.length > 0) {
+    /*if (normalCableLayers.length > 0 || brokenCableGlowLayers.current.length > 0) {
       let startTime: number | null = null;
 
-      const animate = (timestamp: number) => {
+     const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
         const progress = (timestamp - startTime) / 3000;
 
@@ -400,12 +400,12 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
       };
 
       animationFrameRef.current = requestAnimationFrame(animate);
-    }
+    }*/
 
     return () => {
-      if (animationFrameRef.current) {
+     /*if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
-      }
+      }*/
     };
   }, [map, cables, incidents, isLoading, cableFilter]);
 

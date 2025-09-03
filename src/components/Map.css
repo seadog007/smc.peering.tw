@@ -79,7 +79,8 @@
 
 .landing-point-marker,
 .equipment-marker {
-  animation: breathing 3s ease-in-out infinite;
+  /* animation: breathing 3s ease-in-out infinite; */
+  opacity: 1;
   position: absolute !important;
   z-index: 1;
   will-change: transform;
@@ -89,7 +90,8 @@
 
 .landing-point-marker:hover,
 .equipment-marker:hover {
-  animation: breathingHover 1.5s ease-in-out infinite;
+  /* animation: breathingHover 1.5s ease-in-out infinite; */
+  opacity: 1;
 }
 
 /* Optimize marker container performance */

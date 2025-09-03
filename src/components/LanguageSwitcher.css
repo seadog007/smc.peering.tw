@@ -32,7 +32,7 @@
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  animation: shimmer 2s infinite;
+  /* animation: shimmer 2s infinite; */
 }
 
 @keyframes shimmer {
@@ -55,7 +55,8 @@
   height: 1rem;
   margin-right: 0.5rem;
   color: #60a5fa;
-  animation: pulse 2s infinite;
+  /* animation: pulse 2s infinite; */
+  opacity: 1;
 }
 
 @keyframes pulse {
@@ -72,7 +73,7 @@
     0 20px 25px -5px rgba(0, 0, 0, 0.5),
     0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
   padding: 0.5rem;
-  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
 @keyframes slideIn {
@@ -127,7 +128,7 @@
 
 .language-flag {
   font-size: 1.1rem;
-  animation: wave 1s ease-in-out infinite;
+  /* animation: wave 1s ease-in-out infinite; */
 }
 
 @keyframes wave {

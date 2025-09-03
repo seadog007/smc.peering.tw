@@ -23,7 +23,8 @@
 }
 
 .cable-layer-normal {
-  animation: cable-breathing 3s ease-in-out infinite;
+  /* animation: cable-breathing 3s ease-in-out infinite; */
+  opacity: 1;
 }
 
 .cable-layer-broken {
@@ -32,7 +33,8 @@
 }
 
 .equipment-marker {
-  animation: marker-pulse 2s ease-in-out infinite;
+  /* animation: marker-pulse 2s ease-in-out infinite; */
+  filter: drop-shadow(0 0 8px currentColor);
 }
 
 @keyframes marker-pulse {
