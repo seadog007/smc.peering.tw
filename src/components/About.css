@@ -1,5 +1,128 @@
+.about-container {
+  color: #dbeafe;
+  font-size: 0.9rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, 
+    rgba(20, 30, 60, 0.3), 
+    rgba(30, 50, 90, 0.2)
+  );
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 4px 16px rgba(59, 130, 246, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+.about-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.about-container::-webkit-scrollbar-track {
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 3px;
+}
+
+.about-container::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 3px;
+}
+
+.about-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6);
+}
+
+.about-section {
+  margin-bottom: 1rem;
+}
+
+.about-section p {
+  margin-bottom: 1rem;
+  color: #dbeafe;
+}
+
+.about-section p:last-child {
+  margin-bottom: 0;
+}
+
+.about-section a {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.about-section a:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.version {
+  color: #dbeafe;
+  font-size: 0.9rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.version h3 {
+  color: #60a5fa;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.version > div {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(59, 130, 246, 0.05);
+  border-left: 3px solid rgba(59, 130, 246, 0.4);
+  border-radius: 0.5rem;
+}
+
+.version > div:last-child {
+  margin-bottom: 0;
+}
+
+.version p {
+  color: #93c5fd;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.version p b {
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+.version ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+
 .version li {
-    margin-left: 30px;
-    margin-top: 5px;
-    margin-bottom: 5px;
+  color: #dbeafe;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.version li::before {
+  content: '•';
+  color: #60a5fa;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.version li:last-child {
+  margin-bottom: 0;
 }

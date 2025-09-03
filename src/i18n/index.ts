@@ -11,17 +11,17 @@ i18n
   .init({
     supportedLngs: ['en', 'zh-TW'],
     resources: {
-      en: {
-        translation: enTranslations
+      'en': {
+        translation: enTranslations,
       },
       'zh-TW': {
-        translation: zhTWTranslations
-      }
+        translation: zhTWTranslations,
+      },
     },
     fallbackLng: 'en',
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
-export default i18n; 
+export default i18n;
