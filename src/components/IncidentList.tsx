@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import './IncidentList.css';
 
 interface Incident {
@@ -15,22 +16,23 @@ interface Incident {
 
 export default function IncidentList() {
   const { t } = useTranslation();
-  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [showHistorical, setShowHistorical] = useState(false);
 
-  useEffect(() => {
-    // Load incidents from JSON file
-    fetch('/data/incidents.json')
-      .then((response) => response.json())
-      .then((data: Incident[]) => {
-        // Sort incidents by date, most recent first
-        const sortedIncidents = data.sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime(),
-        );
-        setIncidents(sortedIncidents);
-      })
-      .catch((error) => console.error('Error loading incidents:', error));
-  }, []);
+  const { data: incidents } = useQuery({ queryKey: ['incidents'], queryFn: async () => {
+    if (import.meta.env.DEV) {
+      return (await import('../data/incidents.json')).default as Incident[];
+    }
+    const res = await fetch('/data/incidents.json');
+    if (!res.ok) {
+      throw new Error(`Failed to fetch incidents: ${res.status}`);
+    }
+    const sortedIncidents = (await res.json()) as Incident[];
+    sortedIncidents.sort((a, b) =>
+      new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+    return sortedIncidents;
+  },
+  });
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -50,7 +52,7 @@ export default function IncidentList() {
     });
   };
 
-  const filteredIncidents = incidents.filter((incident) =>
+  const filteredIncidents = incidents?.filter((incident) =>
     showHistorical ? (incident.resolved_at && incident.resolved_at !== '') : (!incident.resolved_at || incident.resolved_at === ''),
   );
 
@@ -68,7 +70,7 @@ export default function IncidentList() {
         </button>
       </div>
       <div className="incident-list-container">
-        {filteredIncidents.map((incident, index) => (
+        {filteredIncidents?.map((incident, index) => (
           <div
             key={`${incident.cableid}-${incident.date}-${index}`}
             className="incident-card"
@@ -105,7 +107,7 @@ export default function IncidentList() {
             <p className="incident-description">{incident.description}</p>
           </div>
         ))}
-        {filteredIncidents.length === 0 && (
+        {filteredIncidents?.length === 0 && (
           <div className="incident-card">
             <p className="incident-description">
               {showHistorical ? t('common.noHistoricalIncidents') : t('common.noActiveIncidents')}
