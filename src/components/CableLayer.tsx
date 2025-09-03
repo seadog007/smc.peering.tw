@@ -126,8 +126,7 @@ interface CableLayerProps {
 }
 
 const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilter = 'all' }) => {
-  const sourceAdded = useRef<boolean>(false);
-  const layerAdded = useRef<boolean>(false);
+  const layersAdded = useRef<boolean>(false);
   const markersAdded = useRef<Set<string>>(new Set());
   const popupRef = useRef<maplibregl.Popup | null>(null);
 
@@ -163,7 +162,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
   useEffect(() => {
     if (!map || isLoading || cables?.length === 0) return;
 
-    const features: Feature<LineString>[] = [];
+    const allFeatures: Feature<LineString>[] = [];
 
     cables?.forEach((cable) => {
       cable.segments
@@ -177,7 +176,27 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
             || (cableFilter === 'broken' && status === 'broken');
 
           if (shouldShow) {
-            features.push({
+            if (status === 'broken') {
+              allFeatures.push({
+                type: 'Feature',
+                properties: {
+                  cableName: cable.name,
+                  segmentId: segment.id,
+                  cableId: cable.id,
+                  color: '#ff0000',
+                  status: 'broken-glow',
+                  lineWidth: 15,
+                  lineBlur: 12,
+                  lineOpacity: 0.4,
+                },
+                geometry: {
+                  type: 'LineString',
+                  coordinates: segment.coordinates,
+                },
+              } as Feature<LineString>);
+            }
+
+            allFeatures.push({
               type: 'Feature',
               properties: {
                 cableName: cable.name,
@@ -186,7 +205,8 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
                 color,
                 status,
                 lineWidth: status === 'broken' ? 3 : 1.5,
-                lineBlur: status === 'broken' ? 2 : 0,
+                lineBlur: 0,
+                lineOpacity: 1,
               },
               geometry: {
                 type: 'LineString',
@@ -198,13 +218,12 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
     });
 
     const sourceId = 'all-cables-source';
-    const layerId = 'all-cables-layer';
+    const source = map.getSource(sourceId);
 
-    const source = map.getSource(sourceId)!;
     if (source) {
       (source as GeoJSONSource).setData({
         type: 'FeatureCollection',
-        features,
+        features: allFeatures,
       } as FeatureCollection<LineString>);
     }
     else {
@@ -212,15 +231,14 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features,
+          features: allFeatures,
         } as FeatureCollection<LineString>,
       });
-      sourceAdded.current = true;
     }
 
-    if (!layerAdded.current && map.getSource(sourceId)) {
+    if (!layersAdded.current && map.getSource(sourceId)) {
       map.addLayer({
-        id: layerId,
+        id: 'cables-layer',
         type: 'line',
         source: sourceId,
         layout: {
@@ -231,12 +249,16 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
           'line-color': ['get', 'color'],
           'line-width': ['get', 'lineWidth'],
           'line-blur': ['get', 'lineBlur'],
+          'line-opacity': ['get', 'lineOpacity'],
         },
       });
 
-      map.on('click', layerId, (e) => {
+      map.on('click', 'cables-layer', (e) => {
+        const feature = e.features?.find((f) => f.properties?.status !== 'broken-glow');
+        if (!feature) return;
+
         const coordinates = e.lngLat;
-        const properties = e.features?.[0]?.properties;
+        const properties = feature.properties;
 
         if (popupRef.current) {
           popupRef.current.remove();
@@ -268,15 +290,15 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
           .addTo(map);
       });
 
-      map.on('mouseenter', layerId, () => {
+      map.on('mouseenter', 'cables-layer', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
 
-      map.on('mouseleave', layerId, () => {
+      map.on('mouseleave', 'cables-layer', () => {
         map.getCanvas().style.cursor = '';
       });
 
-      layerAdded.current = true;
+      layersAdded.current = true;
     }
 
     cables?.forEach((cable) => {
