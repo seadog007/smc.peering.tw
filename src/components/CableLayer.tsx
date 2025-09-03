@@ -1,8 +1,5 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
-
-import incidentsData from '../data/incidents.json';
-
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import './CableLayer.css';
 
@@ -139,7 +136,12 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
   useEffect(() => {
     const loadData = async () => {
       try {
-        setIncidents(incidentsData as Incident[]);
+        const res = await fetch('/data/incidents.json');
+        if (!res.ok) {
+          throw new Error(`Failed to fetch incidents: ${res.status}`);
+        }
+        const data = (await res.json()) as Incident[];
+        setIncidents(data);
 
         const cablesData = await loadCables();
         setCables(cablesData);
