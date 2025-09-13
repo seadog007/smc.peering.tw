@@ -247,7 +247,7 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
           'line-blur': ['get', 'lineBlur'],
           'line-opacity': ['get', 'lineOpacity'],
         },
-      });
+      }, 'landing-marker-layer');
 
       map.on('click', 'cables-layer', (e) => {
         const feature = e.features?.find((f) => f.properties?.status !== 'broken-glow');
