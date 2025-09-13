@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v2.0.1** (2025-09-13): Trying to fix performance issue
 - **v2.0.0** (2025-09-03): Changed Leaflet Map to Maplibre GL feat. w/ whes1015, Improved Map Usability, Added Clock for Current Time, Added New Language Selector, Added Cable Filter, Updated About Window
 - **v1.3.3** (2025-08-22): Added SJC2 S4 Cable Data
 - **v1.3.2** (2025-07-14): Fixed cable data build script

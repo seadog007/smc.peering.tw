@@ -113,6 +113,10 @@
       "2.0.0": {
         "date": "2025-09-03",
         "changes": ["Changed Leaflet Map to Maplibre GL feat. w/ whes1015", "Improved Map Usability", "Added Clock for Current Time", "Added New Language Selector", "Added Cable Filter", "Updated About Window"]
+      },
+      "2.0.1": {
+        "date": "2025-09-13",
+        "changes": ["Trying to fix performance issue"]
       }
     }
   }
