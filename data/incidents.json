@@ -160,6 +160,16 @@
     "resolved_at": "2024-12-16T00:00:00+08:00"
   },
   {
+    "date": "2024-11-11T00:00:00+08:00",
+    "status": "notice",
+    "cableid": "c2c",
+    "segment": "c2c-seg-1",
+    "title": "C2C 斷線",
+    "description": "21°16.4490'N 116°6.7150'E 處發生障礙，影響香港南向流量",
+    "reparing_at": "2025-09-25T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
     "date": "2024-11-13T00:00:00+08:00",
     "status": "disconnected",
     "cableid": "apcn2",
@@ -324,9 +334,9 @@
     "status": "disconnected",
     "cableid": "c2c",
     "segment": "c2c-seg-2a",
-    "title": "C2C 斷線",
-    "description": "嚴重影響香港方面流量",
-    "reparing_at": "",
+    "title": "C2C 2B 段斷線",
+    "description": "於 21°57.8463'N 120°10.2423'E 處發生障礙，嚴重影響香港方面流量",
+    "reparing_at": "2025-09-20T00:00:00+08:00",
     "resolved_at": ""
   },
   {
