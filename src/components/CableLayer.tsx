@@ -132,10 +132,6 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
 
   const { data: incidents, isLoading: incidentsLoading } = useQuery({ queryKey: ['incidents'], queryFn: async () => {
     try {
-      if (import.meta.env.DEV) {
-        return (await import('../data/incidents.json')).default as Incident[];
-      }
-
       const res = await fetch('/data/incidents.json');
       if (!res.ok) {
         throw new Error(`Failed to fetch incidents: ${res.status}`);

@@ -19,9 +19,6 @@ export default function IncidentList() {
   const [showHistorical, setShowHistorical] = useState(false);
 
   const { data: incidents } = useQuery({ queryKey: ['incidents'], queryFn: async () => {
-    if (import.meta.env.DEV) {
-      return (await import('../data/incidents.json')).default as Incident[];
-    }
     const res = await fetch('/data/incidents.json');
     if (!res.ok) {
       throw new Error(`Failed to fetch incidents: ${res.status}`);
