@@ -81,7 +81,6 @@
   }
 }
 
-.landing-point-marker,
 .equipment-marker {
   animation: breathing 3s ease-in-out infinite;
   /* opacity: 1; */
@@ -92,7 +91,6 @@
   backface-visibility: hidden;
 }
 
-.landing-point-marker:hover,
 .equipment-marker:hover {
   animation: breathingHover 1.5s ease-in-out infinite;
   /* opacity: 1; */
