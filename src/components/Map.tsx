@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import landingPoints from '../data/landing-points.json';
 import CableLayer from './CableLayer';
+
 import './Map.css';
+import type { Feature, Geometry } from 'geojson';
 
 interface LandingPoint {
   name: string;
@@ -117,34 +119,72 @@ export default function Map({ cableFilter = 'all' }: MapProps) {
   useEffect(() => {
     if (!map.current) return;
 
+    const currentMap = map.current;
+    const landingMarkerList: Feature<Geometry>[] = [];
+
     map.current.on('load', () => {
       const typedLandingPoints = landingPoints as unknown as LandingPoint[];
+
       for (const point of typedLandingPoints) {
-        const el = document.createElement('div');
-        el.className = 'landing-point-marker';
-        el.style.width = '12px';
-        el.style.height = '12px';
-        el.style.borderRadius = '50%';
-        el.style.backgroundColor = '#ffffff';
-        el.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.6)';
-        el.style.cursor = 'pointer';
+        landingMarkerList.push({
+          type: 'Feature',
+          properties: {
+            name: point.name,
+            coordinates: point.coordinates,
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: point.coordinates,
+          },
+        });
+      }
 
-        new maplibregl.Marker({
-          element: el,
-          anchor: 'center',
-          pitchAlignment: 'viewport',
-          rotationAlignment: 'viewport',
-        })
-          .setLngLat([point.coordinates[0], point.coordinates[1]])
-          .addTo(map.current!);
+      const sourceId = 'landing-marker-points';
+      const source = currentMap.getSource(sourceId);
 
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
+      if (!source) {
+        currentMap.addSource(sourceId, {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: landingMarkerList,
+          },
+        });
 
+        // point shadow layer
+        currentMap.addLayer({
+          id: 'landing-marker-shadow-layer',
+          type: 'circle',
+          source: sourceId,
+          paint: {
+            'circle-color': '#ffffff',
+            'circle-radius': 12,
+            'circle-blur': 0.8,
+            'circle-opacity': 0.4,
+          },
+        });
+
+        // point normal layer
+        currentMap.addLayer({
+          id: 'landing-marker-layer',
+          type: 'circle',
+          source: sourceId,
+          paint: {
+            'circle-radius': 7,
+            'circle-color': '#ffffff',
+          },
+        });
+
+        // bind click event
+        currentMap.on('click', 'landing-marker-layer', (event) => {
           // Close existing popup if any
           if (popupRef.current) {
             popupRef.current.remove();
           }
+
+          const properties = event.features![0].properties;
+          // 被 maplibre 轉換成 string, 需自行轉回 array
+          const coordinates = JSON.parse(properties.coordinates as string) as number[];
 
           popupRef.current = new maplibregl.Popup({
             offset: 25,
@@ -153,20 +193,29 @@ export default function Map({ cableFilter = 'all' }: MapProps) {
             className: 'landing-point-popup',
             maxWidth: '250px',
           })
-            .setLngLat([point.coordinates[0], point.coordinates[1]])
+            .setLngLat([coordinates[0], coordinates[1]])
             .setHTML(`
             <div style="padding: 10px 12px;">
               <h3 style="margin: 0 0 8px 0; padding-right: 20px; color: #48A9FF; font-size: 14px; font-weight: bold; word-wrap: break-word;">
-                ${point.name}
+                ${properties.name}
               </h3>
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #3F4045;">
                 <p style="margin: 0; color: #6b7280; font-size: 11px; white-space: nowrap;">
-                  ${point.coordinates[1].toFixed(4)}°N, ${point.coordinates[0].toFixed(4)}°E
+                  ${coordinates[1].toFixed(4)}°N, ${coordinates[0].toFixed(4)}°E
                 </p>
               </div>
             </div>
           `)
-            .addTo(map.current!);
+            .addTo(currentMap);
+        });
+
+        // cursor pointer
+        currentMap.on('mouseenter', 'landing-marker-layer', () => {
+          currentMap.getCanvas().style.cursor = 'pointer';
+        });
+
+        currentMap.on('mouseleave', 'landing-marker-layer', () => {
+          currentMap.getCanvas().style.cursor = '';
         });
       }
     });
