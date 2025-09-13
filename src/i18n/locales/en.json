@@ -117,6 +117,10 @@
       "2.0.1": {
         "date": "2025-09-13",
         "changes": ["Trying to fix performance issue"]
+      },
+      "2.0.2": {
+        "date": "2025-09-14",
+        "changes": ["Trying to fix performance issue"]
       }
     }
   }
