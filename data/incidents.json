@@ -418,5 +418,15 @@
     "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2025-10-18T23:37:45+08:00",
+    "status": "disconnected",
+    "cableid": "apg",
+    "segment": "agp-seg-6",
+    "title": "APG 斷線",
+    "description": "原排定 10/18 ~ 10/24 維護（如中華電信公告所示），後更改為海纜障礙，且修復時間未定，影響香港與南向流量",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
