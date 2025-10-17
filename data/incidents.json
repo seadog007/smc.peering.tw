@@ -423,7 +423,7 @@
     "date": "2025-10-17T23:37:45+08:00",
     "status": "disconnected",
     "cableid": "apg",
-    "segment": "agp-seg-1.5",
+    "segment": "apg-seg-1.5",
     "title": "APG 斷線",
     "description": "原排定 10/18 ~ 10/24 維護（如中華電信公告所示），後修改公告為海纜障礙，且修復時間未定，影響香港與南向流量",
     "reparing_at": "",
