@@ -125,6 +125,10 @@
       "2.1.0": {
         "date": "2025-09-14",
         "changes": ["Made cable data smoother"]
+      },
+      "2.1.1": {
+        "date": "2025-10-18",
+        "changes": ["Fixed incidents data sorting issue"]
       }
     }
   }
