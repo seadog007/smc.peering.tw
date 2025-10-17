@@ -137,7 +137,9 @@ const CableLayer = forwardRef<HTMLDivElement, CableLayerProps>(({ map, cableFilt
         throw new Error(`Failed to fetch incidents: ${res.status}`);
       }
 
-      return (await res.json()) as Incident[];
+      const incidentsData = (await res.json()) as Incident[];
+      incidentsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      return incidentsData;
     }
     catch (error) {
       console.error('Error loading data:', error);
