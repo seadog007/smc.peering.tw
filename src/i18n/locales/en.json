@@ -129,6 +129,10 @@
       "2.1.1": {
         "date": "2025-10-18",
         "changes": ["Fixed incidents data sorting issue"]
+      },
+      "2.1.2": {
+        "date": "2025-10-18",
+        "changes": ["Added OKTW Grafana link"]
       }
     }
   }
