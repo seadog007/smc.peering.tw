@@ -64,8 +64,8 @@ export default function IncidentList({
       {filteredIncidents?.map((incident, index) => (
         <div key={`${incident.cableid}-${incident.date}-${index}`}>
           <div className="flex items-center gap-4 py-4">
-            <div className="w-[72px] flex-shrink-0 text-center">
-              <div className="text-3xl font-bold">
+            <div className="w-12 flex-shrink-0 text-center md:w-18">
+              <div className="text-2xl font-bold md:text-3xl">
                 {calcDays(incident.date, incident.resolved_at)}
               </div>
               <div className="text-white/80">{t("common.days")}</div>
@@ -97,31 +97,27 @@ export default function IncidentList({
               </div>
               <h3 className="text-lg font-semibold">{incident.title}</h3>
 
-              <div className="flex flex-col gap-1 text-sm text-white/70 not-empty:my-1">
+              <p className="text-sm text-white/80">{incident.description}</p>
+
+              <div className="mt-2 flex flex-col gap-1 border-t border-white/10 pt-2 text-sm text-white/70 empty:hidden">
                 {incident.reparing_at && incident.reparing_at !== "" && (
-                  <p>
-                    <span className="text-white">
-                      {t("incidents.reparing_at")}
-                    </span>
-                    <span className="ml-1">
+                  <div className="flex items-center justify-between">
+                    <span>{t("incidents.reparing_at")}</span>
+                    <span className="ml-1 text-white/50">
                       {formatDate(incident.reparing_at)}
                     </span>
-                  </p>
+                  </div>
                 )}
 
                 {incident.resolved_at && incident.resolved_at !== "" && (
-                  <p>
-                    <span className="text-white">
-                      {t("incidents.resolved_at")}
-                    </span>
-                    <span className="ml-1">
+                  <div className="flex items-center justify-between">
+                    <span>{t("incidents.resolved_at")}</span>
+                    <span className="ml-1 text-white/50">
                       {formatDate(incident.resolved_at)}
                     </span>
-                  </p>
+                  </div>
                 )}
               </div>
-
-              <p className="text-sm text-white/80">{incident.description}</p>
             </div>
           </div>
         </div>

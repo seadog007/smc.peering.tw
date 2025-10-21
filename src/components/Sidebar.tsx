@@ -50,7 +50,7 @@ export default function Sidebar() {
               "mx-auto flex w-full flex-col overflow-hidden pt-5",
             )}
           >
-            <div className="mb-2 flex items-center justify-center">
+            <div className="flex items-center justify-center">
               <div className="h-1 w-20 rounded-full bg-white/15" />
             </div>
             <div className={cn(snap === 1 && "h-[calc(100svh-48px-24px)]")}>
@@ -62,11 +62,19 @@ export default function Sidebar() {
     </Drawer.Root>
   ) : (
     <motion.div
-      className="absolute top-2 right-2 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl border border-white/5 bg-[#19191B]/80 shadow-lg backdrop-blur-md"
+      className="absolute top-2 right-2 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md"
       initial={{ x: "100%" }}
       animate={{ x: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
+      <div className="pointer-events-none absolute inset-0 size-full rounded-2xl border border-white/5" />
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 bg-white/10"
+        style={{
+          maskImage:
+            "radial-gradient(circle at top, black 0%, transparent 20%)",
+        }}
+      />
       <SidebarContent />
     </motion.div>
   );
@@ -76,8 +84,8 @@ function SidebarContent() {
   const [showHistorical, setShowHistorical] = useState(false);
   return (
     <>
-      <div className="flex h-full w-full flex-col">
-        <div className="flex w-full items-center justify-between p-4">
+      <div className="relative z-10 flex h-full w-full flex-col gap-4 p-4">
+        <div className="flex w-full items-center justify-between">
           <div>
             <select
               className="w-max text-lg font-semibold outline-0"
@@ -94,8 +102,9 @@ function SidebarContent() {
             <AboutDialog />
           </div>
         </div>
-        <ScrollArea className="flex-1 overflow-y-auto">
-          <div className="p-4 pt-0">
+
+        <ScrollArea className="flex-1 overflow-y-auto rounded-lg border border-white/5 bg-white/5 shadow-lg">
+          <div className="px-4">
             <IncidentList showHistorical={showHistorical} />
           </div>
         </ScrollArea>

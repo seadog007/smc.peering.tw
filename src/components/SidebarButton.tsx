@@ -13,7 +13,13 @@ export default function SidebarButton({
       whileTap={{ scale: 0.95 }}
       className="relative flex w-full cursor-pointer items-center justify-center rounded-full bg-white/5 p-2 text-sm font-medium text-white hover:bg-white/10"
     >
-      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
+      <div
+        className="pointer-events-none absolute inset-0 rounded-full bg-white/10"
+        style={{
+          maskImage:
+            "radial-gradient(circle at top, black 0%, transparent 60%)",
+        }}
+      />
       <div className="relative flex items-center justify-center gap-2">
         {children}
       </div>
