@@ -10,7 +10,8 @@
     "disconnected": "斷線",
     "partial_disconnected": "部分斷線",
     "notice": "注意",
-    "unknown": "未知"
+    "unknown": "未知",
+    "days": "天"
   },
   "filter": {
     "all": "混合",
@@ -44,95 +45,148 @@
     "datasource": "資料來源：內政部國土管理署、內政部地政司、<a href='https://www.fa.gov.tw/'>農業部漁業署</a>、<a href='http://www.cht.com.tw/'>中華電信股份有限公司</a>、<a href='https://www.tainan.gov.tw/'>臺南市政府</a>、<a href='https://retn.net/'>RETN</a>、<a href='https://submarinenetworks.com/'>Submarine Networks</a>、<a href='https://submarinecablemap.com/'>Submarine Cable Map</a>、<a href='https://smokeping.fast-line.tw/'>Fast Line 台灣速連</a>、<a href='https://grafana.k8s.oktw.one/d/H7e2Cm9Zz/ping'>OKTW</a>",
     "techstack": "使用 Typescript 語言搭配 Vite 和 React 框架作為前端，後端使用 Google Spreadsheet 管理資料，以 Github Action 自動更新資料轉為靜態格式部署在 GitHub Pages 上，含資料整理總耗時約一週。",
     "github": "GitHub 專案連結：<a href='https://github.com/seadog007/smc.peering.tw/'>地圖 (公開)</a>、<a href='https://github.com/seadog007/tw-submarine-cable/'>海纜資料 (非公開)</a>",
-    "sponsor": "本專案部分資料由 <a href='https://www.twds.com.tw/'>TWDS</a> 其子專案 <a href='https://stuix.io/'>STUIX</a> 成員所提供<br>TWDS 致力於推動國內 Peering 生態，避免流量需繞出國再繞回國的窘境，也引進許多國外網路快取服務來幫助建立 Peering 生態。相關專案贊助連結如下：<a href='https://sponsor.twds.com.tw/'>TWDS 贊助連結</a>"
+    "sponsor": "本專案部分資料由 <a href='https://www.twds.com.tw/'>TWDS</a> 其子專案 <a href='https://stuix.io/'>STUIX</a> 成員所提供<br>TWDS 推動國內 Peering 生態，避免流量需繞出國再繞回國的窘境，也引進許多國外網路快取服務來幫助建立 Peering 生態。相關專案贊助連結如下：<a href='https://sponsor.twds.com.tw/'>TWDS 贊助連結</a>"
   },
   "version": {
     "history": "版本歷史",
     "version": {
       "1.0.0": {
         "date": "2025-06-15",
-        "changes": ["初始版本"]
+        "changes": [
+          "初始版本"
+        ]
       },
       "1.0.1": {
         "date": "2025-06-16",
-        "changes": ["UI 改善", "新增預計維修時間和障礙排除時間"]
+        "changes": [
+          "UI 改善",
+          "新增預計維修時間和障礙排除時間"
+        ]
       },
       "1.1.0": {
         "date": "2025-06-18",
-        "changes": ["新增版本歷史"]
+        "changes": [
+          "新增版本歷史"
+        ]
       },
       "1.1.1": {
         "date": "2025-06-18",
-        "changes": ["新增 EAC1 Segment E 海纜資料"]
+        "changes": [
+          "新增 EAC1 Segment E 海纜資料"
+        ]
       },
       "1.2.0": {
         "date": "2025-06-19",
-        "changes": ["讓行動裝置也能看到地圖"]
+        "changes": [
+          "讓行動裝置也能看到地圖"
+        ]
       },
       "1.2.1": {
         "date": "2025-06-19",
-        "changes": ["修正行動裝置按鈕位置"]
+        "changes": [
+          "修正行動裝置按鈕位置"
+        ]
       },
       "1.2.2": {
         "date": "2025-06-21",
-        "changes": ["新增 NCP S5, S6, S1.4 海纜資料"]
+        "changes": [
+          "新增 NCP S5, S6, S1.4 海纜資料"
+        ]
       },
       "1.2.3": {
         "date": "2025-07-11",
-        "changes": ["增加滑鼠 Hover 在海纜上時的資訊提示"]
+        "changes": [
+          "增加滑鼠 Hover 在海纜上時的資訊提示"
+        ]
       },
       "1.2.4": {
         "date": "2025-07-12",
-        "changes": ["新增 TSE-1 海纜資料"]
+        "changes": [
+          "新增 TSE-1 海纜資料"
+        ]
       },
       "1.2.5": {
         "date": "2025-07-12",
-        "changes": ["更新 APCN2 海纜資料為精確版本"]
+        "changes": [
+          "更新 APCN2 海纜資料為精確版本"
+        ]
       },
       "1.2.6": {
         "date": "2025-07-12",
-        "changes": ["更新 C2C 海纜資料，新增 Seg 2C, 3A"]
+        "changes": [
+          "更新 C2C 海纜資料，新增 Seg 2C, 3A"
+        ]
       },
       "1.3.0": {
         "date": "2025-07-13",
-        "changes": ["修正按鈕層高", "改善地圖操作", "新增重要提醒視窗 aka 免責聲明", "修正初次語言設定", "增加監測資料來源"]
+        "changes": [
+          "修正按鈕層高",
+          "改善地圖操作",
+          "新增重要提醒視窗 aka 免責聲明",
+          "修正初次語言設定",
+          "增加監測資料來源"
+        ]
       },
       "1.3.1": {
         "date": "2025-07-14",
-        "changes": ["新增 SEO 相關設定", "更新 TM2、TM3、TP3 海纜資料"]
+        "changes": [
+          "新增 SEO 相關設定",
+          "更新 TM2、TM3、TP3 海纜資料"
+        ]
       },
       "1.3.2": {
         "date": "2025-07-14",
-        "changes": ["修正海纜資料建置腳本"]
+        "changes": [
+          "修正海纜資料建置腳本"
+        ]
       },
       "1.3.3": {
         "date": "2025-08-22",
-        "changes": ["新增 SJC2 S4 海纜資料"]
+        "changes": [
+          "新增 SJC2 S4 海纜資料"
+        ]
       },
       "2.0.0": {
         "date": "2025-09-03",
-        "changes": ["將 Leaflet Map 改為 Maplibre GL feat. w/ whes1015", "改善地圖可用性", "新增現在時間", "新增新的語言選擇器", "新增海纜過濾器", "更新關於視窗"]
+        "changes": [
+          "將 Leaflet Map 改為 Maplibre GL feat. w/ whes1015",
+          "改善地圖可用性",
+          "新增現在時間",
+          "新增新的語言選擇器",
+          "新增海纜過濾器",
+          "更新關於視窗"
+        ]
       },
       "2.0.1": {
         "date": "2025-09-13",
-        "changes": ["試圖修復效能問題"]
+        "changes": [
+          "試圖修復效能問題"
+        ]
       },
       "2.0.2": {
         "date": "2025-09-14",
-        "changes": ["試圖修復效能問題"]
+        "changes": [
+          "試圖修復效能問題"
+        ]
       },
       "2.1.0": {
         "date": "2025-09-14",
-        "changes": ["讓海纜資料更平滑"]
+        "changes": [
+          "讓海纜資料更平滑"
+        ]
       },
       "2.1.1": {
         "date": "2025-10-18",
-        "changes": ["修正事件資料排序問題"]
+        "changes": [
+          "修正事件資料排序問題"
+        ]
       },
       "2.1.2": {
         "date": "2025-10-18",
-        "changes": ["新增 OKTW Grafana 連結"]
+        "changes": [
+          "新增 OKTW Grafana 連結"
+        ]
       }
     }
   }
-} 
+}
