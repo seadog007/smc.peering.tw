@@ -24,7 +24,7 @@ export default function TechClock() {
   };
 
   return (
-    <div className="flex gap-2 items-center font-mono text-sm text-white/70">
+    <div className="flex items-center gap-2 text-sm text-white/25 tabular-nums">
       <Clock className="size-4" />
       <span>{formatDateTime(time)}</span>
     </div>
