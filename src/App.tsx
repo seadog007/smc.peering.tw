@@ -17,7 +17,6 @@ import Modal from './components/Modal';
 import IncidentList from './components/IncidentList';
 import TechClock from './components/TechClock';
 
-import './App.css';
 import './i18n';
 
 // Sample timeline data for cables
