@@ -1,7 +1,12 @@
 import { Info } from "lucide-react";
 import SidebarButton from "@/components/SidebarButton";
-
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 
@@ -59,44 +64,19 @@ export default function AboutDialog() {
         </SidebarButton>
       </DialogTrigger>
       <DialogContent className="p-0">
-        <ScrollArea className="max-h-[75vh] overflow-y-auto p-6">
-          <div>
-            <div className="mb-4">
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.description") }}
-              />
-              <br />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.developer") }}
-              />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.techstack") }}
-              />
-              <br />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.datacollect") }}
-              />
-              <br />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.datasource") }}
-              />
-              <br />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.sponsor") }}
-              />
-              <br />
-              <p
-                className="mb-4 text-gray-100"
-                dangerouslySetInnerHTML={{ __html: t("about.github") }}
-              />
-            </div>
-            <br />
+        <ScrollArea className="max-h-[75vh] overflow-y-auto">
+          <div className="flex flex-col gap-4 p-6 text-white/80">
+            <DialogHeader>
+              <DialogTitle> {t("about.title")}</DialogTitle>
+            </DialogHeader>
+            <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.techstack") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.datacollect") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.datasource") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.sponsor") }} />
+            <p dangerouslySetInnerHTML={{ __html: t("about.github") }} />
+
             {genVersionHistory()}
           </div>
         </ScrollArea>
