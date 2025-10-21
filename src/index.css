@@ -7,8 +7,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+:root {
+  text-autospace: normal;
 }
-
 html,
 body,
 #root {
@@ -17,9 +18,8 @@ body,
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 450;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -186,4 +186,8 @@ button:focus-visible {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@theme {
+  --font-sans: Geist, "Noto Sans TC", Avenir, Helvetica, Arial, sans-serif;
 }
