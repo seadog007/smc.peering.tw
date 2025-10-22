@@ -50,62 +50,63 @@ export default function IncidentList({
   return (
     <div className="flex flex-col divide-y text-sm tracking-tight">
       {filteredIncidents?.map((incident, index) => (
-        <div key={`${incident.cableid}-${incident.date}-${index}`}>
-          <div className="flex items-center gap-4 py-4">
-            <div className="w-12 flex-shrink-0 text-center md:w-18">
-              <div className="text-2xl font-bold md:text-3xl">
-                {calcDays(incident.date, incident.resolved_at)}
-              </div>
-              <div className="text-white/80">{t("common.days")}</div>
+        <div
+          key={`${incident.cableid}-${incident.date}-${index}`}
+          className="flex items-center gap-4 py-3"
+        >
+          <div className="w-12 flex-shrink-0 text-center md:w-18">
+            <div className="text-2xl font-bold md:text-3xl">
+              {calcDays(incident.date, incident.resolved_at)}
             </div>
+            <div className="text-white/80">{t("common.days")}</div>
+          </div>
 
-            <div className="flex-1">
-              <div className="flex items-center justify-between gap-1 text-white/60">
-                <div>{formatDateTime(incident.date)}</div>
-                <div
-                  className={cn(
-                    "relative rounded-full px-1.5 py-1 text-xs",
-                    showHistorical
-                      ? "bg-green-900/20 text-green-400"
-                      : "bg-red-500/20 text-red-300",
+          <div className="flex-1">
+            <div className="flex items-center justify-between gap-1 text-white/60">
+              <div>{formatDateTime(incident.date)}</div>
+              <div
+                className={cn(
+                  "relative rounded-full px-1.5 py-1 text-xs",
+                  showHistorical
+                    ? "bg-green-900/20 text-green-400"
+                    : "bg-red-500/20 text-red-300",
+                )}
+              >
+                <span className="flex items-center gap-1 drop-shadow-md drop-shadow-black/20">
+                  {showHistorical ? (
+                    <Check className="size-4" />
+                  ) : (
+                    <TriangleAlert className="size-4 animate-pulse" />
                   )}
-                >
-                  <span className="flex items-center gap-1 drop-shadow-md drop-shadow-black/20">
-                    {showHistorical ? (
-                      <Check className="size-4" />
-                    ) : (
-                      <TriangleAlert className="size-4 animate-pulse" />
-                    )}
 
-                    {showHistorical ? t("common.resolved") : t("common.active")}
+                  {showHistorical ? t("common.resolved") : t("common.active")}
+                </span>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
+                <div className="absolute inset-0 rounded-full border-t border-white/2.5" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold">{incident.title}</h3>
+
+            <p className="text-sm text-white/80">{incident.description}</p>
+
+            <div className="mt-1.5 flex flex-col gap-1 border-t border-white/10 pt-1.5 text-sm text-white/70 empty:hidden">
+              {incident.reparing_at && incident.reparing_at !== "" && (
+                <div className="flex items-center justify-between gap-1">
+                  <span>{t("incidents.reparing_at")}</span>
+                  <span className="text-right text-white/50">
+                    {formatDateTime(incident.reparing_at)}
                   </span>
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
-                  <div className="absolute inset-0 rounded-full border-t border-white/2.5" />
                 </div>
-              </div>
-              <h3 className="text-lg font-semibold">{incident.title}</h3>
+              )}
 
-              <p className="text-sm text-white/80">{incident.description}</p>
-
-              <div className="mt-2 flex flex-col gap-1 border-t border-white/10 pt-2 text-sm text-white/70 empty:hidden">
-                {incident.reparing_at && incident.reparing_at !== "" && (
-                  <div className="flex items-center justify-between gap-1">
-                    <span>{t("incidents.reparing_at")}</span>
-                    <span className="text-right text-white/50">
-                      {formatDateTime(incident.reparing_at)}
-                    </span>
-                  </div>
-                )}
-
-                {incident.resolved_at && incident.resolved_at !== "" && (
-                  <div className="flex items-center justify-between gap-1">
-                    <span>{t("incidents.resolved_at")}</span>
-                    <span className="text-right text-white/50">
-                      {formatDateTime(incident.resolved_at)}
-                    </span>
-                  </div>
-                )}
-              </div>
+              {incident.resolved_at && incident.resolved_at !== "" && (
+                <div className="flex items-center justify-between gap-1">
+                  <span>{t("incidents.resolved_at")}</span>
+                  <span className="text-right text-white/50">
+                    {formatDateTime(incident.resolved_at)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
