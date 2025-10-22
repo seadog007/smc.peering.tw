@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 
 import IntroModal from "@/components/dialog/Intro";
-import Map from "./components/map/Map";
+import Map from "./components/Map";
 import CurrentTime from "./components/CurrentTime";
 
 import "./i18n";
