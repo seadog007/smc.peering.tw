@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from "usehooks-ts";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,17 @@ import { Button } from "@/components/ui/button";
 
 export default function IntroModal() {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [dontShowWarningAgain, setDontShowWarningAgain] = useLocalStorage(
     "dontShowWarningAgain",
     false,
   );
   const buttonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!dontShowWarningAgain) {
+      setIsOpen(true);
+    }
+  }, [dontShowWarningAgain]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
