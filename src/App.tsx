@@ -21,14 +21,14 @@ function App() {
   return (
     <div className="relative h-[100svh] w-full">
       <Map cableFilter={cableFilter} />
-      <div className="absolute top-2 max-md:right-2 md:left-2">
+      <div className="absolute top-2 z-10 max-md:right-2 md:left-2">
         <CableFilter
           cableFilter={cableFilter}
           setCableFilter={setCableFilter}
           t={t}
         />
       </div>
-      <div className="absolute left-2 max-md:top-2 md:bottom-2">
+      <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
         <CurrentTime />
       </div>
       <Sidebar />
