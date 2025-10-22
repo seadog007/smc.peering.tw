@@ -38,7 +38,7 @@ export default function IntroModal() {
         <DialogHeader>
           <DialogTitle>{t("warning.title")}</DialogTitle>
         </DialogHeader>
-        <div>
+        <div className="text-sm text-white/80">
           <p dangerouslySetInnerHTML={{ __html: t("warning.message") }} />
           <div className="mt-4">
             <label className="flex items-center space-x-2">
