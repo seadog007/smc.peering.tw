@@ -10,6 +10,10 @@ import AboutDialog from "@/components/dialog/About";
 import TimelineDialog from "@/components/dialog/Timeline";
 
 import IncidentList from "@/components/IncidentList";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
 
 const snapPoints = ["355px", 1];
 
@@ -80,16 +84,18 @@ function SidebarContent() {
     <>
       <div className="relative z-10 flex h-full w-full flex-col gap-4 p-4">
         <div className="flex w-full items-center justify-between">
-          <div>
-            <select
-              className="w-max text-lg font-semibold outline-0"
-              value={showHistorical.toString()}
-              onChange={(e) => setShowHistorical(e.target.value === "true")}
-            >
-              <option value="false">{t("incidents.activeTitle")}</option>
-              <option value="true">{t("incidents.historicalTitle")}</option>
-            </select>
-          </div>
+          <NativeSelect
+            className="h-auto border-0 !bg-transparent !px-0 !pr-9 text-lg font-semibold !ring-0"
+            value={showHistorical.toString()}
+            onChange={(e) => setShowHistorical(e.target.value === "true")}
+          >
+            <NativeSelectOption value="false">
+              {t("incidents.activeTitle")}
+            </NativeSelectOption>
+            <NativeSelectOption value="true">
+              {t("incidents.historicalTitle")}
+            </NativeSelectOption>
+          </NativeSelect>
           <div className="flex gap-2">
             <ChangeLanguageButton />
             <TimelineDialog />
