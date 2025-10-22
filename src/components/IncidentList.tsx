@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
+import { cn, useFormatDate } from "@/lib/utils";
 import { TriangleAlert, Check } from "lucide-react";
 interface Incident {
   date: string;
@@ -18,7 +18,8 @@ export default function IncidentList({
 }: {
   showHistorical?: boolean;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { formatDateTime } = useFormatDate();
 
   const { data: incidents } = useQuery({
     queryKey: ["incidents"],
@@ -32,19 +33,6 @@ export default function IncidentList({
       return sortedIncidents;
     },
   });
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
-    return date.toLocaleString(i18n.language, {
-      year: "numeric",
-      month: i18n.language === "en" ? "short" : "numeric",
-      day: "numeric",
-      ...(isMidnight
-        ? {}
-        : { hour: "2-digit", minute: "2-digit", hour12: false }),
-    });
-  };
 
   const filteredIncidents = incidents?.filter((incident) =>
     showHistorical
@@ -73,7 +61,7 @@ export default function IncidentList({
 
             <div className="flex-1">
               <div className="flex items-center justify-between gap-1 text-white/60">
-                <div>{formatDate(incident.date)}</div>
+                <div>{formatDateTime(incident.date)}</div>
                 <div
                   className={cn(
                     "relative rounded-full px-1.5 py-1 text-xs",
@@ -104,7 +92,7 @@ export default function IncidentList({
                   <div className="flex items-center justify-between">
                     <span>{t("incidents.reparing_at")}</span>
                     <span className="ml-1 text-white/50">
-                      {formatDate(incident.reparing_at)}
+                      {formatDateTime(incident.reparing_at)}
                     </span>
                   </div>
                 )}
@@ -113,7 +101,7 @@ export default function IncidentList({
                   <div className="flex items-center justify-between">
                     <span>{t("incidents.resolved_at")}</span>
                     <span className="ml-1 text-white/50">
-                      {formatDate(incident.resolved_at)}
+                      {formatDateTime(incident.resolved_at)}
                     </span>
                   </div>
                 )}
