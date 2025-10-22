@@ -7,6 +7,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 
@@ -61,16 +66,23 @@ export default function AboutDialog() {
   };
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <SidebarButton>
-          <Info className="size-5" />
-        </SidebarButton>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger>
+          <DialogTrigger asChild>
+            <SidebarButton>
+              <Info className="size-5" />
+            </SidebarButton>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t("about.title")}</p>
+        </TooltipContent>
+      </Tooltip>
       <DialogContent className="p-0">
         <ScrollArea className="max-h-[75vh] overflow-y-auto">
           <div className="flex flex-col gap-4 p-6 text-sm text-white/80">
             <DialogHeader>
-              <DialogTitle> {t("about.title")}</DialogTitle>
+              <DialogTitle>{t("about.title")}</DialogTitle>
             </DialogHeader>
             <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
             <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />

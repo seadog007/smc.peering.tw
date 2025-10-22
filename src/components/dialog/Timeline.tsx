@@ -8,6 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TimelineContent from "@/components/dialog/TimelineContent";
 import SidebarButton from "@/components/SidebarButton";
@@ -37,11 +43,18 @@ export default function AboutDialog() {
   }, []);
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <SidebarButton>
-          <History className="size-5" />
-        </SidebarButton>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger>
+          <DialogTrigger asChild>
+            <SidebarButton>
+              <History className="size-5" />
+            </SidebarButton>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t("timeline.title")}</p>
+        </TooltipContent>
+      </Tooltip>
       <DialogContent className="p-0 sm:max-w-3xl">
         <ScrollArea className="h-full max-h-[80vh] overflow-y-auto">
           <div className="p-6">
