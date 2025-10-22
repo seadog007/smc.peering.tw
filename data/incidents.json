@@ -285,7 +285,7 @@
     "cableid": "apcn2",
     "segment": "apcn2-seg-7",
     "title": "APCN2 中國方向斷線",
-    "description": "影響中國新加坡方面流量",
+    "description": "區段 7（台灣-中國）斷線（21.85km from SHT CLS、Shunt fault），影響中國新加坡方面流量，暫無修纜許可，No ETR",
     "reparing_at": "",
     "resolved_at": "2025-05-16T09:56:00+08:00"
   },
@@ -410,6 +410,16 @@
     "resolved_at": ""
   },
   {
+    "date": "2025-09-21T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-6",
+    "title": "APCN2 日本方向斷線",
+    "description": "區段 6 於 25°34.032'N 121°30.190'E 處（台灣-日本千倉）斷線（55km from TNS CLS），影響日本方向流量",
+    "reparing_at": "2025-12-05T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
     "date": "2025-10-07T00:00:00+08:00",
     "status": "partial_disconnected",
     "cableid": "twtm2",
@@ -425,7 +435,7 @@
     "cableid": "apg",
     "segment": "apg-seg-1.5",
     "title": "APG 斷線",
-    "description": "原排定 10/18 ~ 10/24 維護（如中華電信公告所示），後修改公告為海纜障礙，且修復時間未定，影響香港與南向流量，流量因迂迴至日本，至日本方面雍塞",
+    "description": "原排定 10/18 ~ 10/24 維護（如中華電信公告所示），後修改公告為海纜障礙，且修復時間未定，APG 系統下線，主要影響備援不足的香港與南向流量，次要影響透過 APG 系統往日本的傳輸；流量因透過其他系統迂迴至日本，至日本方面雍塞。",
     "reparing_at": "",
     "resolved_at": ""
   }
