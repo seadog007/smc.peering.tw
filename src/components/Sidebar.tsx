@@ -1,6 +1,5 @@
 import { clsx } from "clsx";
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { Drawer } from "vaul";
 import { useTranslation } from "react-i18next";
@@ -61,12 +60,7 @@ export default function Sidebar() {
       </Drawer.Portal>
     </Drawer.Root>
   ) : (
-    <motion.div
-      className="absolute top-2 right-2 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md"
-      initial={{ x: "100%" }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
+    <div className="absolute top-2 right-2 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md">
       <div className="pointer-events-none absolute inset-0 size-full rounded-2xl border border-white/5" />
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 bg-white/10"
@@ -76,7 +70,7 @@ export default function Sidebar() {
         }}
       />
       <SidebarContent />
-    </motion.div>
+    </div>
   );
 }
 function SidebarContent() {
