@@ -6,7 +6,7 @@
     "noHistoricalIncidents": "沒有歷史事件",
     "showActive": "顯示發生中事件",
     "showHistorical": "顯示歷史事件",
-    "online": "在線",
+    "online": "正常",
     "disconnected": "斷線",
     "partial_disconnected": "部分斷線",
     "notice": "注意",
@@ -34,11 +34,11 @@
   },
   "timeline": {
     "title": "海纜狀態時間軸",
-    "show": "顯示海纜狀態時間軸"
+    "uptimeLabel": "可用率",
+    "uptimePercentage": "{{value}}% 可用率"
   },
   "about": {
     "title": "關於",
-    "show": "顯示關於",
     "description": "台灣海纜動態地圖是一個互動式地圖，顯示台灣海纜的狀態和歷史事件。",
     "developer": "本專案由 <a href='https://seadog007.work/'>seadog007</a> 與 Cursor AI 協同開發",
     "datacollect": "資料整理：還是我，有問題可以 <a href='https://t.me/seadog007'>Telegram</a> 或 <a href='https://www.facebook.com/seadog007'>Facebook</a> 敲我",

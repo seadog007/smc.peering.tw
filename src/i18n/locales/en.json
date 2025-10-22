@@ -35,11 +35,11 @@
   },
   "timeline": {
     "title": "Cables Uptime Timeline",
-    "show": "Show Cables Uptime Timeline"
+    "uptimeLabel": "Uptime",
+    "uptimePercentage": "{{value}}% uptime"
   },
   "about": {
     "title": "About",
-    "show": "Show About",
     "description": "Taiwan Submarine Cable Map is an interactive map that shows the status and historical incidents of Taiwan's submarine cables.",
     "developer": "This project is developed by <a href='https://seadog007.work/en'>seadog007</a> with Cursor AI",
     "datacollect": "Data collected by... Still me, you can contact me on <a href='https://t.me/seadog007'>Telegram</a> or <a href='https://www.facebook.com/seadog007'>Facebook</a>",
