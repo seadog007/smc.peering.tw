@@ -482,7 +482,7 @@ export default function UptimeTimeline({
             <div className="flex items-start justify-between gap-6">
               <div className="shrink-0">
                 <div className="text-lg font-semibold">{cable.name}</div>
-                <div className="flex items-center gap-2 text-xs text-slate-400">
+                <div className="flex items-center gap-2 text-xs text-white/50">
                   <span
                     className="inline-flex size-2 rounded-full"
                     style={{ backgroundColor: getStatusColor(latestStatus) }}
@@ -494,7 +494,7 @@ export default function UptimeTimeline({
                 <div className="text-lg font-semibold">
                   {uptimePercent.toFixed(1)}%
                 </div>
-                <div className="text-xs tracking-wide text-slate-500 uppercase">
+                <div className="text-xs tracking-wide text-white/50 uppercase">
                   {t("timeline.uptimeLabel")}
                 </div>
               </div>
@@ -534,11 +534,11 @@ export default function UptimeTimeline({
                         <div className="text-sm font-semibold">
                           {getStatusLabel(point.status)}
                         </div>
-                        <div className="mt-1 text-[11px] text-slate-400">
+                        <div className="text-xs text-slate-400">
                           {tooltipStartLabel} - {tooltipEndLabel}
                         </div>
                         {point.incidentDescription ? (
-                          <div className="mt-2 w-40 text-xs text-gray-500">
+                          <div className="mt-1 max-w-60 text-xs text-gray-500">
                             {point.incidentDescription}
                           </div>
                         ) : null}
@@ -548,7 +548,7 @@ export default function UptimeTimeline({
                 })}
               </div>
             </div>
-            <div className="mt-2 flex justify-between text-[11px] text-slate-500">
+            <div className="mt-2 flex justify-between text-xs text-white/50">
               <span>{formatDate(startDate)}</span>
               <span>
                 {formatDate(

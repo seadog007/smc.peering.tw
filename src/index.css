@@ -105,10 +105,10 @@ body {
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
   /* Uptime timeline colors (map to existing color tokens so themes follow) */
-  --color-uptime-online: var(--color-chart-1);
-  --color-uptime-disconnected: var(--color-destructive);
-  --color-uptime-partial-disconnected: var(--color-chart-5);
-  --color-uptime-notice: var(--color-accent);
+  --color-uptime-online: var(--color-chart-2);
+  --color-uptime-disconnected: var(--color-chart-5);
+  --color-uptime-partial-disconnected: var(--color-destructive);
+  --color-uptime-notice: var(--color-chart-3);
   --color-uptime-unknown: var(--color-muted);
 }
 
