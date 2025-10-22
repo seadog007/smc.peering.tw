@@ -46,7 +46,7 @@ export default function Sidebar() {
       <Drawer.Portal>
         <Drawer.Content
           data-testid="content"
-          className="border-b-none fixed right-2 bottom-0 left-2 mx-[-1px] flex h-full max-h-[calc(100svh-48px)] w-[calc(100vw-16px)] flex-col rounded-t-2xl border border-white/5 bg-[#19191B]/80 shadow-lg backdrop-blur-md"
+          className="border-b-none fixed right-2 bottom-0 left-2 z-10 mx-[-1px] flex h-full max-h-[calc(100svh-48px)] w-[calc(100vw-16px)] flex-col rounded-t-2xl border border-white/5 bg-[#19191B]/80 shadow-lg backdrop-blur-md"
         >
           <div
             className={clsx(
@@ -64,7 +64,7 @@ export default function Sidebar() {
       </Drawer.Portal>
     </Drawer.Root>
   ) : (
-    <div className="absolute top-2 right-2 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md">
+    <div className="absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md">
       <div className="pointer-events-none absolute inset-0 size-full rounded-2xl border border-white/5" />
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 bg-white/10"
@@ -85,7 +85,7 @@ function SidebarContent() {
       <div className="relative z-10 flex h-full w-full flex-col gap-4 p-4">
         <div className="flex w-full items-center justify-between">
           <NativeSelect
-            className="h-auto border-0 !bg-transparent !px-0 !pr-9 text-lg font-semibold !ring-0"
+            className="h-auto border-0 !bg-transparent !px-0 !pr-9 text-lg font-semibold shadow-none !ring-0"
             value={showHistorical.toString()}
             onChange={(e) => setShowHistorical(e.target.value === "true")}
           >
