@@ -285,9 +285,9 @@
     "cableid": "apcn2",
     "segment": "apcn2-seg-7",
     "title": "APCN2 中國方向斷線",
-    "description": "區段 7（台灣-中國）斷線（21.85km from SHT CLS、Shunt fault），影響中國新加坡方面流量，暫無修纜許可，No ETR",
+    "description": "區段 7（台灣-中國汕頭）斷線（21.85km from SHT CLS、Shunt fault），影響中國新加坡方面流量，於 2025-05-16T09:56:00+08:00 暫時調整，暫無修復許可，No ETR。",
     "reparing_at": "",
-    "resolved_at": "2025-05-16T09:56:00+08:00"
+    "resolved_at": ""
   },
   {
     "date": "2025-06-15T02:26:12+08:00",
