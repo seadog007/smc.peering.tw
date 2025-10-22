@@ -20,7 +20,20 @@ export default function SidebarButton({
             "radial-gradient(circle at top, black 0%, transparent 60%)",
         }}
       />
-      <div className="relative flex items-center justify-center gap-2">
+      <div
+        className="pointer-events-none absolute inset-0 rounded-full border-[0.5px] border-white/20"
+        style={{
+          maskImage:
+            "radial-gradient(circle at top, black 0%, transparent 80%)",
+        }}
+      />
+      <div
+        className="relative flex items-center justify-center gap-2 drop-shadow-sm drop-shadow-white/5"
+        style={{
+          maskImage:
+            "radial-gradient(circle at bottom, black 0%, rgba(0,0,0,.75) 50%)",
+        }}
+      >
         {children}
       </div>
     </motion.button>
