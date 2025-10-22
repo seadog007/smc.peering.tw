@@ -179,6 +179,8 @@ export default function MapWithCables({
 }: MapWithCablesProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const landingPoints = landingPointsJson as unknown as LandingPoint[];
+  const [cursor, setCursor] = useState<string>("");
+  const [hoveredCableId, setHoveredCableId] = useState<string | null>(null);
   const [selectedCable, setSelectedCable] = useState<{
     cableName: string;
     segmentId: string;
@@ -311,6 +313,15 @@ export default function MapWithCables({
     });
   };
 
+  // Change cursor to pointer when hovering over interactive cable features (excluding glow layer)
+  const handleMouseMove = (event: any) => {
+    const feature = event.features?.find(
+      (f: any) => f.properties?.status !== "broken-glow",
+    );
+    setCursor(feature ? "pointer" : "");
+    setHoveredCableId(feature ? (feature.properties?.cableId ?? null) : null);
+  };
+
   if (isLoading) {
     return (
       <div className={cn("flex h-full w-full items-center justify-center")}>
@@ -321,6 +332,7 @@ export default function MapWithCables({
 
   return (
     <Map
+      cursor={cursor}
       initialViewState={
         isMobile
           ? {
@@ -336,13 +348,38 @@ export default function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
-      interactiveLayerIds={["cables-layer"]}
+      interactiveLayerIds={["cables-hit", "cables-layer"]}
       doubleClickZoom={false}
       keyboard={false}
       attributionControl={false}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        setCursor("");
+        setHoveredCableId(null);
+      }}
       onClick={handleCableClick}
     >
       <Source id="cables" type="geojson" data={cableData}>
+        {/* Hover glow layer for better visual feedback */}
+        <Layer
+          id="cables-hover-glow"
+          type="line"
+          filter={
+            (hoveredCableId
+              ? [
+                  "all",
+                  ["!=", ["get", "status"], "broken-glow"],
+                  ["==", ["get", "cableId"], hoveredCableId],
+                ]
+              : ["==", ["get", "cableId"], "__none__"]) as any
+          }
+          layout={{ "line-join": "round", "line-cap": "round" }}
+          paint={{
+            "line-color": "#fff",
+            "line-width": 8,
+            "line-opacity": 0.1,
+          }}
+        />
         <Layer
           id="cables-layer"
           type="line"
@@ -352,6 +389,18 @@ export default function MapWithCables({
             "line-width": ["get", "lineWidth"],
             "line-blur": ["get", "lineBlur"],
             "line-opacity": ["get", "lineOpacity"],
+          }}
+        />
+        {/* Invisible wide hit area to make hover/click easier */}
+        <Layer
+          id="cables-hit"
+          type="line"
+          layout={{ "line-join": "round", "line-cap": "round" }}
+          paint={{
+            "line-color": "#000000",
+            "line-width": 18,
+            "line-opacity": 0,
+            "line-blur": 0,
           }}
         />
       </Source>
