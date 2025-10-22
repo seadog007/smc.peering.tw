@@ -450,7 +450,7 @@ export default function MapWithCables({
           closeButton={true}
           closeOnClick={false}
           maxWidth="250px"
-          offset={25}
+          offset={6}
         >
           <div className="px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
@@ -474,7 +474,7 @@ export default function MapWithCables({
           closeButton={true}
           closeOnClick={false}
           maxWidth="250px"
-          offset={25}
+          offset={6}
         >
           <div className="px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
@@ -498,7 +498,7 @@ export default function MapWithCables({
           closeButton={true}
           closeOnClick={false}
           maxWidth="260px"
-          offset={25}
+          offset={6}
         >
           <div className="px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
