@@ -82,10 +82,10 @@ function SidebarContent() {
   const [showHistorical, setShowHistorical] = useState(false);
   return (
     <>
-      <div className="relative z-10 flex h-full w-full flex-col gap-2 px-4 pt-2 pb-4">
+      <div className="relative z-10 flex h-full w-full flex-col gap-3 p-3">
         <div className="flex w-full items-center justify-between">
           <NativeSelect
-            className="h-auto border-0 !bg-transparent !px-0 !pr-9 text-lg font-semibold shadow-none !ring-0"
+            className="text-md h-auto border-white/5 font-semibold shadow-none"
             value={showHistorical.toString()}
             onChange={(e) => setShowHistorical(e.target.value === "true")}
           >
