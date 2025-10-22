@@ -48,7 +48,7 @@ export default function IncidentList({
   };
 
   return (
-    <div className="flex flex-col divide-y text-sm">
+    <div className="flex flex-col divide-y text-sm tracking-tight">
       {filteredIncidents?.map((incident, index) => (
         <div key={`${incident.cableid}-${incident.date}-${index}`}>
           <div className="flex items-center gap-4 py-4">
@@ -89,18 +89,18 @@ export default function IncidentList({
 
               <div className="mt-2 flex flex-col gap-1 border-t border-white/10 pt-2 text-sm text-white/70 empty:hidden">
                 {incident.reparing_at && incident.reparing_at !== "" && (
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-1">
                     <span>{t("incidents.reparing_at")}</span>
-                    <span className="ml-1 text-white/50">
+                    <span className="text-right text-white/50">
                       {formatDateTime(incident.reparing_at)}
                     </span>
                   </div>
                 )}
 
                 {incident.resolved_at && incident.resolved_at !== "" && (
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-1">
                     <span>{t("incidents.resolved_at")}</span>
-                    <span className="ml-1 text-white/50">
+                    <span className="text-right text-white/50">
                       {formatDateTime(incident.resolved_at)}
                     </span>
                   </div>
