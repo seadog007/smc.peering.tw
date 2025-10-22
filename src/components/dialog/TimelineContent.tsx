@@ -550,7 +550,11 @@ export default function UptimeTimeline({
             </div>
             <div className="mt-3 flex justify-between text-[11px] text-slate-500">
               <span>{formatDate(startDate)}</span>
-              <span>{formatDate(new Date((startDate.getTime() + endDate.getTime()) / 2))}</span>
+              <span>
+                {formatDate(
+                  new Date((startDate.getTime() + endDate.getTime()) / 2),
+                )}
+              </span>
               <span>{formatDate(endDate)}</span>
             </div>
           </div>
