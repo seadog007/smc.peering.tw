@@ -24,26 +24,29 @@ export default function AboutDialog() {
       returnObjects: true,
     }) as unknown as VersionHistory;
     return (
-      <div className="text-sm leading-relaxed font-normal text-gray-100">
-        <h3 className="mb-4 border-b border-gray-500/20 pb-2 text-xl font-semibold text-gray-400">
-          {t("version.history")}
-        </h3>
-
+      <div className="mt-6 font-normal">
         <div className="flex flex-col divide-y">
+          <DialogHeader className="pb-2">
+            <DialogTitle> {t("version.history")}</DialogTitle>
+          </DialogHeader>
           {Object.entries(versionHistory)
             .reverse()
             .map(([version, versionData]) => (
-              <div key={version} className="py-3">
-                <p className="mb-3 font-semibold text-gray-200">
-                  <b className="font-bold text-gray-400">{version}</b>:{" "}
-                  {versionData.date}
-                </p>
-                <ul className="m-0 list-none pl-5">
+              <div key={version} className="py-2">
+                <div className="mb-1 flex items-center justify-between gap-2 text-base">
+                  <div className="font-semibold text-gray-200 tabular-nums">
+                    {version}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    {versionData.date}
+                  </div>
+                </div>
+                <ul className="flex flex-col gap-0.5">
                   {Object.entries(versionData.changes).map(
                     ([change, changeData]) => (
                       <li
                         key={change}
-                        className="relative mb-2 pl-4 text-gray-100 before:absolute before:left-0 before:font-bold before:text-gray-400 before:content-['•']"
+                        className="relative pl-4 text-gray-300 before:absolute before:left-0 before:font-semibold before:text-gray-400 before:content-['•']"
                       >
                         {changeData}
                       </li>
@@ -65,7 +68,7 @@ export default function AboutDialog() {
       </DialogTrigger>
       <DialogContent className="p-0">
         <ScrollArea className="max-h-[75vh] overflow-y-auto">
-          <div className="flex flex-col gap-4 p-6 text-white/80">
+          <div className="flex flex-col gap-4 p-6 text-sm text-white/80">
             <DialogHeader>
               <DialogTitle> {t("about.title")}</DialogTitle>
             </DialogHeader>
