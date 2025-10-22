@@ -469,7 +469,7 @@ export default function UptimeTimeline({
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full divide-y">
       {cables.map((cable) => {
         const timeline = timelineByCable[cable.id];
         const points = timeline?.points ?? fallbackPoints;
@@ -478,10 +478,7 @@ export default function UptimeTimeline({
           timeline?.latestStatus ?? ("online" as TimelineStatus);
 
         return (
-          <div
-            key={cable.id}
-            className="rounded-md border border-white/5 bg-white/5 p-4 shadow-lg"
-          >
+          <div key={cable.id} className="py-2">
             <div className="flex items-start justify-between gap-6">
               <div className="shrink-0">
                 <div className="text-lg font-semibold">{cable.name}</div>
@@ -504,7 +501,7 @@ export default function UptimeTimeline({
             </div>
 
             <div className="mt-4">
-              <div className="flex h-14 w-full overflow-hidden rounded-md bg-white/5">
+              <div className="flex h-14 w-full overflow-hidden rounded-md bg-white/5 select-none">
                 {points.map((point, index) => {
                   const statusColor = getStatusColor(point.status);
                   const tooltipStartLabel = formatDateTime(point.tooltipStart);
@@ -512,7 +509,7 @@ export default function UptimeTimeline({
                     ? formatDateTime(point.tooltipEnd)
                     : t("common.active");
                   return (
-                    <Tooltip key={point.id}>
+                    <Tooltip key={point.id} useTouch>
                       <TooltipTrigger asChild>
                         <div
                           role="button"
@@ -553,11 +550,7 @@ export default function UptimeTimeline({
             </div>
             <div className="mt-3 flex justify-between text-[11px] text-slate-500">
               <span>{formatDate(startDate)}</span>
-              <span>
-                {t("timeline.uptimePercentage", {
-                  value: uptimePercent.toFixed(1),
-                })}
-              </span>
+              <span>{formatDate(new Date((startDate.getTime() + endDate.getTime()) / 2))}</span>
               <span>{formatDate(endDate)}</span>
             </div>
           </div>
