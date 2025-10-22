@@ -1,9 +1,18 @@
 import { History } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import UptimeTimeline from "@/components/UptimeTimeline";
+import { useTranslation } from "react-i18next";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import TimelineContent from "@/components/dialog/TimelineContent";
 import SidebarButton from "@/components/SidebarButton";
 export default function AboutDialog() {
+  const { t } = useTranslation();
   const now = new Date();
   const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
@@ -33,12 +42,19 @@ export default function AboutDialog() {
           <History className="size-5" />
         </SidebarButton>
       </DialogTrigger>
-      <DialogContent>
-        <UptimeTimeline
-          cables={cables}
-          startDate={timelineRange}
-          endDate={now}
-        />
+      <DialogContent className="p-0 sm:max-w-3xl">
+        <ScrollArea className="h-full max-h-[80vh] overflow-y-auto">
+          <div className="p-6">
+            <DialogHeader className="mb-3">
+              <DialogTitle> {t("timeline.title")}</DialogTitle>
+            </DialogHeader>
+            <TimelineContent
+              cables={cables}
+              startDate={timelineRange}
+              endDate={now}
+            />
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
