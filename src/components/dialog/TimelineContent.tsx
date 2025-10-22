@@ -500,7 +500,7 @@ export default function UptimeTimeline({
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-2">
               <div className="flex h-14 w-full overflow-hidden rounded-md bg-white/5 select-none">
                 {points.map((point, index) => {
                   const statusColor = getStatusColor(point.status);
@@ -548,7 +548,7 @@ export default function UptimeTimeline({
                 })}
               </div>
             </div>
-            <div className="mt-3 flex justify-between text-[11px] text-slate-500">
+            <div className="mt-2 flex justify-between text-[11px] text-slate-500">
               <span>{formatDate(startDate)}</span>
               <span>
                 {formatDate(
