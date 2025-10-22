@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMediaQuery } from "usehooks-ts";
 import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
 import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
@@ -170,18 +171,13 @@ async function loadCables(): Promise<Cable[]> {
 type CableFilter = "all" | "normal" | "broken";
 
 interface MapWithCablesProps {
-  style?: React.CSSProperties;
-  center?: [number, number];
-  zoom?: number;
   cableFilter?: CableFilter;
 }
 
 export default function MapWithCables({
-  style,
-  center = [121, 23.5],
-  zoom = 4.5,
   cableFilter = "all",
 }: MapWithCablesProps) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const landingPoints = landingPointsJson as unknown as LandingPoint[];
   const [selectedCable, setSelectedCable] = useState<{
     cableName: string;
@@ -317,153 +313,157 @@ export default function MapWithCables({
 
   if (isLoading) {
     return (
-      <div
-        className={cn("flex h-full w-full items-center justify-center", style)}
-      >
+      <div className={cn("flex h-full w-full items-center justify-center")}>
         <div className="text-white">Loading map...</div>
       </div>
     );
   }
 
   return (
-    <div className={cn("h-full w-full")} style={style}>
-      <Map
-        initialViewState={{
-          longitude: center[0],
-          latitude: center[1],
-          zoom,
-        }}
-        style={{ width: "100%", height: "100%" }}
-        mapStyle={BASE_MAP_STYLE}
-        interactiveLayerIds={["cables-layer"]}
-        doubleClickZoom={false}
-        keyboard={false}
-        attributionControl={false}
-        onClick={handleCableClick}
-      >
-        <Source id="cables" type="geojson" data={cableData}>
-          <Layer
-            id="cables-layer"
-            type="line"
-            layout={{ "line-join": "round", "line-cap": "round" }}
-            paint={{
-              "line-color": ["get", "color"],
-              "line-width": ["get", "lineWidth"],
-              "line-blur": ["get", "lineBlur"],
-              "line-opacity": ["get", "lineOpacity"],
+    <Map
+      initialViewState={
+        isMobile
+          ? {
+              longitude: 121,
+              latitude: 20.5,
+              zoom: 4.5,
+            }
+          : {
+              longitude: 125,
+              latitude: 23.5,
+              zoom: 5,
+            }
+      }
+      style={{ width: "100%", height: "100%" }}
+      mapStyle={BASE_MAP_STYLE}
+      interactiveLayerIds={["cables-layer"]}
+      doubleClickZoom={false}
+      keyboard={false}
+      attributionControl={false}
+      onClick={handleCableClick}
+    >
+      <Source id="cables" type="geojson" data={cableData}>
+        <Layer
+          id="cables-layer"
+          type="line"
+          layout={{ "line-join": "round", "line-cap": "round" }}
+          paint={{
+            "line-color": ["get", "color"],
+            "line-width": ["get", "lineWidth"],
+            "line-blur": ["get", "lineBlur"],
+            "line-opacity": ["get", "lineOpacity"],
+          }}
+        />
+      </Source>
+
+      {cables?.map((cable) =>
+        cable.equipments?.map((equip) => (
+          <Marker
+            key={`marker-${equip.id}`}
+            longitude={equip.coordinate[0]}
+            latitude={equip.coordinate[1]}
+            onClick={() => handleEquipmentClick(equip)}
+          >
+            <div className="z-[1] size-5 cursor-pointer rounded-full bg-white" />
+          </Marker>
+        )),
+      )}
+
+      {landingPoints.map((lp) => (
+        <Marker
+          key={`lp-${lp.id}`}
+          longitude={lp.coordinates[0]}
+          latitude={lp.coordinates[1]}
+          onClick={() =>
+            setSelectedLandingPoint({
+              name: lp.name,
+              coordinates: lp.coordinates,
+            })
+          }
+        >
+          <motion.div
+            className="size-4 cursor-pointer rounded-full bg-gradient-to-b from-blue-500 to-blue-600 shadow-lg ring-2 ring-white/95 md:size-3"
+            whileHover={{
+              scale: 1.05,
+            }}
+            whileTap={{
+              scale: 0.95,
             }}
           />
-        </Source>
+        </Marker>
+      ))}
 
-        {cables?.map((cable) =>
-          cable.equipments?.map((equip) => (
-            <Marker
-              key={`marker-${equip.id}`}
-              longitude={equip.coordinate[0]}
-              latitude={equip.coordinate[1]}
-              onClick={() => handleEquipmentClick(equip)}
-            >
-              <div className="z-[1] size-5 cursor-pointer rounded-full bg-white" />
-            </Marker>
-          )),
-        )}
-
-        {landingPoints.map((lp) => (
-          <Marker
-            key={`lp-${lp.id}`}
-            longitude={lp.coordinates[0]}
-            latitude={lp.coordinates[1]}
-            onClick={() =>
-              setSelectedLandingPoint({
-                name: lp.name,
-                coordinates: lp.coordinates,
-              })
-            }
-          >
-            <motion.div
-              className="size-4 cursor-pointer rounded-full bg-gradient-to-b from-blue-500 to-blue-600 shadow-lg ring-2 ring-white/95 md:size-3"
-              whileHover={{
-                scale: 1.05,
-              }}
-              whileTap={{
-                scale: 0.95,
-              }}
-            />
-          </Marker>
-        ))}
-
-        {selectedCable && (
-          <Popup
-            longitude={selectedCable.coordinates[0]}
-            latitude={selectedCable.coordinates[1]}
-            onClose={() => setSelectedCable(null)}
-            closeButton={true}
-            closeOnClick={false}
-            maxWidth="250px"
-            offset={25}
-          >
-            <div className="px-3 py-2">
-              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
-                {selectedCable.cableName}
-              </h3>
-              <div className="mt-1 border-t border-gray-300 pt-1">
-                <p className="text-xs whitespace-nowrap text-gray-500">
-                  {selectedCable.coordinates[1].toFixed(4)}°N,{" "}
-                  {selectedCable.coordinates[0].toFixed(4)}°E
-                </p>
-              </div>
+      {selectedCable && (
+        <Popup
+          longitude={selectedCable.coordinates[0]}
+          latitude={selectedCable.coordinates[1]}
+          onClose={() => setSelectedCable(null)}
+          closeButton={true}
+          closeOnClick={false}
+          maxWidth="250px"
+          offset={25}
+        >
+          <div className="px-3 py-2">
+            <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
+              {selectedCable.cableName}
+            </h3>
+            <div className="mt-1 border-t border-gray-300 pt-1">
+              <p className="text-xs whitespace-nowrap text-gray-500">
+                {selectedCable.coordinates[1].toFixed(4)}°N,{" "}
+                {selectedCable.coordinates[0].toFixed(4)}°E
+              </p>
             </div>
-          </Popup>
-        )}
+          </div>
+        </Popup>
+      )}
 
-        {selectedEquipment && (
-          <Popup
-            longitude={selectedEquipment.coordinates[0]}
-            latitude={selectedEquipment.coordinates[1]}
-            onClose={() => setSelectedEquipment(null)}
-            closeButton={true}
-            closeOnClick={false}
-            maxWidth="250px"
-            offset={25}
-          >
-            <div className="px-3 py-2">
-              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
-                {selectedEquipment.name}
-              </h3>
-              <div className="mt-1 border-t border-gray-300 pt-1">
-                <p className="text-xs whitespace-nowrap text-gray-500">
-                  {selectedEquipment.coordinates[1].toFixed(4)}°N,{" "}
-                  {selectedEquipment.coordinates[0].toFixed(4)}°E
-                </p>
-              </div>
+      {selectedEquipment && (
+        <Popup
+          longitude={selectedEquipment.coordinates[0]}
+          latitude={selectedEquipment.coordinates[1]}
+          onClose={() => setSelectedEquipment(null)}
+          closeButton={true}
+          closeOnClick={false}
+          maxWidth="250px"
+          offset={25}
+        >
+          <div className="px-3 py-2">
+            <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
+              {selectedEquipment.name}
+            </h3>
+            <div className="mt-1 border-t border-gray-300 pt-1">
+              <p className="text-xs whitespace-nowrap text-gray-500">
+                {selectedEquipment.coordinates[1].toFixed(4)}°N,{" "}
+                {selectedEquipment.coordinates[0].toFixed(4)}°E
+              </p>
             </div>
-          </Popup>
-        )}
+          </div>
+        </Popup>
+      )}
 
-        {selectedLandingPoint && (
-          <Popup
-            longitude={selectedLandingPoint.coordinates[0]}
-            latitude={selectedLandingPoint.coordinates[1]}
-            onClose={() => setSelectedLandingPoint(null)}
-            closeButton={true}
-            closeOnClick={false}
-            maxWidth="260px"
-            offset={25}
-          >
-            <div className="px-3 py-2">
-              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
-                {selectedLandingPoint.name}
-              </h3>
-              <div className="mt-1 border-t border-gray-300 pt-1">
-                <p className="text-xs whitespace-nowrap text-gray-500">
-                  {selectedLandingPoint.coordinates[1].toFixed(4)}°N,{" "}
-                  {selectedLandingPoint.coordinates[0].toFixed(4)}°E
-                </p>
-              </div>
+      {selectedLandingPoint && (
+        <Popup
+          longitude={selectedLandingPoint.coordinates[0]}
+          latitude={selectedLandingPoint.coordinates[1]}
+          onClose={() => setSelectedLandingPoint(null)}
+          closeButton={true}
+          closeOnClick={false}
+          maxWidth="260px"
+          offset={25}
+        >
+          <div className="px-3 py-2">
+            <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
+              {selectedLandingPoint.name}
+            </h3>
+            <div className="mt-1 border-t border-gray-300 pt-1">
+              <p className="text-xs whitespace-nowrap text-gray-500">
+                {selectedLandingPoint.coordinates[1].toFixed(4)}°N,{" "}
+                {selectedLandingPoint.coordinates[0].toFixed(4)}°E
+              </p>
             </div>
-          </Popup>
-        )}
-      </Map>
-    </div>
+          </div>
+        </Popup>
+      )}
+    </Map>
   );
 }
