@@ -381,7 +381,7 @@ export default function MapWithCables({
             }
           >
             <motion.div
-              className="size-4 cursor-pointer rounded-full bg-gradient-to-b from-blue-500 to-blue-600 shadow-lg ring-2 ring-white/75 md:size-3"
+              className="size-4 cursor-pointer rounded-full bg-gradient-to-b from-blue-500 to-blue-600 shadow-lg ring-2 ring-white/95 md:size-3"
               whileHover={{
                 scale: 1.05,
               }}
@@ -403,14 +403,11 @@ export default function MapWithCables({
             offset={25}
           >
             <div className="px-3 py-2">
-              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-[#48A9FF]">
+              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
                 {selectedCable.cableName}
               </h3>
-              <p className="mt-1 text-xs text-slate-400">
-                Segment: {selectedCable.segmentId}
-              </p>
-              <div className="mt-2 border-t border-slate-700/60 pt-2">
-                <p className="m-0 text-[11px] whitespace-nowrap text-slate-500">
+              <div className="mt-1 border-t border-gray-300 pt-1">
+                <p className="text-xs whitespace-nowrap text-gray-500">
                   {selectedCable.coordinates[1].toFixed(4)}°N,{" "}
                   {selectedCable.coordinates[0].toFixed(4)}°E
                 </p>
@@ -430,11 +427,11 @@ export default function MapWithCables({
             offset={25}
           >
             <div className="px-3 py-2">
-              <h3 className="m-0 mb-2 pr-5 text-sm leading-snug font-semibold break-words text-[#48A9FF]">
+              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
                 {selectedEquipment.name}
               </h3>
-              <div className="mt-2 border-t border-slate-700/60 pt-2">
-                <p className="m-0 text-[11px] whitespace-nowrap text-slate-500">
+              <div className="mt-1 border-t border-gray-300 pt-1">
+                <p className="text-xs whitespace-nowrap text-gray-500">
                   {selectedEquipment.coordinates[1].toFixed(4)}°N,{" "}
                   {selectedEquipment.coordinates[0].toFixed(4)}°E
                 </p>
@@ -454,11 +451,11 @@ export default function MapWithCables({
             offset={25}
           >
             <div className="px-3 py-2">
-              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-[#48A9FF]">
+              <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-500">
                 {selectedLandingPoint.name}
               </h3>
-              <div className="mt-2 border-t border-slate-700/60 pt-2">
-                <p className="m-0 text-[11px] whitespace-nowrap text-slate-500">
+              <div className="mt-1 border-t border-gray-300 pt-1">
+                <p className="text-xs whitespace-nowrap text-gray-500">
                   {selectedLandingPoint.coordinates[1].toFixed(4)}°N,{" "}
                   {selectedLandingPoint.coordinates[0].toFixed(4)}°E
                 </p>
