@@ -65,9 +65,9 @@ export default function Sidebar() {
     </Drawer.Root>
   ) : (
     <div className="absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md">
-      <div className="pointer-events-none absolute inset-0 size-full rounded-2xl border border-white/5" />
+      <div className="pointer-events-none absolute inset-0 size-full rounded-[22px] border border-white/5" />
       <div
-        className="pointer-events-none absolute inset-0 rounded-2xl border border-white/10 bg-white/10"
+        className="pointer-events-none absolute inset-0 rounded-[22px] border border-white/10 bg-white/10"
         style={{
           maskImage:
             "radial-gradient(circle at top, black 0%, transparent 20%)",
@@ -85,7 +85,7 @@ function SidebarContent() {
       <div className="relative z-10 flex h-full w-full flex-col gap-3 p-3">
         <div className="flex w-full items-center justify-between">
           <NativeSelect
-            className="text-md h-auto border-white/5 font-semibold shadow-none"
+            className="md:text-md h-auto border-white/5 font-semibold shadow-none"
             value={showHistorical.toString()}
             onChange={(e) => setShowHistorical(e.target.value === "true")}
           >
