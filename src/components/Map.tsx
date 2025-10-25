@@ -375,9 +375,9 @@ export default function MapWithCables({
           }
           layout={{ "line-join": "round", "line-cap": "round" }}
           paint={{
-            "line-color": "#fff",
+            "line-color": "#333",
             "line-width": 8,
-            "line-opacity": 0.1,
+            "line-opacity": 1,
           }}
         />
         <Layer
