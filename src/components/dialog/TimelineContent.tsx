@@ -183,17 +183,6 @@ const STATUS_PRIORITY: Record<TimelineStatus, number> = {
   unknown: -1,
 };
 
-function selectStatus(statuses: TimelineSegment["status"][]): TimelineStatus {
-  if (statuses.length === 0) {
-    return "online";
-  }
-  return statuses.reduce<TimelineStatus>((current, candidate) => {
-    return STATUS_PRIORITY[candidate] > STATUS_PRIORITY[current]
-      ? candidate
-      : current;
-  }, "online");
-}
-
 function createTimelinePoints(
   segments: TimelineSegment[],
   incidents: Incident[],
@@ -218,62 +207,119 @@ function createTimelinePoints(
     ];
   }
 
-  const sortedIncidents = [...incidents].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  );
+  type PreparedSegment = {
+    startMs: number;
+    endMs: number;
+    status: TimelineSegment["status"];
+  };
+  type PreparedIncident = Incident & {
+    startMs: number;
+    endMs: number;
+  };
 
+  const normalizedSegments: PreparedSegment[] = segments
+    .map((segment) => ({
+      startMs: segment.startTime.getTime(),
+      endMs: segment.endTime.getTime(),
+      status: segment.status,
+    }))
+    .sort((a, b) => a.startMs - b.startMs);
+
+  const sortedIncidents: PreparedIncident[] = [...incidents]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map((incident) => ({
+      ...incident,
+      startMs: new Date(incident.date).getTime(),
+      endMs: incident.resolved_at
+        ? new Date(incident.resolved_at).getTime()
+        : endDate.getTime(),
+    }));
+
+  const startRangeMs = startDate.getTime();
   const start = startOfDay(startDate).getTime();
-  const end = endDate.getTime();
-  const totalDays = Math.ceil((end - start) / DAY_IN_MS);
+  const endRangeMs = endDate.getTime();
+  const totalDays = Math.ceil((endRangeMs - start) / DAY_IN_MS);
   const useWeeklyBuckets = totalDays > 90;
   const bucketSizeMs = useWeeklyBuckets ? DAY_IN_MS * 7 : DAY_IN_MS;
 
-  for (let cursor = start; cursor < end; cursor += bucketSizeMs) {
+  let segmentIndex = 0;
+  let incidentIndex = 0;
+
+  // Use running indices over sorted segments/incidents to keep bucket processing linear.
+
+  for (let cursor = start; cursor < endRangeMs; cursor += bucketSizeMs) {
     const bucketStart = cursor;
-    const bucketEnd = Math.min(cursor + bucketSizeMs, end);
+    const bucketEnd = Math.min(cursor + bucketSizeMs, endRangeMs);
 
-    const intersectingSegments = segments.filter(
-      (segment) =>
-        segment.startTime.getTime() < bucketEnd &&
-        segment.endTime.getTime() > bucketStart,
-    );
+    while (
+      segmentIndex < normalizedSegments.length &&
+      normalizedSegments[segmentIndex].endMs <= bucketStart
+    ) {
+      segmentIndex += 1;
+    }
 
-    const bucketStatuses = intersectingSegments.map(
-      (segment) => segment.status,
-    );
-    const status = selectStatus(bucketStatuses);
+    let status: TimelineStatus = "online";
+    for (let i = segmentIndex; i < normalizedSegments.length; i += 1) {
+      const segment = normalizedSegments[i];
+      if (segment.startMs >= bucketEnd) {
+        break;
+      }
+      if (segment.endMs <= bucketStart) {
+        continue;
+      }
+      if (STATUS_PRIORITY[segment.status] > STATUS_PRIORITY[status]) {
+        status = segment.status;
+        if (status === "disconnected") {
+          break; // disconnected is highest severity
+        }
+      }
+    }
 
-    const relatedIncident = sortedIncidents.find((incident) => {
-      const incidentStart = new Date(incident.date).getTime();
-      const incidentEnd = incident.resolved_at
-        ? new Date(incident.resolved_at).getTime()
-        : end;
-      return incidentStart < bucketEnd && incidentEnd > bucketStart;
-    });
+    while (
+      incidentIndex < sortedIncidents.length &&
+      sortedIncidents[incidentIndex].endMs <= bucketStart
+    ) {
+      incidentIndex += 1;
+    }
 
-    const clampedStart = Math.max(bucketStart, startDate.getTime());
+    let relatedIncident: PreparedIncident | undefined;
+    for (let i = incidentIndex; i < sortedIncidents.length; i += 1) {
+      const incident = sortedIncidents[i];
+      if (incident.startMs >= bucketEnd) {
+        break;
+      }
+      if (incident.startMs < bucketEnd && incident.endMs > bucketStart) {
+        relatedIncident = incident;
+        break;
+      }
+    }
+
+    const clampedStart = Math.max(bucketStart, startRangeMs);
     const inclusiveEnd = Math.max(clampedStart, bucketEnd - 1);
     const durationMs = Math.max(1, bucketEnd - clampedStart);
-    const bucketLabelDate = new Date(bucketStart);
-    const tooltipStart = relatedIncident
-      ? new Date(relatedIncident.date).toISOString()
-      : new Date(clampedStart).toISOString();
-    const tooltipEnd = relatedIncident?.resolved_at
-      ? new Date(relatedIncident.resolved_at).toISOString()
-      : relatedIncident
-        ? undefined
-        : new Date(inclusiveEnd).toISOString();
+    const bucketLabelIso = new Date(bucketStart).toISOString();
+
+    const tooltipStartMs = relatedIncident
+      ? relatedIncident.startMs
+      : clampedStart;
+    const tooltipEndValue = relatedIncident
+      ? relatedIncident.resolved_at
+        ? Math.min(relatedIncident.endMs, endRangeMs)
+        : undefined
+      : inclusiveEnd;
 
     points.push({
-      id: bucketLabelDate.toISOString(),
-      label: bucketLabelDate.toISOString(),
+      id: bucketLabelIso,
+      label: bucketLabelIso,
       value: 1,
       status,
       rangeStart: new Date(clampedStart).toISOString(),
       rangeEnd: new Date(inclusiveEnd).toISOString(),
       durationMs,
-      tooltipStart,
-      tooltipEnd,
+      tooltipStart: new Date(tooltipStartMs).toISOString(),
+      tooltipEnd: tooltipEndValue
+        ? new Date(tooltipEndValue).toISOString()
+        : undefined,
       incidentDescription: relatedIncident?.description,
     });
   }
