@@ -11,7 +11,7 @@ export default function SidebarButton({
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="relative flex size-9.5 cursor-pointer items-center justify-center rounded-full bg-white/5 text-sm font-medium text-white hover:bg-white/10 md:size-10.5"
+      className="relative flex size-9.5 cursor-pointer items-center justify-center rounded-full bg-white/5 text-sm font-medium text-white hover:bg-white/10"
     >
       <div
         className="pointer-events-none absolute inset-0 rounded-full bg-white/10"
