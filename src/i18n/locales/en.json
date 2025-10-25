@@ -7,8 +7,8 @@
     "showActive": "Show Active",
     "showHistorical": "Show Historical",
     "online": "Online",
-    "disconnected": "Disconnected",
-    "partial_disconnected": "Partial Disconnected",
+    "disconnected": "Outage",
+    "partial_disconnected": "Partial Outage",
     "notice": "Notice",
     "unknown": "Unknown",
     "days": "days"
