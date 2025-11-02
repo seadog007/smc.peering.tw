@@ -325,9 +325,9 @@
     "cableid": "frnal-nacs",
     "segment": "nacs-seg-2",
     "title": "NACS 香港方向斷線",
-    "description": "於 21°17.0500'N 115°49.9479'Е 處發生障礙（259km from HK CLS），9/15 修復後發現新障礙點（40km from TNS CLS、Shunt fault with Partial fiber cut），嚴重影響香港方面流量，迂迴至日本方面，導致日本方面流量阻塞（C2C/EAC 系統回復後已改善，APG 斷線後情況加重）。10/9 UPD：船隻漏油回港修復，ETR 後延至 11/2-11/20。",
+    "description": "於 21°17.0500'N 115°49.9479'Е 處發生障礙（259km from HK CLS），9/15 修復後發現新障礙點（40km from TNS CLS、Shunt fault with Partial fiber cut），嚴重影響香港方面流量，迂迴至日本方面，導致日本方面流量阻塞（C2C/EAC 系統回復後已改善，APG 斷線後情況加重）。10/9 UPD：船隻漏油回港修復，ETR 後延至 11/2-11/20。2025-11-02T17:28:10+08:00 短暫恢復，19:35 回到斷線狀態",
     "reparing_at": "2025-11-20T00:00:00+08:00",
-    "resolved_at": "2025-11-02T17:28:10+08:00"
+    "resolved_at": ""
   },
   {
     "date": "2025-07-06T18:05:00+08:00",
