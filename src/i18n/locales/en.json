@@ -11,7 +11,8 @@
     "partial_disconnected": "Partial Outage",
     "notice": "Notice",
     "unknown": "Unknown",
-    "days": "days"
+    "days": "days",
+    "total": "Total"
   },
   "filter": {
     "all": "All",
