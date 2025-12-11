@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.0.0** (2025-12-11): UI overhaul with new cable filter and timeline refresh feat. w/ gnehs
 - **v2.1.2** (2025-10-18): Added OKTW Grafana link
 - **v2.1.1** (2025-10-18): Fixed incidents data sorting issue
 - **v2.1.0** (2025-09-14): Made cable data smoother
