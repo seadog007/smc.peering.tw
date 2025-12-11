@@ -1,51 +1,62 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/twds.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>台灣海纜動態地圖</title>
+<html lang="en" class="dark">
 
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-KXZXX7DX');</script>
-    <!-- End Google Tag Manager -->
-    
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="台灣海纜動態地圖">
-    <meta name="description" content="互動地圖顯示歷史海纜斷線事件">
-    <meta name="keywords" content="submarine cable, Taiwan, cable map, undersea cable, internet infrastructure, 海纜, 台灣海纜, 海底電纜, 網路基礎設施">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/icon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣海纜動態地圖</title>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://smc.peering.tw/">
-    <meta property="og:title" content="台灣海纜動態地圖">
-    <meta property="og:description" content="互動地圖顯示歷史海纜斷線事件，包含海纜系統、登陸點位置及系統資訊">
-    <meta property="og:image" content="https://smc.peering.tw/og.png">
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-KXZXX7DX');</script>
+  <!-- End Google Tag Manager -->
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://smc.peering.tw/">
-    <meta property="twitter:title" content="台灣海纜動態地圖">
-    <meta property="twitter:description" content="互動地圖顯示歷史海纜斷線事件，包含海纜系統、登陸點位置及系統資訊">
-    <meta property="twitter:image" content="https://smc.peering.tw/og.png">
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="台灣海纜動態地圖">
+  <meta name="description" content="互動地圖顯示歷史海纜斷線事件">
+  <meta name="keywords" content="submarine cable, Taiwan, cable map, undersea cable, internet infrastructure, 海纜, 台灣海纜, 海底電纜, 網路基礎設施">
 
-    <!-- Additional SEO Meta Tags -->
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="Chinese">
-    <meta name="author" content="seadog007, TWDS">
-    <link rel="canonical" href="https://smc.peering.tw/">
-    <script type="module" crossorigin src="/assets/index-eAiv6vJl.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BY0Bpn2D.css">
-  </head>
-  <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KXZXX7DX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <div id="root"></div>
-  </body>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smc.peering.tw/">
+  <meta property="og:title" content="台灣海纜動態地圖">
+  <meta property="og:description" content="互動地圖顯示歷史海纜斷線事件，包含海纜系統、登陸點位置及系統資訊">
+  <meta property="og:image" content="https://smc.peering.tw/og.jpeg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://smc.peering.tw/">
+  <meta property="twitter:title" content="台灣海纜動態地圖">
+  <meta property="twitter:description" content="互動地圖顯示歷史海纜斷線事件，包含海纜系統、登陸點位置及系統資訊">
+  <meta property="twitter:image" content="https://smc.peering.tw/og.jpeg">
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="Chinese">
+  <meta name="author" content="seadog007, TWDS">
+  <link rel="canonical" href="https://smc.peering.tw/">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-uub1hP7y.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BZS1XZXZ.css">
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KXZXX7DX"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div id="root"></div>
+</body>
+
 </html>
