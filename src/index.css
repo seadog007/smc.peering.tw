@@ -1,25 +1,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  text-autospace: normal;
 }
-
 html,
 body,
 #root {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100svh;
+  overflow: hidden;
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 450;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -65,12 +60,12 @@ body,
 
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  color: #fff;
+  text-decoration: underline;
 }
 
 a:hover {
-  color: #535bf2;
+  opacity: 0.8;
 }
 
 body {
@@ -79,32 +74,6 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @theme inline {
@@ -135,14 +104,12 @@ button:focus-visible {
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  /* Uptime timeline colors (map to existing color tokens so themes follow) */
+  --color-uptime-online: var(--color-chart-2);
+  --color-uptime-disconnected: var(--color-chart-5);
+  --color-uptime-partial-disconnected: var(--color-destructive);
+  --color-uptime-notice: var(--color-chart-3);
+  --color-uptime-unknown: var(--color-muted);
 }
 
 .dark {
@@ -169,14 +136,6 @@ button:focus-visible {
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -185,5 +144,71 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@theme {
+  --font-sans: Geist, "Noto Sans TC", Avenir, Helvetica, Arial, sans-serif;
+}
+
+@layer components {
+  .maplibregl-popup {
+    @apply z-[10] font-sans drop-shadow-sm;
+  }
+
+  .maplibregl-popup-content {
+    @apply z-[10] !rounded-lg !border-white bg-white !p-0 text-slate-900 !shadow-none;
+  }
+
+  .maplibregl-popup-close-button,
+  .maplibregl-popup .maplibregl-popup-close-button {
+    @apply absolute !top-1 !right-1 flex size-5 items-center justify-center !rounded-full !bg-gray-100 text-lg !text-gray-400 hover:bg-gray-300;
+  }
+
+  .maplibregl-popup-close-button:hover,
+  .maplibregl-popup-close-button:focus,
+  .maplibregl-popup-close-button:active,
+  .maplibregl-popup .maplibregl-popup-close-button:hover,
+  .maplibregl-popup .maplibregl-popup-close-button:focus,
+  .maplibregl-popup .maplibregl-popup-close-button:active {
+    @apply bg-transparent text-[#cccccc] outline-none;
+  }
+
+  .maplibregl-popup-tip {
+    @apply !h-4 !w-4 rotate-45 rounded-tl-xs rounded-br-xs !border-0 bg-white;
+  }
+  .maplibregl-popup-anchor-bottom {
+    .maplibregl-popup-tip {
+      @apply -translate-y-[50%];
+    }
+  }
+  .maplibregl-popup-anchor-top {
+    .maplibregl-popup-tip {
+      @apply translate-y-[50%];
+    }
+  }
+  .maplibregl-popup-anchor-top-left {
+    .maplibregl-popup-tip {
+      @apply translate-x-[100%] translate-y-[50%];
+    }
+  }
+  .maplibregl-popup-anchor-top-right {
+    .maplibregl-popup-tip {
+      @apply -translate-x-[100%] translate-y-[50%];
+    }
+  }
+  .maplibregl-popup-anchor-left {
+    .maplibregl-popup-tip {
+      @apply translate-x-[50%];
+    }
+  }
+  .maplibregl-popup-anchor-right {
+    .maplibregl-popup-tip {
+      @apply -translate-x-[50%];
+    }
+  }
+
+  .maplibregl-marker {
+    @apply z-[1] will-change-transform;
   }
 }

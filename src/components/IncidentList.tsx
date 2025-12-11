@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
-import './IncidentList.css';
-
+import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { cn, useFormatDate } from "@/lib/utils";
+import { TriangleAlert, Check, XCircle } from "lucide-react";
 interface Incident {
   date: string;
   status: string;
@@ -14,104 +13,144 @@ interface Incident {
   resolved_at: string;
 }
 
-export default function IncidentList() {
+export default function IncidentList({
+  showHistorical = false,
+}: {
+  showHistorical?: boolean;
+}) {
   const { t } = useTranslation();
-  const [showHistorical, setShowHistorical] = useState(false);
+  const { formatDateTime } = useFormatDate();
 
-  const { data: incidents } = useQuery({ queryKey: ['incidents'], queryFn: async () => {
-    const res = await fetch('/data/incidents.json');
-    if (!res.ok) {
-      throw new Error(`Failed to fetch incidents: ${res.status}`);
-    }
-    const sortedIncidents = (await res.json()) as Incident[];
-    sortedIncidents.sort((a, b) =>
-      new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-    return sortedIncidents;
-  },
+  const { data: incidents } = useQuery({
+    queryKey: ["incidents"],
+    queryFn: async () => {
+      const res = await fetch("/data/incidents.json");
+      if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
+      const sortedIncidents = (await res.json()) as Incident[];
+      sortedIncidents.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
+      return sortedIncidents;
+    },
   });
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
-
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      ...(isMidnight
-        ? {}
-        : {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          }),
-    });
-  };
-
   const filteredIncidents = incidents?.filter((incident) =>
-    showHistorical ? (incident.resolved_at && incident.resolved_at !== '') : (!incident.resolved_at || incident.resolved_at === ''),
+    showHistorical
+      ? incident.resolved_at && incident.resolved_at !== ""
+      : !incident.resolved_at || incident.resolved_at === "",
   );
 
+  const calcDays = (start: string, end?: string) => {
+    const s = new Date(start);
+    const e = end && end !== "" ? new Date(end) : new Date();
+    const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+    return diff >= 0 ? diff : 0;
+  };
+
   return (
-    <div className="incident-list">
-      <div className="incident-list-header">
-        <h2 className="incident-list-title">
-          {showHistorical ? t('incidents.historicalTitle') : t('incidents.activeTitle')}
-        </h2>
-        <button
-          className="toggle-button"
-          onClick={() => setShowHistorical(!showHistorical)}
-        >
-          {showHistorical ? t('common.showActive') : t('common.showHistorical')}
-        </button>
-      </div>
-      <div className="incident-list-container">
-        {filteredIncidents?.map((incident, index) => (
+    <div className="flex flex-col divide-y text-sm tracking-tight">
+      {filteredIncidents?.map((incident, index) => {
+        const isHistorical = showHistorical;
+        const status = incident.status;
+
+        // Determine pill classes, icon and label
+        let pillClass = "";
+        let IconComponent = TriangleAlert;
+        let iconClass = "size-4 animate-pulse";
+        let label = isHistorical ? t("common.resolved") : t("common.active");
+
+        if (isHistorical) {
+          pillClass += " bg-green-900/40 text-green-400";
+          IconComponent = Check;
+          iconClass = "size-4";
+        } else if (status === "partial_disconnected") {
+          // partial: orange
+          pillClass += " bg-orange-500/40 text-orange-300";
+          IconComponent = TriangleAlert;
+          iconClass = "size-4 animate-pulse";
+          label = t("common.partial_disconnected");
+        } else if (status === "disconnected") {
+          // disconnected: red
+          pillClass += " bg-red-500/40 text-red-300";
+          IconComponent = XCircle;
+          iconClass = "size-4 animate-pulse";
+          label = t("common.disconnected");
+        } else {
+          // fallback: use active / red
+          pillClass += " bg-red-500/40 text-red-300";
+          IconComponent = TriangleAlert;
+          iconClass = "size-4 animate-pulse";
+          label = t("common.active");
+        }
+
+        return (
           <div
             key={`${incident.cableid}-${incident.date}-${index}`}
-            className="incident-card"
+            className="flex items-center gap-4 py-3"
           >
-            <div className="incident-header">
-              <h3 className="incident-title">
-                {incident.title}
-              </h3>
-              <span className={`incident-status ${(incident.resolved_at && incident.resolved_at !== '') ? 'status-resolved' : 'status-active'}`}>
-                {(incident.resolved_at && incident.resolved_at !== '') ? t('common.resolved') : t('common.active')}
-              </span>
+            <div className="w-12 flex-shrink-0 text-center md:w-18">
+              <div className="text-2xl font-bold md:text-3xl">
+                {calcDays(incident.date, incident.resolved_at)}
+              </div>
+              <div className="text-white/80">{t("common.days")}</div>
             </div>
-            <div className="incident-timestamps">
-              <p className="incident-timestamp">
-                {t('incidents.started_at')}
-                :
-                {formatDate(incident.date)}
-              </p>
-              {incident.reparing_at && incident.reparing_at !== '' && (
-                <p className="incident-timestamp">
-                  {t('incidents.reparing_at')}
-                  :
-                  {formatDate(incident.reparing_at)}
-                </p>
-              )}
-              {incident.resolved_at && incident.resolved_at !== '' && (
-                <p className="incident-timestamp">
-                  {t('incidents.resolved_at')}
-                  :
-                  {formatDate(incident.resolved_at)}
-                </p>
-              )}
+
+            <div className="flex-1">
+              <div className="flex flex-wrap-reverse items-center justify-between gap-1 tracking-tighter text-white/60">
+                <div>{formatDateTime(incident.date)}</div>
+                <div
+                  className={cn(
+                    "relative ml-auto rounded-full px-1.5 py-1 text-xs",
+                    pillClass,
+                  )}
+                >
+                  <span className="flex items-center gap-1 drop-shadow-md drop-shadow-black/20">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    <IconComponent className={iconClass as any} />
+
+                    {label}
+                  </span>
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
+                  <div className="absolute inset-0 rounded-full border-t border-white/2.5" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold">{incident.title}</h3>
+
+              <p className="text-sm text-white/80">{incident.description}</p>
+
+              <div className="mt-1.5 flex flex-col gap-1 border-t border-white/10 pt-1.5 text-sm text-white/70 empty:hidden">
+                {incident.reparing_at && incident.reparing_at !== "" && (
+                  <div className="flex items-center justify-between gap-1">
+                    <span>{t("incidents.reparing_at")}</span>
+                    <span className="text-right text-white/50">
+                      {formatDateTime(incident.reparing_at)}
+                    </span>
+                  </div>
+                )}
+
+                {incident.resolved_at && incident.resolved_at !== "" && (
+                  <div className="flex items-center justify-between gap-1">
+                    <span>{t("incidents.resolved_at")}</span>
+                    <span className="text-right text-white/50">
+                      {formatDateTime(incident.resolved_at)}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-            <p className="incident-description">{incident.description}</p>
           </div>
-        ))}
-        {filteredIncidents?.length === 0 && (
-          <div className="incident-card">
-            <p className="incident-description">
-              {showHistorical ? t('common.noHistoricalIncidents') : t('common.noActiveIncidents')}
-            </p>
-          </div>
-        )}
-      </div>
+        );
+      })}
+
+      {filteredIncidents?.length === 0 && (
+        <div className="py-6">
+          <p className="text-sm text-slate-700 dark:text-slate-200">
+            {showHistorical
+              ? t("common.noHistoricalIncidents")
+              : t("common.noActiveIncidents")}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

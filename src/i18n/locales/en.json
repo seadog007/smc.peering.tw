@@ -7,19 +7,20 @@
     "showActive": "Show Active",
     "showHistorical": "Show Historical",
     "online": "Online",
-    "disconnected": "Disconnected",
-    "partial_disconnected": "Partial Disconnected",
+    "disconnected": "Outage",
+    "partial_disconnected": "Partial Outage",
     "notice": "Notice",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "days": "days"
   },
   "filter": {
-    "all": "Mixed",
+    "all": "All",
     "normal": "Normal",
     "broken": "Broken"
   },
   "warning": {
     "title": "Important Notice",
-    "message": "This map is a dynamic submarine cable map dedicated to providing the most up-to-date status on submarine cables connected to Taiwan.<br><br>The data presented on this site is derived from publicly available intelligence sources and multiple third-party monitoring systems (including but not limited to routing information, packet latency, and packet loss rates). Through analysis and inference, it identifies potential disruptions in submarine communication cables.<br><br>Please note that the website may not reflect the most current or accurate status. The information provided is for reference only and should be verified with the official sources of each submarine cable.<br><br>If you are interested in contributing information, please refer to the contact details available in the \"About\" window located at the bottom left corner.",
+    "message": "This map is a dynamic submarine cable map dedicated to providing the most up-to-date status on submarine cables connected to Taiwan.<br><br>The data presented on this site is derived from publicly available intelligence sources and multiple third-party monitoring systems (including but not limited to routing information, packet latency, and packet loss rates). Through analysis and inference, it identifies potential disruptions in submarine communication cables.<br><br>Please note that the website may not reflect the most current or accurate status. The information provided is for reference only and should be verified with the official sources of each submarine cable.<br><br>If you are interested in contributing information, please refer to the contact details available in the \"About\" window located at the top right corner.",
     "acknowledge": "I Understand",
     "dontShowAgain": "Don't show this warning again"
   },
@@ -34,11 +35,11 @@
   },
   "timeline": {
     "title": "Cables Uptime Timeline",
-    "show": "Show Cables Uptime Timeline"
+    "uptimeLabel": "Uptime",
+    "uptimePercentage": "{{value}}% uptime"
   },
   "about": {
     "title": "About",
-    "show": "Show About",
     "description": "Taiwan Submarine Cable Map is an interactive map that shows the status and historical incidents of Taiwan's submarine cables.",
     "developer": "This project is developed by <a href='https://seadog007.work/en'>seadog007</a> with Cursor AI",
     "datacollect": "Data collected by... Still me, you can contact me on <a href='https://t.me/seadog007'>Telegram</a> or <a href='https://www.facebook.com/seadog007'>Facebook</a>",
@@ -52,88 +53,141 @@
     "version": {
       "1.0.0": {
         "date": "2025-06-15",
-        "changes": ["Initial release"]
+        "changes": [
+          "Initial release"
+        ]
       },
       "1.0.1": {
         "date": "2025-06-16",
-        "changes": ["UI Improvements", "Added Estimated Reparing Time and Resolved Time"]
+        "changes": [
+          "UI Improvements",
+          "Added Estimated Reparing Time and Resolved Time"
+        ]
       },
       "1.1.0": {
         "date": "2025-06-18",
-        "changes": ["Added Version History"]
+        "changes": [
+          "Added Version History"
+        ]
       },
       "1.1.1": {
         "date": "2025-06-18",
-        "changes": ["Added EAC1 Segment E Cable Data"]
+        "changes": [
+          "Added EAC1 Segment E Cable Data"
+        ]
       },
       "1.2.0": {
         "date": "2025-06-19",
-        "changes": ["Added Mobile Version Map"]
+        "changes": [
+          "Added Mobile Version Map"
+        ]
       },
       "1.2.1": {
         "date": "2025-06-19",
-        "changes": ["Fixed Mobile Button Position"]
+        "changes": [
+          "Fixed Mobile Button Position"
+        ]
       },
       "1.2.2": {
         "date": "2025-06-21",
-        "changes": ["Added NCP S5, S6, S1.4 Cable Data"]
+        "changes": [
+          "Added NCP S5, S6, S1.4 Cable Data"
+        ]
       },
       "1.2.3": {
         "date": "2025-07-11",
-        "changes": ["Added Hover Info when mouse is on the cable"]
+        "changes": [
+          "Added Hover Info when mouse is on the cable"
+        ]
       },
       "1.2.4": {
         "date": "2025-07-12",
-        "changes": ["Added TSE-1 Cable Data"]
+        "changes": [
+          "Added TSE-1 Cable Data"
+        ]
       },
       "1.2.5": {
         "date": "2025-07-12",
-        "changes": ["Updated APCN2 to accurate version"]
+        "changes": [
+          "Updated APCN2 to accurate version"
+        ]
       },
       "1.2.6": {
         "date": "2025-07-12",
-        "changes": ["Updated C2C Cable Data, Added Seg 2C, 3A"]
+        "changes": [
+          "Updated C2C Cable Data, Added Seg 2C, 3A"
+        ]
       },
       "1.3.0": {
         "date": "2025-07-13",
-        "changes": ["Fixed Button Layer", "Improved Map Usability", "Added Important Notice Window aka Disclaimer", "Fixed Initial Language Setting", "Added Monitoring Data Sources"]
+        "changes": [
+          "Fixed Button Layer",
+          "Improved Map Usability",
+          "Added Important Notice Window aka Disclaimer",
+          "Fixed Initial Language Setting",
+          "Added Monitoring Data Sources"
+        ]
       },
       "1.3.1": {
         "date": "2025-07-14",
-        "changes": ["Added SEO Related Settings", "Updated TM2, TM3, TP3 Cable Data"]
+        "changes": [
+          "Added SEO Related Settings",
+          "Updated TM2, TM3, TP3 Cable Data"
+        ]
       },
       "1.3.2": {
         "date": "2025-07-14",
-        "changes": ["Fixed cable data build script"]
+        "changes": [
+          "Fixed cable data build script"
+        ]
       },
       "1.3.3": {
         "date": "2025-08-22",
-        "changes": ["Added SJC2 S4 Cable Data"]
+        "changes": [
+          "Added SJC2 S4 Cable Data"
+        ]
       },
       "2.0.0": {
         "date": "2025-09-03",
-        "changes": ["Changed Leaflet Map to Maplibre GL feat. w/ whes1015", "Improved Map Usability", "Added Clock for Current Time", "Added New Language Selector", "Added Cable Filter", "Updated About Window"]
+        "changes": [
+          "Changed Leaflet Map to Maplibre GL feat. w/ whes1015",
+          "Improved Map Usability",
+          "Added Clock for Current Time",
+          "Added New Language Selector",
+          "Added Cable Filter",
+          "Updated About Window"
+        ]
       },
       "2.0.1": {
         "date": "2025-09-13",
-        "changes": ["Trying to fix performance issue"]
+        "changes": [
+          "Trying to fix performance issue"
+        ]
       },
       "2.0.2": {
         "date": "2025-09-14",
-        "changes": ["Trying to fix performance issue"]
+        "changes": [
+          "Trying to fix performance issue"
+        ]
       },
       "2.1.0": {
         "date": "2025-09-14",
-        "changes": ["Made cable data smoother"]
+        "changes": [
+          "Made cable data smoother"
+        ]
       },
       "2.1.1": {
         "date": "2025-10-18",
-        "changes": ["Fixed incidents data sorting issue"]
+        "changes": [
+          "Fixed incidents data sorting issue"
+        ]
       },
       "2.1.2": {
         "date": "2025-10-18",
-        "changes": ["Added OKTW Grafana link"]
+        "changes": [
+          "Added OKTW Grafana link"
+        ]
       }
     }
   }
-} 
+}
