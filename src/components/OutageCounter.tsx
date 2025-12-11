@@ -193,6 +193,7 @@ export default function OutageCounter() {
           loadCablesLite(),
           loadIncidents(),
         ]);
+        //@ts-ignore 這是等等會用到的妙妙工具
         const { totalDom, totalIntl, remainingDom, remainingIntl } =
           computePathAvailability(cables, incidents);
         if (!mounted) return;
