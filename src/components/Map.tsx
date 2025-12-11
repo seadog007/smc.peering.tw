@@ -337,13 +337,13 @@ export default function MapWithCables({
         isMobile
           ? {
               longitude: 121,
-              latitude: 20.5,
-              zoom: 4.5,
+              latitude: 22.5,
+              zoom: 5.5,
             }
           : {
               longitude: 125,
               latitude: 23.5,
-              zoom: 5,
+              zoom: 5.5,
             }
       }
       style={{ width: "100%", height: "100%" }}
