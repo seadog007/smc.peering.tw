@@ -15,7 +15,7 @@ import {
   NativeSelectOption,
 } from "@/components/ui/native-select";
 
-const snapPoints = ["355px", 1];
+const snapPoints = ["210px", 1];
 
 export default function Sidebar() {
   const [snap, setSnap] = useState<number | string | null>(snapPoints[0]);
