@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
 
 export default function TechClock() {
   const [time, setTime] = useState(new Date());
@@ -24,9 +23,8 @@ export default function TechClock() {
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm text-white/25 tabular-nums">
-      <Clock className="size-4" />
-      <span>{formatDateTime(time)}</span>
+    <div className="text-sm text-white/25 tabular-nums">
+      {formatDateTime(time)}
     </div>
   );
 }

@@ -11,7 +11,9 @@
     "partial_disconnected": "部分斷線",
     "notice": "注意",
     "unknown": "未知",
-    "days": "天"
+    "days": "天",
+    "total": "總計",
+    "outageStatus": "台灣對外連線狀況"
   },
   "filter": {
     "all": "全部",
