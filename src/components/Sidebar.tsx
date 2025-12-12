@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarButton from "@/components/SidebarButton";
 import AboutDialog from "@/components/dialog/About";
 import TimelineDialog from "@/components/dialog/Timeline";
-import OutageCounter from "@/components/OutageCounter";
 
 import IncidentList from "@/components/IncidentList";
 import {
@@ -106,7 +105,6 @@ function SidebarContent() {
 
         <ScrollArea className="flex-1 overflow-y-auto rounded-lg border border-white/5 bg-white/5 shadow-lg">
           <div className="px-4">
-            <OutageCounter />
             <IncidentList showHistorical={showHistorical} />
           </div>
         </ScrollArea>

@@ -6,6 +6,7 @@ import CableFilter from "./components/CableFilter";
 import IntroModal from "@/components/dialog/Intro";
 import Map from "./components/Map";
 import CurrentTime from "@/components/CurrentTime";
+import OutageCounter from "@/components/OutageCounter";
 import "./i18n";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
         />
       </div>
       <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
+        <OutageCounter />
         <CurrentTime />
       </div>
       <Sidebar />

@@ -214,23 +214,47 @@ export default function OutageCounter() {
   }, []);
 
   const totalDisplay = total ?? "--";
+  const onlineDisplay = total && outages ? total - outages : "--";
   const outageDisplay = outages ?? "--";
 
   return (
-    <div>
-      <div className="flex justify-center divide-x divide-white/5 border-b border-white/5 text-center tabular-nums">
+    <div className="mb-1">
+      <div className="flex items-center justify-center text-center tabular-nums">
+        <div className="flex w-16 flex-col gap-1 px-3 py-2">
+          <div className="bg-linear-to-b from-green-300 to-green-500 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent text-shadow-sm">
+            {onlineDisplay}
+          </div>
+          <div className="text-xs opacity-50">{t("common.online")}</div>
+        </div>
+        <div className="h-10 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
         <div className="flex w-16 flex-col gap-1 px-3 py-2">
           <div className="bg-linear-to-b from-red-300 to-red-500 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent text-shadow-sm">
             {outageDisplay}
           </div>
           <div className="text-xs opacity-50">{t("common.disconnected")}</div>
         </div>
+        <div className="h-10 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
         <div className="flex w-16 flex-col gap-1 px-3 py-2">
           <div className="bg-linear-to-b from-white to-gray-100 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent text-shadow-sm">
             {totalDisplay}
           </div>
           <div className="text-xs opacity-50">{t("common.total")}</div>
         </div>
+      </div>
+      <div className="shdaow-sm relative h-0.5 w-full overflow-hidden rounded-full bg-white/50">
+        <div
+          className="absolute top-0 left-0 h-full bg-linear-to-b from-green-400 to-green-500"
+          style={{
+            width:
+              total && outages ? `${((total - outages) / total) * 100}%` : "0%",
+          }}
+        />
+        <div
+          className="absolute top-0 right-0 h-full bg-linear-to-b from-red-400 to-red-500"
+          style={{
+            width: total && outages ? `${(outages / total) * 100}%` : "0%",
+          }}
+        />
       </div>
     </div>
   );
