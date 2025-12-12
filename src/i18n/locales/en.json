@@ -12,7 +12,8 @@
     "notice": "Notice",
     "unknown": "Unknown",
     "days": "days",
-    "total": "Total"
+    "total": "Total",
+    "outageStatus": "Taiwan International Connectivity Status"
   },
   "filter": {
     "all": "All",
