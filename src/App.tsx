@@ -19,7 +19,7 @@ function App() {
   );
 
   return (
-    <div className="relative h-[100svh] w-full">
+    <div className="relative h-svh w-full">
       <Map cableFilter={cableFilter} />
       <div className="absolute top-2 z-10 max-md:right-2 md:left-2">
         <CableFilter
@@ -30,6 +30,8 @@ function App() {
       </div>
       <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
         <OutageCounter />
+      </div>
+      <div className="absolute right-2 z-10 max-md:bottom-[168px] md:right-[416px] md:bottom-2">
         <CurrentTime />
       </div>
       <Sidebar />
