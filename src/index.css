@@ -1,9 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   text-autospace: normal;
 }
+
 html,
 body,
 #root {
@@ -107,7 +109,7 @@ body {
   /* Uptime timeline colors (map to existing color tokens so themes follow) */
   --color-uptime-online: var(--color-chart-2);
   --color-uptime-disconnected: var(--color-chart-5);
-  --color-uptime-partial-disconnected: var(--color-destructive);
+  --color-uptime-partial-disconnected: #f97316;
   --color-uptime-notice: var(--color-chart-3);
   --color-uptime-unknown: var(--color-muted);
 }
@@ -142,6 +144,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -177,31 +180,37 @@ body {
   .maplibregl-popup-tip {
     @apply !h-4 !w-4 rotate-45 rounded-tl-xs rounded-br-xs !border-0 bg-white;
   }
+
   .maplibregl-popup-anchor-bottom {
     .maplibregl-popup-tip {
       @apply -translate-y-[50%];
     }
   }
+
   .maplibregl-popup-anchor-top {
     .maplibregl-popup-tip {
       @apply translate-y-[50%];
     }
   }
+
   .maplibregl-popup-anchor-top-left {
     .maplibregl-popup-tip {
       @apply translate-x-[100%] translate-y-[50%];
     }
   }
+
   .maplibregl-popup-anchor-top-right {
     .maplibregl-popup-tip {
       @apply -translate-x-[100%] translate-y-[50%];
     }
   }
+
   .maplibregl-popup-anchor-left {
     .maplibregl-popup-tip {
       @apply translate-x-[50%];
     }
   }
+
   .maplibregl-popup-anchor-right {
     .maplibregl-popup-tip {
       @apply -translate-x-[50%];
