@@ -32,13 +32,17 @@ export default function AboutDialog() {
       return;
     }
     // Dynamically import cable data only when dialog is open
+    // Dynamically import cable data only when dialog is open
     const loadCables = async () => {
       const cableFiles = import.meta.glob<{
-        default: { id: string; name: string };
+        default: { id: string; name: string; building?: boolean };
       }>("/src/data/cables/*.json");
       const loadedCables: { id: string; name: string }[] = [];
       for (const path in cableFiles) {
         const module = await cableFiles[path]();
+        if (module.default.building) {
+          continue;
+        }
         loadedCables.push({
           id: module.default.id,
           name: module.default.name,
