@@ -336,15 +336,15 @@ export default function MapWithCables({
       initialViewState={
         isMobile
           ? {
-              longitude: 121,
-              latitude: 22.5,
-              zoom: 5.5,
-            }
+            longitude: 121,
+            latitude: 22.5,
+            zoom: 5.5,
+          }
           : {
-              longitude: 125,
-              latitude: 23.5,
-              zoom: 5.5,
-            }
+            longitude: 125,
+            latitude: 23.5,
+            zoom: 5.5,
+          }
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
@@ -367,10 +367,10 @@ export default function MapWithCables({
           filter={
             (hoveredCableId
               ? [
-                  "all",
-                  ["!=", ["get", "status"], "broken-glow"],
-                  ["==", ["get", "cableId"], hoveredCableId],
-                ]
+                "all",
+                ["!=", ["get", "status"], "broken-glow"],
+                ["==", ["get", "cableId"], hoveredCableId],
+              ]
               : ["==", ["get", "cableId"], "__none__"]) as any
           }
           layout={{ "line-join": "round", "line-cap": "round" }}
@@ -456,6 +456,9 @@ export default function MapWithCables({
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
               {selectedCable.cableName}
             </h3>
+            <p className="mt-1 text-xs text-slate-400">
+              Segment: {selectedCable.segmentId}
+            </p>
             <div className="mt-1 border-t border-gray-300 pt-1">
               <p className="text-xs whitespace-nowrap text-gray-500">
                 {selectedCable.coordinates[1].toFixed(4)}°N,{" "}
