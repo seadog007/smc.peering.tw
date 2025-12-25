@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.2.0** (2025-12-26): Filter out building cables in timeline, Timeline color adjustments, Compact timeline view
 - **v3.1.0** (2025-12-12): Added outage counter to map UI, Added dark mode favicon
 - **v3.0.0** (2025-12-11): UI overhaul with new cable filter and timeline refresh feat. w/ gnehs
 - **v2.1.2** (2025-10-18): Added OKTW Grafana link
