@@ -1,1 +1,0 @@
-const t="apricot",o="Apricot",n="#546EFF",a=!0,c=[],s=[],i=[],e={id:t,name:o,color:n,building:!0,available_path:c,equipments:s,segments:i};export{c as available_path,a as building,n as color,e as default,s as equipments,t as id,o as name,i as segments};

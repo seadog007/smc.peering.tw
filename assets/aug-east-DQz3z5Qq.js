@@ -1,1 +1,0 @@
-const t="aug-east",s="Asia United Gateway East (AUG East)",a="#19DFFF",c=!0,n=[],e=[],o=[],i={id:t,name:s,color:a,building:!0,available_path:n,equipments:e,segments:o};export{n as available_path,c as building,a as color,i as default,e as equipments,t as id,s as name,o as segments};

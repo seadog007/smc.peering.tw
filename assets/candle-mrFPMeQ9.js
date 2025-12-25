@@ -1,0 +1,1 @@
+const n="candle",t="Candle",e="#767CFF",a=!0,s=[],c=[],o=[],l={id:n,name:t,color:e,building:!0,available_path:s,equipments:c,segments:o};export{s as available_path,a as building,e as color,l as default,c as equipments,n as id,t as name,o as segments};

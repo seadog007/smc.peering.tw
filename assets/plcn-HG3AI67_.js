@@ -1,1 +1,0 @@
-const t="plcn",n="Pacific Light Cable Network (PLCN)",c="#4686FF",i=!0,o=[],s=[],e=[],a={id:t,name:n,color:c,building:!0,available_path:o,equipments:s,segments:e};export{o as available_path,i as building,c as color,a as default,s as equipments,t as id,n as name,e as segments};

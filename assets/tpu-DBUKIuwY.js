@@ -1,0 +1,1 @@
+const o="tpu",t="Taiwan-Philippines-United States (TPU)",n="#08AAFF",a=!0,s=[],i=[],e=[],c={id:"tpu",name:t,color:n,building:!0,available_path:s,equipments:i,segments:e};export{s as available_path,a as building,n as color,c as default,i as equipments,o as id,t as name,e as segments};

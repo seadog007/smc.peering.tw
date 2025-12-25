@@ -1,1 +1,0 @@
-const o="tpe",t="Trans-Pacific Express (TPE)",s="#89AFFF",i=!0,n=[],e=[],c=[],a={id:"tpe",name:t,color:s,building:!0,available_path:n,equipments:e,segments:c};export{n as available_path,i as building,s as color,a as default,e as equipments,o as id,t as name,c as segments};
