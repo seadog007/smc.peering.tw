@@ -212,6 +212,14 @@
           "Timeline color adjustments",
           "Compact timeline view"
         ]
+      },
+      "3.3.0": {
+        "date": "2025-12-26",
+        "changes": [
+          "Updated cable data - changing c2c-seg-2c to retired",
+          "Supported retired segments visualization and calculation",
+          "Restored missing segment info in popup"
+        ]
       }
     }
   }
