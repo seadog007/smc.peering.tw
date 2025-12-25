@@ -1,0 +1,512 @@
+[
+  {
+    "date": "2022-02-16T10:43:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "於 25°26.905'N 121°23.007'E 處發生故障 3/12芯斷線，其餘位置為 25°51.78'N 121°18.595'E、26°17.7'N 120°48.925'E、26°21.57'N 120°43.41'E 共四處 2022/12/25 新增 26°5.785'N 121°5.61'E，總計共五處",
+    "reparing_at": "2022-03-10T00:00:00+08:00",
+    "resolved_at": "2024-01-03T00:00:00+08:00"
+  },
+  {
+    "date": "2024-01-12T10:10:00+08:00",
+    "status": "disconnected",
+    "cableid": "twpk1",
+    "segment": "twpk1-mk-km",
+    "title": "澎金一號斷線",
+    "description": "於 24°5.82'N 118°52.4320'E 處發生故障 12/12 芯斷線 (西嶼-金湖) ",
+    "reparing_at": "2024-01-21T00:00:00+08:00",
+    "resolved_at": "2024-03-31T00:00:00+08:00"
+  },
+  {
+    "date": "2024-02-16T09:40:00+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-e",
+    "title": "EAC1 E 段香港方向斷線",
+    "description": "於 25°44.735'N 121°38.537'E 處發生故障，影響香港方面流量",
+    "reparing_at": "2024-02-28T00:00:00+08:00",
+    "resolved_at": "2024-05-07T00:00:00+08:00"
+  },
+  {
+    "date": "2024-03-13T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-hj-hk",
+    "title": "NACS 香港方向斷線",
+    "description": "於 21°11.1650'N 115°58.6108'E 處發生故障，影響香港方面流量",
+    "reparing_at": "2024-04-02T00:00:00+08:00",
+    "resolved_at": "2024-04-14T00:00:00+08:00"
+  },
+  {
+    "date": "2024-04-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-2",
+    "title": "NACS 香港方向斷線",
+    "description": "於 23°58.1688′N 122°30.0804′E 處發生故障，影響香港方面流量",
+    "reparing_at": "2024-05-30T00:00:00+08:00",
+    "resolved_at": "2024-08-06T00:00:00+08:00"
+  },
+  {
+    "date": "2024-04-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-2",
+    "title": "NACS 香港方向斷線",
+    "description": "於 24°49.4730′N 122°4.7530'E 處發生故障，影響香港方面流量",
+    "reparing_at": "2024-04-17T00:00:00+08:00",
+    "resolved_at": "2024-05-19T00:00:00+08:00"
+  },
+  {
+    "date": "2024-04-08T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-d",
+    "title": "EAC1 D 段香港方向斷線",
+    "description": "於 23°58.12′N 122°25.095′E 處發生故障，影響香港方面流量",
+    "reparing_at": "2024-04-21T00:00:00+08:00",
+    "resolved_at": "2024-05-01T00:00:00+08:00"
+  },
+  {
+    "date": "2024-04-08T00:00:00+08:00",
+    "status": "notice",
+    "cableid": "eac1",
+    "segment": "eac1-seg-c",
+    "title": "EAC1 C 段港日方向斷線",
+    "description": "於 23°8.1026′N 122°40.5820′E 處發生故障，影響港日流量，台灣使用不受影響",
+    "reparing_at": "2024-04-24T00:00:00+08:00",
+    "resolved_at": "2024-06-07T00:00:00+08:00"
+  },
+  {
+    "date": "2024-04-17T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b1",
+    "title": "EAC2 2B1段 東南亞方向斷線",
+    "description": "於 25°9.9160'N 122°29.8420'E 處發生故障，影響東南亞與新加坡方面流量",
+    "reparing_at": "2024-04-26T00:00:00+08:00",
+    "resolved_at": "2024-05-20T00:00:00+08:00"
+  },
+  {
+    "date": "2024-07-31T00:00:00+08:00",
+    "status": "notice",
+    "cableid": "frnal-fnal",
+    "segment": "fnal-seg-e",
+    "title": "FNAL 台灣外海斷線",
+    "description": "於 21°19.101'N 120°8.652'E 處發生故障，無接入台灣，不影響使用",
+    "reparing_at": "2024-09-10T00:00:00+08:00",
+    "resolved_at": "2024-05-20T00:00:00+08:00"
+  },
+  {
+    "date": "2024-09-22T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "於 25°11.6'N 121°24.59'E 處發生故障 10/12 芯斷線 (淡水-東引)，主要影響馬祖日常使用",
+    "reparing_at": "2025-05-01T00:00:00+08:00",
+    "resolved_at": "2025-07-04T00:00:00+08:00"
+  },
+  {
+    "date": "2024-10-03T15:30:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtk2",
+    "segment": "twtk2-km",
+    "title": "台金二號斷線",
+    "description": "於 24°25.17'N 120°16.43'E 處發生故障 12/12 芯斷線 (日南-金湖)",
+    "reparing_at": "",
+    "resolved_at": "2025-01-03T00:00:00+08:00"
+  },
+  {
+    "date": "2024-10-26T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "faster",
+    "segment": "faster-seg-6",
+    "title": "FASTER S6 斷線",
+    "description": "於 25°14.218'N 122°15.002'E 處發生故障",
+    "reparing_at": "2024-11-20T00:00:00+08:00",
+    "resolved_at": "2025-01-26T00:00:00+08:00"
+  },
+  {
+    "date": "2024-11-11T10:10:00+08:00",
+    "status": "notice",
+    "cableid": "eac1",
+    "segment": "eac1-seg-c",
+    "title": "EAC1 C 段港日方向斷線",
+    "description": "於 23°7.8093'N 122°40.1773'E 處發生故障，影響港日流量，台灣使用不受影響",
+    "reparing_at": "2024-11-21T00:00:00+08:00",
+    "resolved_at": "2024-12-16T00:00:00+08:00"
+  },
+  {
+    "date": "2024-11-11T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "c2c",
+    "segment": "c2c-seg-1",
+    "title": "C2C 斷線",
+    "description": "區段 1 （香港-菲律賓）於 21°16.4490'N 116°6.7150'E 處發生障礙（R18 Single FP Fault），影響香港南向流量",
+    "reparing_at": "2025-09-25T00:00:00+08:00",
+    "resolved_at": "2024-10-10T11:33:00+08:00"
+  },
+  {
+    "date": "2024-11-13T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apcn2",
+    "segment": "",
+    "title": "APCN2 未知方向斷線",
+    "description": "待補充",
+    "reparing_at": "",
+    "resolved_at": "2024-11-17T10:18:00+08:00"
+  },
+  {
+    "date": "2025-01-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpe",
+    "segment": "tpe-seg-3s",
+    "title": "TPE 3S 段斷線",
+    "description": "於 25°22.7202'N 121°47.352'E 處發生故障",
+    "reparing_at": "2025-01-11T00:00:00+08:00",
+    "resolved_at": "2025-01-20T00:00:00+08:00"
+  },
+  {
+    "date": "2025-01-04T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-1",
+    "title": "NACS 日本方向斷線",
+    "description": "於 24°58.439'N 122°2.080'E 處發生故障（30km from TNS CLS、Shunt fault），主要影響日本方面流量",
+    "reparing_at": "2025-10-28T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-01-11T01:58:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtm3",
+    "segment": "twtm3-mt",
+    "title": "台馬三號斷線",
+    "description": "於 25°5.197'N 121°5.416'E 處發生故障 24/24 芯斷線 (草漯-南竿)，2024/01/11 6 芯斷線，2024/01/15 13:36 全斷",
+    "reparing_at": "2025-01-24T00:00:00+08:00",
+    "resolved_at": "2025-03-26T03:26:00+08:00"
+  },
+  {
+    "date": "2025-01-22T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "於 26°19.175'N 120°46.865'E 處發生故障 12/12芯斷線 (淡水-東引)",
+    "reparing_at": "2025-02-08T00:00:00+08:00",
+    "resolved_at": "2025-03-31T00:00:00+08:00"
+  },
+  {
+    "date": "2025-01-22T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-d",
+    "title": "EAC1 D 段香港方向斷線",
+    "description": "於 22°26.5661'N 121°44.2585'E、23°27.9840'N 122°19.773'E 兩處發生故障，影響往香港與東南亞流量",
+    "reparing_at": "2025-02-21T00:00:00+08:00",
+    "resolved_at": "2025-04-12T12:00:00+08:00"
+  },
+  {
+    "date": "2025-02-05T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "faster",
+    "segment": "faster-seg-6",
+    "title": "FASTER S6 斷線",
+    "description": "於 25°18.140'N 122°03.705'E 處發生斷線",
+    "reparing_at": "2025-02-12T00:00:00+08:00",
+    "resolved_at": "2025-03-01T00:00:00+08:00"
+  },
+  {
+    "date": "2025-02-06T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "sjc2",
+    "segment": "sjc2-seg-5",
+    "title": "SJC2 S5東北亞方向斷線",
+    "description": "於 25°11.086'N 122°14.612'E 處發生故障，主要影響東北亞方向流量",
+    "reparing_at": "2025-03-15T00:00:00+08:00",
+    "resolved_at": "2025-03-26T00:00:00+08:00"
+  },
+  {
+    "date": "2025-02-25T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtp3",
+    "segment": "twtp3-ph",
+    "title": "台澎三號斷線",
+    "description": "於 23°17.4756'N 120°1.2708'E 處發生故障 24/24 芯斷線 (北門-馬公)",
+    "reparing_at": "2025-05-01T00:00:00+08:00",
+    "resolved_at": "2025-05-07T00:00:00+08:00"
+  },
+  {
+    "date": "2025-03-14T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtp3",
+    "segment": "twtp3-ph",
+    "title": "台澎三號斷線",
+    "description": "於 23°21.3963'N 119°48.3221'E 處發生故障 24/24 芯斷線",
+    "reparing_at": "2025-05-01T00:00:00+08:00",
+    "resolved_at": "2025-05-11T00:00:00+08:00"
+  },
+  {
+    "date": "2025-03-27T10:03:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b1",
+    "title": "EAC2 2B1段 東南亞方向斷線",
+    "description": "於 23°28.1486'N 122°16.8922'E 處發生故障，影響東南亞與新加坡方面流量",
+    "reparing_at": "2025-04-20T00:00:00+08:00",
+    "resolved_at": "2025-06-14T00:00:00+08:00"
+  },
+  {
+    "date": "2025-04-29T15:05:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-7",
+    "title": "APCN2 中國方向斷線",
+    "description": "區段 7（台灣-中國汕頭）斷線（21.85km from SHT CLS、Shunt fault），影響中國新加坡方面流量，於 2025-05-16T09:56:00+08:00 暫時調整，暫無修復許可，No ETR。",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-06-15T02:26:12+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "",
+    "title": "EAC1 斷線",
+    "description": "陸上段斷線，影響香港方面流量",
+    "reparing_at": "",
+    "resolved_at": "2025-06-15T21:04:11+08:00"
+  },
+  {
+    "date": "2025-06-16T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "於 25°44.48'N 121°21.31'E 處發生故障 12/12芯斷線 (淡水-東引)",
+    "reparing_at": "2025-06-25T00:00:00+08:00",
+    "resolved_at": "2025-07-04T00:00:00+08:00"
+  },
+  {
+    "date": "2025-07-06T00:00:00+08:00",
+    "status": "notice",
+    "cableid": "frnal-fnal",
+    "segment": "fnal-seg-e",
+    "title": "FNAL 港日斷線",
+    "description": "於 21°30.096'N 115°55.111'E 處發生故障，無接入台灣，不影響使用",
+    "reparing_at": "2025-09-05T00:00:00+08:00",
+    "resolved_at": "2025-09-16T02:21:00+08:00"
+  },
+  {
+    "date": "2025-07-06T14:10:49+08:00",
+    "status": "disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-2",
+    "title": "NACS 香港方向斷線",
+    "description": "於 21°17.0500'N 115°49.9479'Е 處發生障礙（259km from HK CLS），9/15 修復後發現新障礙點（40km from TNS CLS、Shunt fault with Partial fiber cut），嚴重影響香港方面流量，迂迴至日本方面，導致日本方面流量阻塞（C2C/EAC 系統回復後已改善，APG 斷線後情況加重）。10/9 UPD：船隻漏油回港修復，ETR 後延至 11/2-11/20。2025-11-02T17:28:10+08:00 短暫恢復，19:35 回到斷線狀態。PCCW 於 11/03 13:07 恢復。RNAL NOC 於 11/03 17:11 回報修復完成",
+    "reparing_at": "2025-11-20T00:00:00+08:00",
+    "resolved_at": "2025-11-03T17:11:00+08:00"
+  },
+  {
+    "date": "2025-07-06T18:05:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "c2c",
+    "segment": "c2c-seg-1",
+    "title": "C2C 斷線",
+    "description": "區段 1 （香港-菲律賓）斷線（200km from HKG CLS、Between R19 & R18X ），影響香港南向流量",
+    "reparing_at": "2025-10-08T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-07-10T21:47:15+08:00",
+    "status": "disconnected",
+    "cableid": "c2c",
+    "segment": "c2c-seg-2b",
+    "title": "C2C 2B 段斷線",
+    "description": "於 21°57.8463'N 120°10.2423'E 等多處發生障礙（308.6km、385.6km from HK Chung Hom Kok CLS），嚴重影響香港方面流量，10/7 通報數位發展部完修，10/9 Telstra 卡板維護後全數恢復",
+    "reparing_at": "2025-09-20T00:00:00+08:00",
+    "resolved_at": "2025-10-05T21:13:20+08:00"
+  },
+  {
+    "date": "2025-07-11T00:13:36+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-d",
+    "title": "EAC1 香港方向斷線",
+    "description": "陸上段排定改接維護（台北市士林區文昌橋），嚴重影響香港方面流量，重複斷線連線多次（02:20:30、02:25:04、02:25:51），因備援所用 C2C 先行離線，導致後續國際 ISP 未成功應變及通知下游廠商，最終導致 23,493 個 /24 （6,014,208個 IPv4 位置）從網際網路離線，約佔台灣總 IPv4 數量 17.2%",
+    "reparing_at": "",
+    "resolved_at": "2025-07-11T02:29:14+08:00"
+  },
+  {
+    "date": "2025-08-05T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-a",
+    "title": "EAC1 日本方向排定維護",
+    "description": "排定維護，更換 Repeater x2，影響日本方面流量",
+    "reparing_at": "2025-08-21T00:00:00+08:00",
+    "resolved_at": "2025-08-22T17:35:00+08:00"
+  },
+  {
+    "date": "2025-08-16T15:06:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac1",
+    "segment": "",
+    "title": "EAC1 香港方向斷線",
+    "description": "香港端路上段障礙，影響部分電信跨國傳輸",
+    "reparing_at": "",
+    "resolved_at": "2025-08-17T01:25:00+08:00"
+  },
+  {
+    "date": "2025-08-22T06:07:28+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-e",
+    "title": "EAC1 出海方向部分斷線",
+    "description": "區段 E 於 25°33.4620'N 122°30.7293'E 斷線（207km from Bali CLS），韓國與香港方向傳輸失效，影響部分 ISP 香港方面流量：RETN、CMI 等。部分傳輸維持正常服務，9/30 01:24:30 部分傳輸恢復。10/14 UPD：船隻 Stern Thrusters 維護，ETR 後延至 10/29",
+    "reparing_at": "2026-02-25T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-09-01T16:07:24+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b2",
+    "title": "EAC2 東南亞方向斷線",
+    "description": "區段 2B2（菲律賓-新加坡）斷線（474km from SGP CLS、Between RS3-44 & RS3-45），影響台灣往新加坡流量",
+    "reparing_at": "2025-12-24T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-09-16T09:24:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2a1",
+    "title": "EAC2 東南亞方向斷線",
+    "description": "區段 2A1（香港-新加坡）斷線（2850km from HKG CLS、Between R58 & R59），影響東北亞經香港轉送新加坡流量",
+    "reparing_at": "2025-12-11T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-09-21T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-6",
+    "title": "APCN2 日本方向斷線",
+    "description": "區段 6 於 25°34.032'N 121°30.190'E 處（台灣-日本千倉）斷線（55km from TNS CLS），影響日本方向流量",
+    "reparing_at": "2025-12-05T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-10-07T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」。10/28 Update 「距淡水沙崙 162 公里處斷纜」。12/3 Update「距淡水沙崙約117公里處發生部分芯線受損障礙」",
+    "reparing_at": "2026-02-27T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-10-17T23:37:45+08:00",
+    "status": "disconnected",
+    "cableid": "apg",
+    "segment": "apg-seg-1.5",
+    "title": "APG 斷線",
+    "description": "原排定 10/18 ~ 10/24 維護（如中華電信公告所示），後修改公告為海纜障礙，且修復時間未定，據中華電信所提供資料為 66km from CN CLS 供電異常導致 APG 系統下線，主要影響備援不足的香港與南向流量，次要影響透過 APG 系統往日本的傳輸；流量因透過其他系統迂迴至日本，至日本方面雍塞。",
+    "reparing_at": "",
+    "resolved_at": "2025-10-27T18:38:32+08:00"
+  },
+  {
+    "date": "2025-10-27T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "tse1",
+    "segment": "tse1-ts-fz",
+    "title": "TSE1 斷線",
+    "description": "From 數位發展部資料，「距淡水 156 公里處發生部分芯線受損障礙」",
+    "reparing_at": "2026-04-15T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-11-06T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apg",
+    "segment": "apg-seg-4",
+    "title": "APG 斷線",
+    "description": "From 數位發展部資料，「據中國南匯約290公里處斷纜」",
+    "reparing_at": "2026-02-06T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-08T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpe",
+    "segment": "tpe-seg-3n",
+    "title": "TPE 3N 段斷線",
+    "description": "From 中華電信公告",
+    "reparing_at": "2025-12-20T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-15T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apg",
+    "segment": "apg-seg-9",
+    "title": "APG 斷線",
+    "description": "From 數位發展部資料，「距新加坡樟宜約140公里處斷纜」",
+    "reparing_at": "2026-01-30T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-18T01:00:00+08:00",
+    "status": "notice",
+    "cableid": "ncp",
+    "segment": "ncp-seg-1.1",
+    "title": "NCP 1.1 段計畫性維護公告",
+    "description": "From 中華電信公告",
+    "reparing_at": "2025-12-18T05:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-21T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpe",
+    "segment": "tpe-seg-4",
+    "title": "TPE 4 段 中國香港段斷線",
+    "description": "From 數位發展部資料，「距中國崇明約72.3公里處斷纜」",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-21T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apcn2",
+    "segment": "apcn2-seg-4a",
+    "title": "APCN2 4A 段 中國日本段斷線",
+    "description": "552 km away from Chongming CLS",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-25T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "tpe",
+    "segment": "tpe-seg-1s",
+    "title": "TPE 1S 段斷線",
+    "description": "From 中華電信公告",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-25T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "sjc2",
+    "segment": "sjc2-seg-1.4",
+    "title": "SJC2 1.4 段斷線",
+    "description": "From 中華電信公告",
+    "reparing_at": "",
+    "resolved_at": ""
+  }
+]
