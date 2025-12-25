@@ -65,6 +65,7 @@ interface Segment {
   hidden?: boolean;
   coordinates: [number, number][];
   color?: string;
+  retired?: boolean;
 }
 interface Equipment {
   id: string;
@@ -143,6 +144,7 @@ function getSegmentColor(
   cable: Cable,
   incidents: Incident[],
 ) {
+  if (segment.retired) return "#292a2f"; // Near background color
   if (segment.color) return segment.color;
   const activeIncidents = incidents.filter(
     (incident) =>

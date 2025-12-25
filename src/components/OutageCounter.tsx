@@ -7,6 +7,7 @@ interface CableLite {
   id: string;
   name: string;
   available_path?: Path[];
+  segments?: { id: string; retired?: boolean }[];
 }
 
 interface Incident {
@@ -113,6 +114,24 @@ export default function OutageCounter() {
       cables.forEach((cable) => {
         if (!cable.available_path || cable.available_path.length === 0) return;
 
+        // Identify retired segments for this cable
+        const retiredSegments = new Set(
+          cable.segments
+            ?.filter((s) => s.retired)
+            .map((s) => s.id) || []
+        );
+
+        // Filter out paths that contain any retired segment
+        const validPaths = cable.available_path.filter((path) => {
+          // If the path contains a node (segment ID) that is marked as retired, exclude it.
+          // Note: 'path' array contains segment IDs mixed with country codes? 
+          // Based on c2c.json: ["TW", "c2c-seg-2b", "c2c-seg-2a", "HK"]
+          // "c2c-seg-2b" is a segment ID.
+          return !path.some((node) => retiredSegments.has(node));
+        });
+
+        if (validPaths.length === 0) return;
+
         const downSegments = new Set(
           activeIncidents
             .filter((incident) => incident.cableid === cable.id)
@@ -120,7 +139,7 @@ export default function OutageCounter() {
             .filter((id): id is string => Boolean(id && id.length > 0)),
         );
 
-        const pathGroups = groupPaths(cable.available_path);
+        const pathGroups = groupPaths(validPaths);
 
         pathGroups.forEach((paths) => {
           if (paths.length === 0) return;
