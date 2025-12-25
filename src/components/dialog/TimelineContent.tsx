@@ -524,7 +524,7 @@ export default function UptimeTimeline({
           timeline?.latestStatus ?? ("online" as TimelineStatus);
 
         return (
-          <div key={cable.id} className="py-2">
+          <div key={cable.id} className="py-1">
             <div className="flex items-start justify-between gap-6">
               <div className="shrink-0">
                 <div className="text-lg font-semibold">{cable.name}</div>
@@ -546,8 +546,8 @@ export default function UptimeTimeline({
               </div>
             </div>
 
-            <div className="mt-2">
-              <div className="flex h-14 w-full overflow-hidden rounded-md bg-white/5 select-none">
+            <div className="mt-1">
+              <div className="flex h-8 w-full overflow-hidden rounded-md bg-white/5 select-none">
                 {points.map((point, index) => {
                   const statusColor = getStatusColor(point.status);
                   const tooltipStartLabel = formatDateTime(point.tooltipStart);
@@ -594,7 +594,7 @@ export default function UptimeTimeline({
                 })}
               </div>
             </div>
-            <div className="mt-2 flex justify-between text-xs text-white/50">
+            <div className="mt-1 flex justify-between text-xs text-white/50">
               <span>{formatDate(startDate)}</span>
               <span>
                 {formatDate(

@@ -97,7 +97,7 @@ export default function AboutDialog() {
               <div className="w-full divide-y">
                 {cables.map((cable) => {
                   return (
-                    <div key={cable.id} className="py-2">
+                    <div key={cable.id} className="py-1">
                       <div className="flex items-start justify-between gap-6">
                         <div className="shrink-0">
                           <div className="text-lg font-semibold">
@@ -113,10 +113,10 @@ export default function AboutDialog() {
                         </div>
                       </div>
 
-                      <div className="mt-2">
-                        <Skeleton className="h-14 w-full rounded-md" />
+                      <div className="mt-1">
+                        <Skeleton className="h-8 w-full rounded-md" />
                       </div>
-                      <div className="mt-2 flex justify-between text-xs text-white/50">
+                      <div className="mt-1 flex justify-between text-xs text-white/50">
                         <Skeleton className="h-[14px] w-[4em] rounded-md" />
                         <Skeleton className="h-[14px] w-[4em] rounded-md" />
                         <Skeleton className="h-[14px] w-[4em] rounded-md" />
