@@ -508,5 +508,15 @@
     "description": "From 中華電信公告",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2025-12-25T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "plcn",
+    "segment": "plcn-seg-2",
+    "title": "PLCN 2 段斷線",
+    "description": "From 中華電信公告，PLCN S2 部分芯數障礙",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
