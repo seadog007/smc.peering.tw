@@ -518,5 +518,15 @@
     "description": "From 中華電信公告，PLCN S2 部分芯數障礙",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2025-12-28T04:16:14+08:00",
+    "status": "disconnected",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-2",
+    "title": "NACS 香港方向斷線",
+    "description": "04:16:14 觀測到網路流量中斷與 Rerouting",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
