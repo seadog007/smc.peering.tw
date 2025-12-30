@@ -512,6 +512,16 @@
   {
     "date": "2025-12-25T00:00:00+08:00",
     "status": "partial_disconnected",
+    "cableid": "eac1",
+    "segment": "eac1-seg-c",
+    "title": "EAC1 香港方向斷線",
+    "description": "EAC 1 Seg C 往香港方向部分斷線 (563 km from TW CLS)",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-25T00:00:00+08:00",
+    "status": "partial_disconnected",
     "cableid": "plcn",
     "segment": "plcn-seg-2",
     "title": "PLCN 2 段斷線",
@@ -526,6 +536,16 @@
     "segment": "nacs-seg-2",
     "title": "NACS 香港方向斷線",
     "description": "04:16:14 觀測到網路流量中斷與 Rerouting",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-12-29T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b1",
+    "title": "EAC2 2B1段 東南亞方向斷線",
+    "description": "EAC 2 Seg 2B1 部分芯數障礙，影響東南亞與新加坡方面流量",
     "reparing_at": "",
     "resolved_at": ""
   }
