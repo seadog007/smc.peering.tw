@@ -490,6 +490,16 @@
     "resolved_at": ""
   },
   {
+    "date": "2025-12-23T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "sjc",
+    "segment": "、",
+    "title": "SJC 香港新加坡區段中斷",
+    "description": "SJC HK-SG 區段障礙，非屬台灣直接接入系統，用以於香港中轉之流量，影響部分台灣往新加坡之部分國際業者流量",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
     "date": "2025-12-25T00:00:00+08:00",
     "status": "disconnected",
     "cableid": "tpe",
@@ -515,7 +525,7 @@
     "cableid": "eac1",
     "segment": "eac1-seg-c",
     "title": "EAC1 香港方向斷線",
-    "description": "EAC 1 Seg C 往香港方向部分斷線 (563 km from TW CLS)",
+    "description": "EAC 1 Seg C 往香港方向部分斷線 (563 km from TW CLS)，為台灣較少使用段，主要影響日本與香港間通訊",
     "reparing_at": "",
     "resolved_at": ""
   },
