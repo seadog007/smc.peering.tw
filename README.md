@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.3.1** (2026-01-03): Updated landing points
 - **v3.3.0** (2025-12-26): Updated cable data - changing c2c-seg-2c to retired, Supported retired segments visualization and calculation, Restored missing segment info in popup
 - **v3.2.0** (2025-12-26): Filter out building cables in timeline, Timeline color adjustments, Compact timeline view
 - **v3.1.0** (2025-12-12): Added outage counter to map UI, Added dark mode favicon
