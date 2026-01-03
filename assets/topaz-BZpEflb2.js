@@ -1,1 +1,0 @@
-const t="topaz",o="Topaz",n="#08ADFF",e=!0,s=[],a=[],c=[],i={id:t,name:o,color:n,building:!0,available_path:s,equipments:a,segments:c};export{s as available_path,e as building,n as color,i as default,a as equipments,t as id,o as name,c as segments};

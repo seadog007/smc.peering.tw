@@ -1,1 +1,0 @@
-const t="orca",n="ORCA",o="#08CAFF",e=!0,s=[],c=[],a=[],i={id:t,name:n,color:o,building:!0,available_path:s,equipments:c,segments:a};export{s as available_path,e as building,o as color,i as default,c as equipments,t as id,n as name,a as segments};
