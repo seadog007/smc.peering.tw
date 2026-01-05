@@ -548,5 +548,15 @@
     "description": "EAC 2 Seg 2B1 部分芯數障礙，影響東南亞與新加坡方面流量",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-01-03T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "apricot",
+    "segment": "apricot-seg-6",
+    "title": "Apricot 6 段斷線",
+    "description": "From 中華電信公告，距宜蘭頭城約 47.7 公里處斷纜",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
