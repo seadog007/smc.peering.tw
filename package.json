@@ -63,6 +63,6 @@
     "prettier-plugin-tailwindcss": "^0.7.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.41.0",
-    "vite": "^6.3.5"
+    "vite": "^6.4.1"
   }
 }
