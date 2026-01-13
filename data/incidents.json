@@ -377,7 +377,7 @@
     "title": "EAC2 東南亞方向斷線",
     "description": "區段 2A1（香港-新加坡）斷線（2850km from HKG CLS、Between R58 & R59），影響東北亞經香港轉送新加坡流量",
     "reparing_at": "2025-12-11T00:00:00+08:00",
-    "resolved_at": ""
+    "resolved_at": "2026-01-05T00:00:00+08:00"
   },
   {
     "date": "2025-09-21T00:00:00+08:00",
@@ -556,6 +556,16 @@
     "segment": "apricot-seg-6",
     "title": "Apricot 6 段斷線",
     "description": "From 中華電信公告，距宜蘭頭城約 47.7 公里處斷纜",
+    "reparing_at": "",
+    "resolved_at": ""
+  },
+  {
+    "date": "2026-01-13T08:34:02+08:00",
+    "status": "partial_disconnected",
+    "cableid": "c2c",
+    "segment": "",
+    "title": "C2C 台灣路上段障礙",
+    "description": "08:34:02 觀測到台北往枋山 C2C 出口路上段傳輸斷線",
     "reparing_at": "",
     "resolved_at": ""
   }
