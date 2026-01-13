@@ -355,7 +355,7 @@
     "cableid": "eac1",
     "segment": "eac1-seg-e",
     "title": "EAC1 出海方向部分斷線",
-    "description": "區段 E 於 25°33.4620'N 122°30.7293'E 斷線（207km from Bali CLS），韓國與香港方向傳輸失效，影響部分 ISP 香港方面流量：RETN、CMI 等。部分傳輸維持正常服務，9/30 01:24:30 部分傳輸恢復。10/14 UPD：船隻 Stern Thrusters 維護，ETR 後延至 10/29",
+    "description": "區段 E 於 25°33.4620'N 122°30.7293'E 斷線（207km from Bali CLS），韓國與香港方向傳輸失效，影響部分 ISP 香港方面流量：RETN、CMI 等。部分傳輸維持正常服務，9/30 01:24:30 部分傳輸恢復。10/14 UPD：船隻 Stern Thrusters 維護，ETR 後延至 10/29。12/30 UPD：船隻主發電機維護，ETR 後延至 2/20",
     "reparing_at": "2026-02-25T00:00:00+08:00",
     "resolved_at": ""
   },
@@ -495,7 +495,7 @@
     "cableid": "tpe",
     "segment": "tpe-seg-1s",
     "title": "TPE 1S 段斷線",
-    "description": "From 中華電信公告",
+    "description": "From 中華電信公告，區段 1S 斷纜（72.3km from Chongming CLS）",
     "reparing_at": "",
     "resolved_at": ""
   },
@@ -505,7 +505,7 @@
     "cableid": "sjc2",
     "segment": "sjc2-seg-1.4",
     "title": "SJC2 1.4 段斷線",
-    "description": "From 中華電信公告",
+    "description": "From 中華電信公告，區段 1.4 斷纜（2600km from Chikura CLS）",
     "reparing_at": "",
     "resolved_at": ""
   },
@@ -515,7 +515,7 @@
     "cableid": "eac1",
     "segment": "eac1-seg-c",
     "title": "EAC1 香港方向斷線",
-    "description": "EAC 1 Seg C 往香港方向部分斷線 (563 km from TW CLS)，為台灣較少使用段，主要影響日本與香港間通訊",
+    "description": "EAC 1 Seg C 往香港方向部分斷線（563 km from TW CLS），為台灣較少使用段，主要影響日本與香港間通訊",
     "reparing_at": "",
     "resolved_at": ""
   },
@@ -540,12 +540,12 @@
     "resolved_at": ""
   },
   {
-    "date": "2025-12-29T00:00:00+08:00",
+    "date": "2025-12-28T02:13:00+08:00",
     "status": "partial_disconnected",
     "cableid": "eac2",
     "segment": "eac2-seg-2b1",
     "title": "EAC2 2B1段 東南亞方向斷線",
-    "description": "EAC 2 Seg 2B1 部分芯數障礙，影響東南亞與新加坡方面流量",
+    "description": "區段 2B1（台灣-菲律賓） 部分芯數障礙（1477.57 km from PH CLS, ~7.8 km past R06 -> R05），影響東南亞與新加坡方面流量。 From 數位發展部資料，323km from Bali CLS ",
     "reparing_at": "",
     "resolved_at": ""
   },
