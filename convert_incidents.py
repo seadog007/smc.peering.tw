@@ -54,7 +54,7 @@ def convert_incidents():
                 })
         
         # Write to JSON file with UTF-8 encoding
-        with open('src/data/incidents.json', 'w', encoding='utf-8') as f:
+        with open('incidents.json', 'w', encoding='utf-8') as f:
             json.dump(filtered_incidents, f, indent=2, ensure_ascii=False)
         
         print(f"Successfully converted and filtered {len(filtered_incidents)} incidents to JSON format")
