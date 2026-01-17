@@ -23,14 +23,25 @@ export function useFormatDate() {
     const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
     const lang = locale ?? undefined; // undefined lets toLocaleString pick runtime default
-    return date.toLocaleString(lang, {
+
+    const dateStr = date.toLocaleString(lang, {
       year: "numeric",
       month: lang === "en" ? "short" : "numeric",
       day: "numeric",
-      ...(isMidnight
-        ? {}
-        : { hour: "2-digit", minute: "2-digit", hour12: false }),
     });
+
+    if (isMidnight) {
+      return dateStr;
+    }
+
+    const timeStr = date.toLocaleString(lang, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+
+    // Firefox zh-TW omits the space; add it manually.
+    return `${dateStr} ${timeStr}`;
   }
 
   return {
