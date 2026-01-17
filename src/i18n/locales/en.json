@@ -226,6 +226,13 @@
         "changes": [
           "Updated landing points"
         ]
+      },
+      "3.3.2": {
+        "date": "2026-01-17",
+        "changes": [
+          "Fixed datetime string for Firefox",
+          "Updated dependencies"
+        ]
       }
     }
   }
