@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.3.3** (2026-01-17): Reverted convert_incidents.py output path change
 - **v3.3.2** (2026-01-17): Fixed datetime string for Firefox, Updated dependencies
 - **v3.3.1** (2026-01-03): Updated landing points
 - **v3.3.0** (2025-12-26): Updated cable data - changing c2c-seg-2c to retired, Supported retired segments visualization and calculation, Restored missing segment info in popup
