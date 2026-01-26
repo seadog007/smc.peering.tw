@@ -564,9 +564,19 @@
     "status": "partial_disconnected",
     "cableid": "c2c",
     "segment": "",
-    "title": "C2C 台灣路上段障礙",
-    "description": "08:34:02 觀測到台北往枋山 C2C 出口路上段傳輸斷線",
+    "title": "C2C 台灣陸上段障礙",
+    "description": "08:34:02 觀測到台北往枋山 C2C 出口陸上段傳輸斷線",
     "reparing_at": "",
     "resolved_at": "2026-01-13T15:53:47+08:00"
+  },
+  {
+    "date": "2026-01-26T23:27:15+08:00",
+    "status": "partial_disconnected",
+    "cableid": "c2c",
+    "segment": "",
+    "title": "C2C 部分傳輸中斷",
+    "description": "23:27:15 觀測到部分傳輸中斷，原因調查中",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
