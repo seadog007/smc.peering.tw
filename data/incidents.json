@@ -575,8 +575,8 @@
     "cableid": "c2c",
     "segment": "",
     "title": "C2C 部分傳輸中斷",
-    "description": "23:27:15 觀測到部分傳輸中斷，原因調查中",
+    "description": "23:27:15 觀測到部分傳輸中斷，06:14:15 回復正常，原因為 HK CLS（香港上陸站）FRM Module 故障",
     "reparing_at": "",
-    "resolved_at": ""
+    "resolved_at": "2026-01-27T06:14:15+08:00"
   }
 ]
