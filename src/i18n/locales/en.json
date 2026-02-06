@@ -197,6 +197,10 @@
       "3.3.3": {
         "date": "2026-01-17",
         "changes": ["Reverted convert_incidents.py output path change"]
+      },
+      "3.4.0": {
+        "date": "2026-01-17",
+        "changes": ["Added scheduled incident status"]
       }
     }
   }

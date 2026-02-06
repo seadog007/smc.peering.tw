@@ -1,7 +1,7 @@
 {
   "name": "smc.peering.tw",
   "private": true,
-  "version": "3.3.3",
+  "version": "3.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
