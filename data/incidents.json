@@ -304,7 +304,7 @@
     "status": "partial_disconnected",
     "cableid": "c2c",
     "segment": "c2c-seg-1",
-    "title": "C2C 斷線",
+    "title": "C2C S1 斷線",
     "description": "區段 1 （香港-菲律賓）斷線（200km from HKG CLS、Between R19 & R18X ），影響香港南向流量",
     "reparing_at": "2025-10-08T00:00:00+08:00",
     "resolved_at": ""
@@ -314,7 +314,7 @@
     "status": "disconnected",
     "cableid": "c2c",
     "segment": "c2c-seg-2b",
-    "title": "C2C 2B 段斷線",
+    "title": "C2C S2B 斷線",
     "description": "於 21°57.8463'N 120°10.2423'E 等多處發生障礙（308.6km、385.6km from HK Chung Hom Kok CLS），嚴重影響香港方面流量，10/7 通報數位發展部完修，10/9 Telstra 卡板維護後全數恢復",
     "reparing_at": "2025-09-20T00:00:00+08:00",
     "resolved_at": "2025-10-05T21:13:20+08:00"
@@ -397,6 +397,16 @@
     "title": "台馬二號斷線",
     "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」。10/28 Update 「距淡水沙崙 162 公里處斷纜」。12/3 Update「距淡水沙崙約117公里處發生部分芯線受損障礙」",
     "reparing_at": "2026-02-27T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2025-10-17T20:00:00+08:00",
+    "status": "partial_disconnected",
+    "cableid": "c2c",
+    "segment": "c2c-seg-5",
+    "title": "C2C 菲日方向斷線",
+    "description": "區段 5 （日本-菲律賓）部分（4）芯數斷線、Shunt Fault (between R36 & R37)、多組中繼器更換（R33、R34、R35、R36）。原訂 ETR 1/31 後延至 2/5",
+    "reparing_at": "2026-02-05T00:00:00+08:00",
     "resolved_at": ""
   },
   {
