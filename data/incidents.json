@@ -535,7 +535,7 @@
     "cableid": "eac1",
     "segment": "eac1-seg-c",
     "title": "EAC1 C 段斷線",
-    "description": "EAC 1 Seg C 往香港方向部分斷線（563 km from TW CLS、2326 km from Japan to Hong Kong CLS between Repeaters RC-021D & RC-022B），主要影響日本與香港間通訊。1/23 UPD：ETR 延後至 2/10。2/6 UPD：ETER 延後至 2/16",
+    "description": "EAC 1 Seg C 往香港方向部分斷線（563 km from TW CLS、2326 km from Japan to Hong Kong CLS between Repeaters RC-021D & RC-022B），主要影響日本與香港間通訊（AC（日港） & BC（台港））。1/23 UPD：ETR 延後至 2/10。2/6 UPD：ETR 延後至 2/16",
     "reparing_at": "2026-04-30T00:00:00+08:00",
     "resolved_at": ""
   },
