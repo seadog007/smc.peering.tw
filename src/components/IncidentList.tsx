@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { cn, useFormatDate } from "@/lib/utils";
-import { TriangleAlert, Check, XCircle } from "lucide-react";
+import { TriangleAlert, Check, XCircle, CalendarClock } from "lucide-react";
 interface Incident {
   date: string;
   status: string;
@@ -41,8 +41,13 @@ export default function IncidentList({
   );
 
   const calcDays = (start: string, end?: string) => {
+    const nowMs = Date.now();
     const s = new Date(start);
-    const e = end && end !== "" ? new Date(end) : new Date();
+    const hasEnd = end && end !== "";
+    if (!hasEnd && s.getTime() > nowMs) {
+      return Math.ceil((s.getTime() - nowMs) / (1000 * 60 * 60 * 24));
+    }
+    const e = hasEnd ? new Date(end) : new Date(nowMs);
     const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
     return diff >= 0 ? diff : 0;
   };
@@ -52,6 +57,11 @@ export default function IncidentList({
       {filteredIncidents?.map((incident, index) => {
         const isHistorical = showHistorical;
         const status = incident.status;
+        const startDate = new Date(incident.date);
+        const isUpcoming =
+          (!incident.resolved_at || incident.resolved_at.trim() === "") &&
+          startDate.getTime() > Date.now();
+        const daysValue = calcDays(incident.date, incident.resolved_at);
 
         // Determine pill classes, icon and label
         let pillClass = "";
@@ -63,6 +73,11 @@ export default function IncidentList({
           pillClass += " bg-green-900/40 text-green-400";
           IconComponent = Check;
           iconClass = "size-4";
+        } else if (isUpcoming) {
+          pillClass += " bg-sky-500/35 text-sky-200";
+          IconComponent = CalendarClock;
+          iconClass = "size-4";
+          label = t("common.scheduled");
         } else if (status === "partial_disconnected") {
           // partial: orange
           pillClass += " bg-orange-500/40 text-orange-300";
@@ -89,10 +104,10 @@ export default function IncidentList({
             className="flex items-center gap-4 py-3"
           >
             <div className="w-12 flex-shrink-0 text-center md:w-18">
-              <div className="text-2xl font-bold md:text-3xl">
-                {calcDays(incident.date, incident.resolved_at)}
+              <div className="text-2xl font-bold md:text-3xl">{daysValue}</div>
+              <div className="text-white/80">
+                {isUpcoming ? t("common.daysAfter") : t("common.days")}
               </div>
-              <div className="text-white/80">{t("common.days")}</div>
             </div>
 
             <div className="flex-1">
