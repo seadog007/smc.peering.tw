@@ -89,13 +89,13 @@ export default function AboutDialog() {
               <DialogTitle> {t("timeline.title")}</DialogTitle>
             </DialogHeader>
             <DialogDescription asChild>
-            {hasLoaded ? (
-              <TimelineContent
-                cables={cables}
-                startDate={timelineRange}
-                endDate={now}
-              />
-            ) : (
+              {hasLoaded ? (
+                <TimelineContent
+                  cables={cables}
+                  startDate={timelineRange}
+                  endDate={now}
+                />
+              ) : (
                 <div className="w-full divide-y">
                   {cables.map((cable) => {
                     return (
@@ -127,7 +127,7 @@ export default function AboutDialog() {
                     );
                   })}
                 </div>
-            )}
+              )}
             </DialogDescription>
           </div>
         </ScrollArea>
