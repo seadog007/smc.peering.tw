@@ -67,7 +67,7 @@ export default function AboutDialog() {
   return (
     <Dialog>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <DialogTrigger asChild>
             <SidebarButton>
               <Info className="size-5" />

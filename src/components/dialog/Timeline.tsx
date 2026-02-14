@@ -70,7 +70,7 @@ export default function AboutDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <DialogTrigger asChild>
             <SidebarButton>
               <History className="size-5" />
