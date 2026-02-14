@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -38,20 +39,22 @@ export default function IntroModal() {
         <DialogHeader>
           <DialogTitle>{t("warning.title")}</DialogTitle>
         </DialogHeader>
-        <div className="text-sm text-white/80">
-          <p dangerouslySetInnerHTML={{ __html: t("warning.message") }} />
-          <div className="mt-4">
-            <label className="flex items-center space-x-2">
-              <Checkbox
-                checked={dontShowWarningAgain}
-                onCheckedChange={(checked) =>
-                  setDontShowWarningAgain(checked === true)
-                }
-              />
-              <span>{t("warning.dontShowAgain")}</span>
-            </label>
+        <DialogDescription asChild>
+          <div className="text-sm text-white/80">
+            <p dangerouslySetInnerHTML={{ __html: t("warning.message") }} />
+            <div className="mt-4">
+              <label className="flex items-center space-x-2">
+                <Checkbox
+                  checked={dontShowWarningAgain}
+                  onCheckedChange={(checked) =>
+                    setDontShowWarningAgain(checked === true)
+                  }
+                />
+                <span>{t("warning.dontShowAgain")}</span>
+              </label>
+            </div>
           </div>
-        </div>
+        </DialogDescription>
         <DialogFooter>
           <Button
             ref={buttonRef}
