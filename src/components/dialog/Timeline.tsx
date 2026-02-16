@@ -7,6 +7,7 @@ import {
   DialogTrigger,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -70,7 +71,7 @@ export default function AboutDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <DialogTrigger asChild>
             <SidebarButton>
               <History className="size-5" />
@@ -87,45 +88,47 @@ export default function AboutDialog() {
             <DialogHeader className="mb-3">
               <DialogTitle> {t("timeline.title")}</DialogTitle>
             </DialogHeader>
-            {hasLoaded ? (
-              <TimelineContent
-                cables={cables}
-                startDate={timelineRange}
-                endDate={now}
-              />
-            ) : (
-              <div className="w-full divide-y">
-                {cables.map((cable) => {
-                  return (
-                    <div key={cable.id} className="py-1">
-                      <div className="flex items-start justify-between gap-6">
-                        <div className="shrink-0">
-                          <div className="text-lg font-semibold">
-                            {cable.name}
+            <DialogDescription asChild>
+              {hasLoaded ? (
+                <TimelineContent
+                  cables={cables}
+                  startDate={timelineRange}
+                  endDate={now}
+                />
+              ) : (
+                <div className="w-full divide-y">
+                  {cables.map((cable) => {
+                    return (
+                      <div key={cable.id} className="py-1">
+                        <div className="flex items-start justify-between gap-6">
+                          <div className="shrink-0">
+                            <div className="text-lg font-semibold">
+                              {cable.name}
+                            </div>
+                            <Skeleton className="h-[18px] w-[3em] rounded-md" />
                           </div>
-                          <Skeleton className="h-[18px] w-[3em] rounded-md" />
-                        </div>
-                        <div className="text-right">
-                          <Skeleton className="h-[28px] w-[3em] rounded-md" />
-                          <div className="text-xs tracking-wide text-white/50 uppercase">
-                            {t("timeline.uptimeLabel")}
+                          <div className="text-right">
+                            <Skeleton className="h-[28px] w-[3em] rounded-md" />
+                            <div className="text-xs tracking-wide text-white/50 uppercase">
+                              {t("timeline.uptimeLabel")}
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="mt-1">
-                        <Skeleton className="h-8 w-full rounded-md" />
+                        <div className="mt-1">
+                          <Skeleton className="h-8 w-full rounded-md" />
+                        </div>
+                        <div className="mt-1 flex justify-between text-xs text-white/50">
+                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
+                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
+                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
+                        </div>
                       </div>
-                      <div className="mt-1 flex justify-between text-xs text-white/50">
-                        <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                        <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                        <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </DialogDescription>
           </div>
         </ScrollArea>
       </DialogContent>

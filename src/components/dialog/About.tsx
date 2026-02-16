@@ -3,6 +3,7 @@ import SidebarButton from "@/components/SidebarButton";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -67,7 +68,7 @@ export default function AboutDialog() {
   return (
     <Dialog>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <DialogTrigger asChild>
             <SidebarButton>
               <Info className="size-5" />
@@ -84,15 +85,20 @@ export default function AboutDialog() {
             <DialogHeader>
               <DialogTitle>{t("about.title")}</DialogTitle>
             </DialogHeader>
-            <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.techstack") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.datacollect") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.datasource") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.sponsor") }} />
-            <p dangerouslySetInnerHTML={{ __html: t("about.github") }} />
 
-            {genVersionHistory()}
+            <DialogDescription asChild>
+              <div>
+                <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.techstack") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.datacollect") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.datasource") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.sponsor") }} />
+                <p dangerouslySetInnerHTML={{ __html: t("about.github") }} />
+
+                {genVersionHistory()}
+              </div>
+            </DialogDescription>
           </div>
         </ScrollArea>
       </DialogContent>
