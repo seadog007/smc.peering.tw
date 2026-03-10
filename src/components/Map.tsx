@@ -130,11 +130,25 @@ function getSegmentStatus(
       (!incident.resolved_at || incident.resolved_at.trim() === ""),
   );
   if (activeIncidents.length > 0 && cable.available_path) {
-    const affectedSegments = activeIncidents
+    // Run markBroken only on non-partial incidents so that partial_disconnected
+    // segments with alternative routes are not incorrectly marked as fully broken.
+    const disconnectedIncidents = activeIncidents.filter(
+      (incident) => incident.status !== "partial_disconnected",
+    );
+    if (disconnectedIncidents.length > 0) {
+      const affectedSegments = disconnectedIncidents
+        .map((incident) => incident.segment?.trim())
+        .filter((id): id is string => Boolean(id && id.length > 0));
+      const brokenSegments = markBroken(cable.available_path, affectedSegments);
+      if (brokenSegments.includes(segment.id)) return "broken";
+    }
+    // Check whether this segment is directly referenced by a partial_disconnected
+    // incident. Red (broken) takes priority, so this check comes second.
+    const partialSegments = activeIncidents
+      .filter((incident) => incident.status === "partial_disconnected")
       .map((incident) => incident.segment?.trim())
       .filter((id): id is string => Boolean(id && id.length > 0));
-    const brokenSegments = markBroken(cable.available_path, affectedSegments);
-    if (brokenSegments.includes(segment.id)) return "broken";
+    if (partialSegments.includes(segment.id)) return "partial_disconnected";
   }
   return "normal";
 }
@@ -146,18 +160,9 @@ function getSegmentColor(
 ) {
   if (segment.retired) return "#292a2f"; // Near background color
   if (segment.color) return segment.color;
-  const activeIncidents = incidents.filter(
-    (incident) =>
-      incident.cableid === cable.id &&
-      (!incident.resolved_at || incident.resolved_at.trim() === ""),
-  );
-  if (activeIncidents.length > 0 && cable.available_path) {
-    const affectedSegments = activeIncidents
-      .map((incident) => incident.segment?.trim())
-      .filter((id): id is string => Boolean(id && id.length > 0));
-    const brokenSegments = markBroken(cable.available_path, affectedSegments);
-    if (brokenSegments.includes(segment.id)) return "#ff0000";
-  }
+  const status = getSegmentStatus(segment, cable, incidents);
+  if (status === "broken") return "#ff0000";
+  if (status === "partial_disconnected") return "#fcc800";
   return cable.color || "#48A9FF";
 }
 
@@ -237,7 +242,8 @@ export default function MapWithCables({
           const shouldShow =
             cableFilter === "all" ||
             (cableFilter === "normal" && status === "normal") ||
-            (cableFilter === "broken" && status === "broken");
+            (cableFilter === "broken" &&
+              (status === "broken" || status === "partial_disconnected"));
 
           if (!shouldShow) return;
 
@@ -269,7 +275,7 @@ export default function MapWithCables({
               cableId: cable.id,
               color,
               status,
-              lineWidth: status === "broken" ? 3 : 1.5,
+              lineWidth: status === "broken" || status === "partial_disconnected" ? 3 : 1.5,
               lineBlur: 0,
               lineOpacity: 1,
             },
