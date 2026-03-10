@@ -162,7 +162,7 @@ function getSegmentColor(
   if (segment.color) return segment.color;
   const status = getSegmentStatus(segment, cable, incidents);
   if (status === "broken") return "#ff0000";
-  if (status === "partial_disconnected") return "#ffff00";
+  if (status === "partial_disconnected") return "#fcc800";
   return cable.color || "#48A9FF";
 }
 
@@ -267,26 +267,6 @@ export default function MapWithCables({
             } as Feature<LineString>);
           }
 
-          if (status === "partial_disconnected") {
-            allFeatures.push({
-              type: "Feature",
-              properties: {
-                cableName: cable.name,
-                segmentId: segment.id,
-                cableId: cable.id,
-                color: "#ffff00",
-                status: "partial-glow",
-                lineWidth: 15,
-                lineBlur: 12,
-                lineOpacity: 0.4,
-              },
-              geometry: {
-                type: "LineString",
-                coordinates: segment.coordinates,
-              },
-            } as Feature<LineString>);
-          }
-
           allFeatures.push({
             type: "Feature",
             properties: {
@@ -320,9 +300,7 @@ export default function MapWithCables({
 
   const handleCableClick = (event: any) => {
     const feature = event.features?.find(
-      (f: any) =>
-        f.properties?.status !== "broken-glow" &&
-        f.properties?.status !== "partial-glow",
+      (f: any) => f.properties?.status !== "broken-glow",
     );
     if (!feature) return;
 
@@ -346,9 +324,7 @@ export default function MapWithCables({
   // Change cursor to pointer when hovering over interactive cable features (excluding glow layer)
   const handleMouseMove = (event: any) => {
     const feature = event.features?.find(
-      (f: any) =>
-        f.properties?.status !== "broken-glow" &&
-        f.properties?.status !== "partial-glow",
+      (f: any) => f.properties?.status !== "broken-glow",
     );
     setCursor(feature ? "pointer" : "");
     setHoveredCableId(feature ? (feature.properties?.cableId ?? null) : null);
@@ -401,7 +377,6 @@ export default function MapWithCables({
               ? [
                 "all",
                 ["!=", ["get", "status"], "broken-glow"],
-                ["!=", ["get", "status"], "partial-glow"],
                 ["==", ["get", "cableId"], hoveredCableId],
               ]
               : ["==", ["get", "cableId"], "__none__"]) as any
