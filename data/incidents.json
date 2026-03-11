@@ -405,9 +405,9 @@
     "cableid": "twtm2",
     "segment": "twtm2-mt",
     "title": "台馬二號斷線",
-    "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」。10/28 Update 「距淡水沙崙 162 公里處斷纜」。12/3 Update「距淡水沙崙約117公里處發生部分芯線受損障礙」",
-    "reparing_at": "2026-02-27T00:00:00+08:00",
-    "resolved_at": "2026-02-26T00:00:00+08:00"
+    "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」。12/3 Update「距淡水沙崙約117公里處發生部分芯線受損障礙」",
+    "reparing_at": "",
+    "resolved_at": "2025-10-08T00:00:00+08:00"
   },
   {
     "date": "2025-10-17T20:00:00+08:00",
@@ -440,6 +440,16 @@
     "resolved_at": ""
   },
   {
+    "date": "2025-10-28T04:24:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "From 中華電信公告「114年10月28日04:24台馬第二海纜發生芯線障礙，訊務已疏轉至台馬第三海纜，客戶服務不受影響，中華電信公司技術團隊已緊急處理中。」From 數位發展部資料「距淡水沙崙 162 公里處斷纜」。2026/02/26 Update From 中華電信公告「中華電信公司台馬第二海纜(TDM2)，於02月26日已完成部分芯線搶通並恢復雙海纜運作。」",
+    "reparing_at": "2026-02-27T00:00:00+08:00",
+    "resolved_at": "2026-02-26T00:00:00+08:00"
+  },
+  {
     "date": "2025-11-06T00:00:00+08:00",
     "status": "disconnected",
     "cableid": "apg",
@@ -455,9 +465,9 @@
     "cableid": "tpe",
     "segment": "tpe-seg-3n",
     "title": "TPE 3N 段斷線",
-    "description": "From 中華電信公告",
+    "description": "From 中華電信公告「中華電信公司橫太平洋快速海纜網路(TPE)S3N韓國區段於12月08日發生芯線障礙，訊務已疏轉至其他國際海纜，服務不受影響，中華電信公司技術團隊已緊急處理中。」。2025/12/20 Update From 中華電信公告「中華電信公司橫太平洋快速海纜網路(TPE)S3N韓國區段，已於12月20日搶修完成並恢復正常運作。」",
     "reparing_at": "2025-12-20T00:00:00+08:00",
-    "resolved_at": ""
+    "resolved_at": "2025-12-20T00:00:00+08:00"
   },
   {
     "date": "2025-12-15T00:00:00+08:00",
@@ -475,7 +485,7 @@
     "cableid": "ncp",
     "segment": "ncp-seg-1.1",
     "title": "NCP 1.1 段計畫性維護公告",
-    "description": "From 中華電信公告",
+    "description": "From 中華電信公告「新橫太平洋快速海纜網路(NCP)S1.1區段於2025年12月18日01:00~05:00計畫性維護，維修期間中華電信將進行調度支援，服務不受影響。」",
     "reparing_at": "2025-12-18T05:00:00+08:00",
     "resolved_at": "2025-12-18T05:00:00+08:00"
   },
@@ -485,9 +495,9 @@
     "cableid": "tpe",
     "segment": "tpe-seg-4",
     "title": "TPE 4 段 中國香港段斷線",
-    "description": "From 數位發展部資料，「距中國崇明約72.3公里處斷纜」",
+    "description": "From 數位發展部資料，「距中國崇明約72.3公里處斷纜」。2026/02/12 Update From 中華電信公告「中華電信公司橫太平洋快速海纜網路(TPE)S4區段，已於2月12日搶修完成並恢復正常運作。」",
     "reparing_at": "",
-    "resolved_at": ""
+    "resolved_at": "2026-02-12T05:00:00+08:00"
   },
   {
     "date": "2025-12-21T00:00:00+08:00",
@@ -495,7 +505,7 @@
     "cableid": "apcn2",
     "segment": "apcn2-seg-4a",
     "title": "APCN2 4A 段 中國日本段斷線",
-    "description": "552 km away from Chongming CLS",
+    "description": "APCN2 4A 區段斷線（552 km from Chongming CLS）。2026/01/08 Update From 中華電信公告「中華電信公司亞太海纜網路二號(APCN2)S4A區段，已於1月8日搶修完成並恢復正常運作。」",
     "reparing_at": "",
     "resolved_at": "2026-01-08T00:00:00+08:00"
   },
@@ -638,5 +648,15 @@
     "description": "From 中華電信公告「S3N區段於01月29日00:00至04:00計畫性維護」。01/29 UPD：延期至2/12",
     "reparing_at": "2026-02-12T04:00:00+08:00",
     "resolved_at": "2026-02-12T04:00:00+08:00"
+  },
+  {
+    "date": "2026-03-07T00:00:00+08:00",
+    "status": "disconnected",
+    "cableid": "twtm2",
+    "segment": "twtm2-mt",
+    "title": "台馬二號斷線",
+    "description": "From 中華電信公告「中華電信公司台馬第二海纜(TDM2)於3月7日發生芯線障礙，訊務已於第一時間疏轉至台馬第三海纜，客戶服務不受影響，中華電信公司技術團隊已派員全力搶修中，敬請客戶安心。」From 數位發展部資料「距淡水沙崙約23.6公里處斷纜」",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
