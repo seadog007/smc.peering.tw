@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.5.1** (2026-03-11): Improve segment status propagation for partial-disconnected highlights
 - **v3.5.0** (2026-03-10): Show partial-disconnected segments as yellow and prioritize red on overlaps
 - **v3.4.0** (2026-01-17): Added scheduled incident status
 - **v3.3.3** (2026-01-17): Reverted convert_incidents.py output path change

@@ -253,6 +253,12 @@
         "changes": [
           "Show partial-disconnected segments as yellow and prioritize red on overlaps"
         ]
+      },
+      "3.5.1": {
+        "date": "2026-03-11",
+        "changes": [
+          "Improve segment status propagation for partial-disconnected highlights"
+        ]
       }
     }
   }
