@@ -142,13 +142,27 @@ function getSegmentStatus(
       const brokenSegments = markBroken(cable.available_path, affectedSegments);
       if (brokenSegments.includes(segment.id)) return "broken";
     }
-    // Check whether this segment is directly referenced by a partial_disconnected
-    // incident. Red (broken) takes priority, so this check comes second.
-    const partialSegments = activeIncidents
-      .filter((incident) => incident.status === "partial_disconnected")
+
+    // For partial_disconnected, also propagate along the same logical paths
+    // so upstream/downstream segments share the partial highlight.
+    const partialIncidents = activeIncidents.filter(
+      (incident) => incident.status === "partial_disconnected",
+    );
+    const directPartialSegments = partialIncidents
       .map((incident) => incident.segment?.trim())
       .filter((id): id is string => Boolean(id && id.length > 0));
-    if (partialSegments.includes(segment.id)) return "partial_disconnected";
+
+    const propagatedPartialSegments =
+      directPartialSegments.length > 0
+        ? markBroken(cable.available_path, directPartialSegments)
+        : [];
+
+    const partialSegmentsSet = new Set([
+      ...directPartialSegments,
+      ...propagatedPartialSegments,
+    ]);
+
+    if (partialSegmentsSet.has(segment.id)) return "partial_disconnected";
   }
   return "normal";
 }
