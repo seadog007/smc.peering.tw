@@ -130,39 +130,50 @@ function getSegmentStatus(
       (!incident.resolved_at || incident.resolved_at.trim() === ""),
   );
   if (activeIncidents.length > 0 && cable.available_path) {
-    // Run markBroken only on non-partial incidents so that partial_disconnected
-    // segments with alternative routes are not incorrectly marked as fully broken.
-    const disconnectedIncidents = activeIncidents.filter(
-      (incident) => incident.status !== "partial_disconnected",
+    // Only consider paths that do not contain retired segments (retired = no valid route).
+    const retiredSegmentIds = new Set(
+      cable.segments?.filter((s) => s.retired).map((s) => s.id) ?? [],
     );
-    if (disconnectedIncidents.length > 0) {
-      const affectedSegments = disconnectedIncidents
+    const validPaths = cable.available_path.filter(
+      (path) => !path.some((node) => retiredSegmentIds.has(node)),
+    );
+    if (validPaths.length === 0) {
+      // No valid paths; fall through to normal status.
+    } else {
+      // Run markBroken only on non-partial incidents so that partial_disconnected
+      // segments with alternative routes are not incorrectly marked as fully broken.
+      const disconnectedIncidents = activeIncidents.filter(
+        (incident) => incident.status !== "partial_disconnected",
+      );
+      if (disconnectedIncidents.length > 0) {
+        const affectedSegments = disconnectedIncidents
+          .map((incident) => incident.segment?.trim())
+          .filter((id): id is string => Boolean(id && id.length > 0));
+        const brokenSegments = markBroken(validPaths, affectedSegments);
+        if (brokenSegments.includes(segment.id)) return "broken";
+      }
+
+      // For partial_disconnected, also propagate along the same logical paths
+      // so upstream/downstream segments share the partial highlight.
+      const partialIncidents = activeIncidents.filter(
+        (incident) => incident.status === "partial_disconnected",
+      );
+      const directPartialSegments = partialIncidents
         .map((incident) => incident.segment?.trim())
         .filter((id): id is string => Boolean(id && id.length > 0));
-      const brokenSegments = markBroken(cable.available_path, affectedSegments);
-      if (brokenSegments.includes(segment.id)) return "broken";
+
+      const propagatedPartialSegments =
+        directPartialSegments.length > 0
+          ? markBroken(validPaths, directPartialSegments)
+          : [];
+
+      const partialSegmentsSet = new Set([
+        ...directPartialSegments,
+        ...propagatedPartialSegments,
+      ]);
+
+      if (partialSegmentsSet.has(segment.id)) return "partial_disconnected";
     }
-
-    // For partial_disconnected, also propagate along the same logical paths
-    // so upstream/downstream segments share the partial highlight.
-    const partialIncidents = activeIncidents.filter(
-      (incident) => incident.status === "partial_disconnected",
-    );
-    const directPartialSegments = partialIncidents
-      .map((incident) => incident.segment?.trim())
-      .filter((id): id is string => Boolean(id && id.length > 0));
-
-    const propagatedPartialSegments =
-      directPartialSegments.length > 0
-        ? markBroken(cable.available_path, directPartialSegments)
-        : [];
-
-    const partialSegmentsSet = new Set([
-      ...directPartialSegments,
-      ...propagatedPartialSegments,
-    ]);
-
-    if (partialSegmentsSet.has(segment.id)) return "partial_disconnected";
   }
   return "normal";
 }
