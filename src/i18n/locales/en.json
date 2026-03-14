@@ -259,6 +259,12 @@
         "changes": [
           "Improve segment status propagation for partial-disconnected highlights"
         ]
+      },
+      "3.5.2": {
+        "date": "2026-03-10",
+        "changes": [
+          "Path propagation excludes retired segments so same-path segments color correctly"
+        ]
       }
     }
   }
