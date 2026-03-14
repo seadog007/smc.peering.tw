@@ -658,5 +658,15 @@
     "description": "From 中華電信公告「中華電信公司台馬第二海纜(TDM2)於3月7日發生芯線障礙，訊務已於第一時間疏轉至台馬第三海纜，客戶服務不受影響，中華電信公司技術團隊已派員全力搶修中，敬請客戶安心。」From 數位發展部資料「距淡水沙崙約23.6公里處斷纜」",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-03-14T10:15:36+08:00",
+    "status": "disconnected",
+    "cableid": "c2c",
+    "segment": "c2c-seg-2b",
+    "title": "C2C 香港方向斷線",
+    "description": "2026/03/14 10:15:36 觀測到 C2C 傳輸失效，原因待調查",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
