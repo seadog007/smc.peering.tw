@@ -276,6 +276,12 @@
         "changes": [
           "Path propagation excludes retired segments so same-path segments color correctly"
         ]
+      },
+      "3.6.0": {
+        "date": "2026-03-16",
+        "changes": [
+          "Add incident reason field"
+        ]
       }
     }
   }
