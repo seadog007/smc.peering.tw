@@ -34,7 +34,18 @@
     "historicalTitle": "歷史事件",
     "started_at": "開始時間",
     "reparing_at": "預計維修時間",
-    "resolved_at": "排除時間"
+    "resolved_at": "排除時間",
+    "reason": {
+      "unknown": "未知",
+      "maintenance": "維護",
+      "earthquake": "地震",
+      "fishing": "漁業",
+      "sabotage": "破壞",
+      "typhoon": "颱風",
+      "aging": "老化",
+      "land": "陸上",
+      "equipment": "設備"
+    }
   },
   "timeline": {
     "title": "海纜狀態時間軸",

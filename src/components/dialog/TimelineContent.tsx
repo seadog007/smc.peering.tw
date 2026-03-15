@@ -21,6 +21,7 @@ interface TimelineSegment {
 interface Incident {
   date: string;
   status: string;
+  reason: string;
   cableid: string;
   segment: string;
   description: string;

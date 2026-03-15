@@ -93,6 +93,7 @@ interface Incident {
   title: string;
   description: string;
   resolved_at: string;
+  reason?: string;
 }
 
 // Path-propagation logic: if any segment on a path is affected,

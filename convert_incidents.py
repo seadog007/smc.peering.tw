@@ -45,6 +45,7 @@ def convert_incidents():
                 filtered_incidents.append({
                     'date': row['date'],
                     'status': row['status'],
+                    'reason': row['reason'],
                     'cableid': row['cableid'],
                     'segment': row['segment'],
                     'title': row['title'],

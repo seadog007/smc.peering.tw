@@ -35,7 +35,18 @@
     "started_at": "Started at",
     "reparing_at": "Estimated Reparing at",
     "resolved_at": "Resolved at",
-    "show": "Show Incidents"
+    "show": "Show Incidents",
+    "reason": {
+      "unknown": "Unknown",
+      "maintenance": "Maintenance",
+      "earthquake": "Earthquake",
+      "fishing": "Fishing",
+      "sabotage": "Sabotage",
+      "typhoon": "Typhoon",
+      "aging": "Aging",
+      "land": "Land",
+      "equipment": "Equipment"
+    }
   },
   "timeline": {
     "title": "Cables Uptime Timeline",
