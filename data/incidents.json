@@ -565,8 +565,8 @@
     "cableid": "frnal-nacs",
     "segment": "nacs-seg-2",
     "title": "NACS 香港方向斷線",
-    "description": "04:16:14 觀測到網路流量中斷與 Rerouting。From 數位發展部資料「距宜蘭頭城約160公里處斷纜」",
-    "reparing_at": "2026-02-28T00:00:00+08:00",
+    "description": "04:16:14 觀測到網路流量中斷與 Rerouting。From 數位發展部資料「距宜蘭頭城約160公里處斷纜」。2/11 Update，ETR 由 2/28 後延至 3/20",
+    "reparing_at": "2026-03-20T00:00:00+08:00",
     "resolved_at": ""
   },
   {
