@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.6.1** (2026-03-16): Fix outage counter wording
 - **v3.6.0** (2026-03-16): Add incident reason field
 - **v3.5.2** (2026-03-10): Path propagation excludes retired segments so same-path segments color correctly
 - **v3.5.1** (2026-03-11): Improve segment status propagation for partial-disconnected highlights

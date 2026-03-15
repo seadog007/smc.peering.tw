@@ -283,6 +283,12 @@
         "changes": [
           "Add incident reason field"
         ]
+      },
+      "3.6.1": {
+        "date": "2026-03-16",
+        "changes": [
+          "Fix outage counter wording"
+        ]
       }
     }
   }
