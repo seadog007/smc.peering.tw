@@ -262,7 +262,7 @@ export default function OutageCounter() {
           <div className="bg-linear-to-b from-red-300 to-red-500 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent">
             {outageDisplay}
           </div>
-          <div className="text-xs opacity-50">{t("common.disconnected")}</div>
+          <div className="text-xs opacity-50">{t("common.affected")}</div>
         </div>
         <div className="h-10 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
         <div className="flex w-16 flex-col gap-1 px-3 py-2">

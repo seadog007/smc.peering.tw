@@ -15,6 +15,7 @@
     "unknown": "未知",
     "days": "天",
     "total": "總計",
+    "affected": "受影響",
     "outageStatus": "台灣對外連線狀況"
   },
   "filter": {

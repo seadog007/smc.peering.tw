@@ -15,6 +15,7 @@
     "unknown": "Unknown",
     "days": "days",
     "total": "Total",
+    "affected": "Affected",
     "outageStatus": "International Connectivity"
   },
   "filter": {
