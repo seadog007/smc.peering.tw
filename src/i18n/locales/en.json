@@ -289,6 +289,12 @@
         "changes": [
           "Fix outage counter wording"
         ]
+      },
+      "3.6.2": {
+        "date": "2026-03-16",
+        "changes": [
+          "Add rough PLCN data for outage visualization and counting"
+        ]
       }
     }
   }
