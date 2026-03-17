@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.6.3** (2026-03-16): Add APRICOT data
 - **v3.6.2** (2026-03-16): Add rough PLCN data for outage visualization and counting
 
 - **v3.6.1** (2026-03-16): Fix outage counter wording

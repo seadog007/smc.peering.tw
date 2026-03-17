@@ -295,6 +295,12 @@
         "changes": [
           "Add rough PLCN data for outage visualization and counting"
         ]
+      },
+      "3.6.3": {
+        "date": "2026-03-16",
+        "changes": [
+          "Add APRICOT data"
+        ]
       }
     }
   }
