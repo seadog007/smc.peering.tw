@@ -99,6 +99,17 @@
     "resolved_at": "2024-05-20T00:00:00+08:00"
   },
   {
+    "date": "2024-09-18T00:00:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "frnal-nacs",
+    "segment": "nacs-seg-2",
+    "title": "NACS 香港方向斷線",
+    "description": "於 24°43.3750'N 122°5.27'E 處發生故障",
+    "reparing_at": "",
+    "resolved_at": "2025-11-03T17:11:00+08:00"
+  },
+  {
     "date": "2024-09-22T00:00:00+08:00",
     "status": "partial_disconnected",
     "reason": "unknown",
@@ -600,7 +611,7 @@
     "cableid": "sjc2",
     "segment": "sjc2-seg-1.4",
     "title": "SJC2 1.4 段斷線",
-    "description": "From 中華電信公告，區段 1.4 斷纜（2600km from Chikura CLS）",
+    "description": "於 23°2.339'N 123°34.922'Е 處發生障礙。From 中華電信公告，區段 1.4 斷纜（2600km from Chikura CLS）",
     "reparing_at": "2026-02-12T00:00:00+08:00",
     "resolved_at": "2026-02-14T00:00:00+08:00"
   },
@@ -646,7 +657,7 @@
     "title": "NACS 香港方向斷線",
     "description": "04:16:14 觀測到網路流量中斷與 Rerouting。From 數位發展部資料「距宜蘭頭城約160公里處斷纜」。2/11 Update，ETR 由 2/28 後延至 3/20",
     "reparing_at": "2026-03-20T00:00:00+08:00",
-    "resolved_at": ""
+    "resolved_at": "2026-03-17T19:17:00+08:00"
   },
   {
     "date": "2026-01-03T00:00:00+08:00",
