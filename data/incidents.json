@@ -255,7 +255,7 @@
   {
     "date": "2025-03-14T00:00:00+08:00",
     "status": "disconnected",
-    "reason": "sabotage",
+    "reason": "unknown",
     "cableid": "twtp3",
     "segment": "twtp3-ph",
     "title": "台澎三號斷線",
@@ -442,7 +442,7 @@
   {
     "date": "2025-10-07T00:00:00+08:00",
     "status": "partial_disconnected",
-    "reason": "unknown",
+    "reason": "fishing",
     "cableid": "twtm2",
     "segment": "twtm2-mt",
     "title": "台馬二號斷線",
@@ -732,7 +732,7 @@
     "cableid": "c2c",
     "segment": "c2c-seg-2b",
     "title": "C2C 香港方向斷線",
-    "description": "2026/03/14 10:15:36 觀測到 C2C 傳輸失效，原因待調查",
+    "description": "2026/03/14 10:15:36 觀測到 C2C 傳輸失效，HK CLS IAM 卡板故障。The root cause was identified as a faulty IAM (Integrated Access Module) card within the transmission equipment. This fault caused degradation while boosting power, leading to multiple optical carrier failures. The investigation also noted a suspected wet plant issue causing power deviation at the affected site. The fault was localized to a DWDM amplifier card at the remote end in the Hong Kong CLS (C2C Hong Kong Landing Station).",
     "reparing_at": "",
     "resolved_at": "2026-03-14T18:43:25+08:00"
   },
