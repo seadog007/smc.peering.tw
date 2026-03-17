@@ -728,7 +728,7 @@
   {
     "date": "2026-03-14T10:15:36+08:00",
     "status": "disconnected",
-    "reason": "unknown",
+    "reason": "equipment",
     "cableid": "c2c",
     "segment": "c2c-seg-2b",
     "title": "C2C 香港方向斷線",
