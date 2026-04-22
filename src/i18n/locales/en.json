@@ -319,6 +319,12 @@
         "changes": [
           "Fix outage counter text alignment"
         ]
+      },
+      "3.7.0": {
+        "date": "2026-04-22",
+        "changes": [
+          "Add map legend"
+        ]
       }
     }
   }

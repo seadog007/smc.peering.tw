@@ -168,6 +168,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.7.0** (2026-04-22): Add map legend
 - **v3.6.4** (2026-04-22): Fix outage counter text alignment
 - **v3.6.3** (2026-03-16): Add APRICOT data
 - **v3.6.2** (2026-03-16): Add rough PLCN data for outage visualization and counting
