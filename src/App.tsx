@@ -7,6 +7,7 @@ import IntroModal from "@/components/dialog/Intro";
 import Map from "./components/Map";
 import CurrentTime from "@/components/CurrentTime";
 import OutageCounter from "@/components/OutageCounter";
+import MapLegend from "@/components/MapLegend";
 import "./i18n";
 
 function App() {
@@ -28,8 +29,9 @@ function App() {
           t={t}
         />
       </div>
-      <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
+      <div className="absolute left-2 z-10 flex flex-col gap-2 max-md:top-2 md:bottom-2">
         <OutageCounter />
+        <MapLegend />
       </div>
       <div className="absolute right-2 z-10 max-md:bottom-[168px] md:right-[416px] md:bottom-2">
         <CurrentTime />
