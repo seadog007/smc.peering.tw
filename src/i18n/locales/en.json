@@ -317,7 +317,7 @@
       "3.6.4": {
         "date": "2026-04-22",
         "changes": [
-          "Add submarine cable map legend"
+          "Fix outage counter text alignment"
         ]
       }
     }

@@ -251,25 +251,31 @@ export default function OutageCounter() {
         {t("common.outageStatus")}
       </div>
       <div className="flex items-center justify-center text-center tabular-nums">
-        <div className="flex w-16 flex-col gap-1 px-3 py-2">
+        <div className="flex w-16 flex-col items-center gap-1 px-2 py-2">
           <div className="bg-linear-to-b from-green-300 to-green-500 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent">
             {onlineDisplay}
           </div>
-          <div className="text-xs opacity-50">{t("common.online")}</div>
+          <div className="w-full text-center text-xs opacity-50">
+            {t("common.online")}
+          </div>
         </div>
         <div className="h-10 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
-        <div className="flex w-16 flex-col gap-1 px-3 py-2">
+        <div className="flex w-16 flex-col items-center gap-1 px-2 py-2">
           <div className="bg-linear-to-b from-red-300 to-red-500 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent">
             {outageDisplay}
           </div>
-          <div className="text-xs opacity-50">{t("common.affected")}</div>
+          <div className="w-full text-center text-xs opacity-50">
+            {t("common.affected")}
+          </div>
         </div>
         <div className="h-10 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
-        <div className="flex w-16 flex-col gap-1 px-3 py-2">
+        <div className="flex w-16 flex-col items-center gap-1 px-2 py-2">
           <div className="bg-linear-to-b from-white to-gray-100 bg-clip-text text-2xl leading-[1em] font-semibold text-transparent">
             {totalDisplay}
           </div>
-          <div className="text-xs opacity-50">{t("common.total")}</div>
+          <div className="w-full text-center text-xs opacity-50">
+            {t("common.total")}
+          </div>
         </div>
       </div>
       <div className="shdaow-sm relative h-0.5 w-full overflow-hidden rounded-full bg-white/50">
