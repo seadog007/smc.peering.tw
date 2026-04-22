@@ -77,7 +77,7 @@ export default function MapLegend() {
             "radial-gradient(circle at top, black 0%, transparent 60%)",
         }}
       />
-      <div className="relative flex flex-col gap-2">
+      <div className="relative flex flex-col gap-2 md:flex-col-reverse">
         <div className="relative min-w-0 text-center">
           <div className="min-w-0">
              <div className="relative flex items-center justify-center">
