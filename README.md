@@ -8,6 +8,7 @@ An interactive map application that displays the status and historical incidents
 - **Real-time Status**: Monitor active and historical incidents affecting submarine cables
 - **Uptime Timeline**: Visualize cable uptime data over the past year
 - **Multi-language Support**: Available in English and Traditional Chinese
+- **Intro Screen**: Show an introduction screen on first visit
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **Incident Tracking**: Detailed information about cable incidents including start time, estimated repair time, and resolution status
 
@@ -168,6 +169,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.9.0** (2026-04-22): Add guided tour
 - **v3.8.0** (2026-04-22): Update dependencies, Add language selection modal
 - **v3.7.0** (2026-04-22): Add map legend
 - **v3.6.4** (2026-04-22): Fix outage counter text alignment

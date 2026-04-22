@@ -374,6 +374,12 @@
           "Update dependencies",
           "Add language selection modal"
         ]
+      },
+      "3.9.0": {
+        "date": "2026-04-22",
+        "changes": [
+          "Add guided tour"
+        ]
       }
     }
   }
