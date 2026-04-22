@@ -31,7 +31,10 @@ function App() {
   return (
     <div className="relative h-svh w-full">
       <Map cableFilter={cableFilter} />
-      <div className="absolute top-2 z-10 max-md:right-2 md:left-2">
+      <div
+        className="absolute top-2 z-10 max-md:right-2 md:left-2"
+        data-tour="cable-filter"
+      >
         <CableFilter
           cableFilter={cableFilter}
           setCableFilter={setCableFilter}

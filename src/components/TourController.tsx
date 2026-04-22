@@ -87,6 +87,72 @@ export default function TourController() {
             onPopoverRender: () => getEl('[data-tour="incident-panel"]'),
           },
         },
+        {
+          element: '[data-tour="incident-mode-select"]',
+          popover: {
+            title: t("tour.incidentModeSelect.title"),
+            description: t("tour.incidentModeSelect.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="incident-mode-select"]'),
+          },
+        },
+        {
+          element: '[data-tour="cable-filter"]',
+          popover: {
+            title: t("tour.cableFilter.title"),
+            description: t("tour.cableFilter.body"),
+            side: "right",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="cable-filter"]'),
+          },
+        },
+        {
+          element: '[data-tour="change-language"]',
+          popover: {
+            title: t("tour.changeLanguage.title"),
+            description: t("tour.changeLanguage.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="change-language"]'),
+          },
+        },
+        {
+          element: '[data-tour="timeline-dialog"]',
+          popover: {
+            title: t("tour.timeline.title"),
+            description: t("tour.timeline.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="timeline-dialog"]'),
+          },
+        },
+        {
+          element: '[data-tour="about-dialog"]',
+          popover: {
+            title: t("tour.about.title"),
+            description: t("tour.about.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="about-dialog"]'),
+          },
+        },
+        {
+          element: '[data-tour="tour-help"]',
+          popover: {
+            title: t("tour.help.title"),
+            description: t("tour.help.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="tour-help"]'),
+          },
+        },
       ],
     });
     return d;

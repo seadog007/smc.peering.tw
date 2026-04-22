@@ -58,6 +58,30 @@
     "incidents": {
       "title": "Incident list",
       "body": "Browse active and historical incidents here. Each item shows duration, cause, and any estimated repair information."
+    },
+    "incidentModeSelect": {
+      "title": "Active vs historical",
+      "body": "Switch between active incidents and historical records to explore recent events over time."
+    },
+    "cableFilter": {
+      "title": "Cable filter",
+      "body": "Filter the map to show all cables, only normal cables, or only outages."
+    },
+    "changeLanguage": {
+      "title": "Language",
+      "body": "Toggle the interface language between English and Traditional Chinese."
+    },
+    "timeline": {
+      "title": "Timeline",
+      "body": "Open the timeline view to review cable uptime and outage history."
+    },
+    "help": {
+      "title": "Guided tour",
+      "body": "Start this tour again any time if you want a quick refresher."
+    },
+    "about": {
+      "title": "About",
+      "body": "Learn more about this project, data sources, and version history."
     }
   },
   "incidents": {

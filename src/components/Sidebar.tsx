@@ -92,6 +92,7 @@ function SidebarContent() {
         <div className="flex w-full items-center justify-between">
           <NativeSelect
             className="md:text-md h-auto border-white/5 font-semibold shadow-none"
+            data-tour="incident-mode-select"
             value={showHistorical.toString()}
             onChange={(e) => setShowHistorical(e.target.value === "true")}
           >
@@ -103,12 +104,20 @@ function SidebarContent() {
             </NativeSelectOption>
           </NativeSelect>
           <div className="flex gap-2">
-            <ChangeLanguageButton />
-            <TimelineDialog />
-            <SidebarButton onClick={startTour}>
-              <CircleHelp className="size-5" />
-            </SidebarButton>
-            <AboutDialog />
+            <div data-tour="change-language">
+              <ChangeLanguageButton />
+            </div>
+            <div data-tour="timeline-dialog">
+              <TimelineDialog />
+            </div>
+            <div data-tour="tour-help">
+              <SidebarButton onClick={startTour}>
+                <CircleHelp className="size-5" />
+              </SidebarButton>
+            </div>
+            <div data-tour="about-dialog">
+              <AboutDialog />
+            </div>
           </div>
         </div>
 
