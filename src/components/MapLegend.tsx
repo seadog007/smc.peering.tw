@@ -92,7 +92,7 @@ export default function MapLegend() {
                 aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
               >
                 <ChevronDown
-                  className={`size-4 transition-transform ${isCollapsed ? "-rotate-90" : "rotate-0"}`}
+                  className={`size-4 transition-transform ${isCollapsed ? "-rotate-180" : "rotate-0"}`}
                 />
               </button>
             </div>
