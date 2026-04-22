@@ -25,7 +25,6 @@
   },
   "legend": {
     "title": "Map Legend",
-    "description": "Normal cables use different shades of blue to distinguish systems.",
     "items": {
       "normal": "Blue: Normal",
       "broken": "Red: Outage",
@@ -53,7 +52,7 @@
     },
     "legend": {
       "title": "Map legend",
-      "body": "Use the legend to understand cable colors and symbols. You can collapse it if it blocks the map."
+      "body": "Use the legend to understand cable colors and symbols. The map uses different shades of blue to distinguish systems. You can collapse it if it blocks the map."
     },
     "incidents": {
       "title": "Incident list",
