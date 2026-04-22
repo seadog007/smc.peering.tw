@@ -12,11 +12,10 @@ export default function TourController() {
   const { t } = useTranslation();
   const setStartTour = useTourStore((s) => s.setStartTour);
 
-  const [tourAutoStartAllowed, setTourAutoStartAllowed] = useLocalStorage(
+  const [tourAutoStartAllowed] = useLocalStorage(
     "tourAutoStartAllowed",
     false,
   );
-  const [warningAcknowledged] = useLocalStorage("warningAcknowledged", false);
   const [tourTriggered, setTourTriggered] = useLocalStorage(
     "tourTriggered",
     false,
@@ -175,12 +174,6 @@ export default function TourController() {
       driverRef.current = null;
     };
   }, [setStartTour, startTour]);
-
-  useEffect(() => {
-    if (!tourAutoStartAllowed && warningAcknowledged) {
-      setTourAutoStartAllowed(true);
-    }
-  }, [setTourAutoStartAllowed, tourAutoStartAllowed, warningAcknowledged]);
 
   useEffect(() => {
     if (!tourAutoStartAllowed) return;
