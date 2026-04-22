@@ -1,7 +1,21 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "usehooks-ts";
+
+interface CableWithEquipment {
+  equipments?: unknown[];
+}
+
+async function loadCablesForLegend(): Promise<CableWithEquipment[]> {
+  const modules = import.meta.glob("../data/cables/*.json");
+  const cablePromises = Object.values(modules).map(async (loader) => {
+    const module = await loader();
+    return (module as { default: CableWithEquipment }).default;
+  });
+  return Promise.all(cablePromises);
+}
 
 const legendItems = [
   {
@@ -42,6 +56,19 @@ export default function MapLegend() {
   const [collapsed, setCollapsed] = useState(false);
   const isCollapsed = isMobile && collapsed;
 
+  const { data: cables } = useQuery({
+    queryKey: ["cables"],
+    queryFn: async () => loadCablesForLegend(),
+  });
+
+  const hasEquipment = Boolean(
+    cables?.some((cable) => (cable.equipments?.length ?? 0) > 0),
+  );
+
+  const visibleLegendItems = hasEquipment
+    ? legendItems
+    : legendItems.filter((item) => item.key !== "equipment");
+
   return (
     <div className="relative w-full min-w-0 rounded-xl bg-white/5 p-2 text-white shadow-lg backdrop-blur-md text-shadow-sm">
       <div className="pointer-events-none absolute inset-0 size-full rounded-xl border border-white/5" />
@@ -81,7 +108,7 @@ export default function MapLegend() {
         </div>
         {!isCollapsed && (
           <div className="flex flex-col gap-1.5 rounded-lg bg-black/10 px-2 py-1.5">
-            {legendItems.map((item) => (
+            {visibleLegendItems.map((item) => (
               <div key={item.key} className="flex items-center gap-2 text-xs">
                 {item.line ? (
                   <span
