@@ -1,24 +1,28 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 
-import enTranslations from './locales/en.json';
-import zhTWTranslations from './locales/zh-tw.json';
+import enTranslations from "./locales/en.json";
+import zhTWTranslations from "./locales/zh-tw.json";
+
+const storedLng =
+  typeof window !== "undefined"
+    ? (window.localStorage.getItem("i18nextLng") ?? "").trim()
+    : "";
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    supportedLngs: ['en', 'zh-TW'],
+    lng: storedLng || undefined,
+    supportedLngs: ["en", "zh-TW"],
     resources: {
-      'en': {
+      en: {
         translation: enTranslations,
       },
-      'zh-TW': {
+      "zh-TW": {
         translation: zhTWTranslations,
       },
     },
-    fallbackLng: 'en',
+    fallbackLng: "en",
     interpolation: {
       escapeValue: false,
     },

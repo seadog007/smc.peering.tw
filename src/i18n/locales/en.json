@@ -344,6 +344,13 @@
         "changes": [
           "Add map legend"
         ]
+      },
+      "3.8.0": {
+        "date": "2026-04-22",
+        "changes": [
+          "Update dependencies",
+          "Add language selection modal"
+        ]
       }
     }
   }
