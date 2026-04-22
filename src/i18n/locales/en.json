@@ -301,6 +301,12 @@
         "changes": [
           "Add APRICOT data"
         ]
+      },
+      "3.6.4": {
+        "date": "2026-04-22",
+        "changes": [
+          "Fix outage counter text alignment"
+        ]
       }
     }
   }
