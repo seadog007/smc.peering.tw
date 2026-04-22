@@ -31,11 +31,9 @@ function App() {
         />
       </div>
       <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
-        <div className="relative inline-block">
+        <div className="flex w-max flex-col gap-2 md:flex-col-reverse">
           <OutageCounter />
-          <div className="absolute left-0 w-full max-md:top-[calc(100%+0.5rem)] md:bottom-[calc(100%+0.5rem)]">
-            <MapLegend />
-          </div>
+          <MapLegend />
         </div>
       </div>
       <div className="absolute right-2 z-10 max-md:bottom-[168px] md:right-[416px] md:bottom-2">
