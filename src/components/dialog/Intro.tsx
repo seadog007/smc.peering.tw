@@ -19,6 +19,10 @@ export default function IntroModal() {
     "dontShowWarningAgain",
     false,
   );
+  const [, setTourAutoStartAllowed] = useLocalStorage(
+    "tourAutoStartAllowed",
+    false,
+  );
   const buttonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!dontShowWarningAgain) {
@@ -59,7 +63,10 @@ export default function IntroModal() {
           <Button
             ref={buttonRef}
             className="warning-acknowledge-btn"
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setTourAutoStartAllowed(true);
+              setIsOpen(false);
+            }}
           >
             {t("warning.acknowledge")}
           </Button>

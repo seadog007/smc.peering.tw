@@ -25,7 +25,6 @@
   },
   "legend": {
     "title": "Map Legend",
-    "description": "Normal cables use different shades of blue to distinguish systems.",
     "items": {
       "normal": "Blue: Normal",
       "broken": "Red: Outage",
@@ -40,6 +39,49 @@
     "message": "This map is a dynamic submarine cable map dedicated to providing the most up-to-date status on submarine cables connected to Taiwan.<br><br>The data presented on this site is derived from publicly available intelligence sources and multiple third-party monitoring systems (including but not limited to routing information, packet latency, and packet loss rates). Through analysis and inference, it identifies potential disruptions in submarine communication cables.<br><br>Please note that the website may not reflect the most current or accurate status. The information provided is for reference only and should be verified with the official sources of each submarine cable.<br><br>If you are interested in contributing information, please refer to the contact details available in the \"About\" window located at the top right corner.",
     "acknowledge": "I Understand",
     "dontShowAgain": "Don't show this warning again"
+  },
+  "tour": {
+    "controls": {
+      "next": "Next",
+      "back": "Back",
+      "done": "Done"
+    },
+    "counter": {
+      "title": "Connectivity status",
+      "body": "This counter summarizes how many international routes are online vs affected, based on the latest incident data."
+    },
+    "legend": {
+      "title": "Map legend",
+      "body": "Use the legend to understand cable colors and symbols. The map uses different shades of blue to distinguish systems. You can collapse it if it blocks the map."
+    },
+    "incidents": {
+      "title": "Incident list",
+      "body": "Browse active and historical incidents here. Each item shows duration, cause, and any estimated repair information."
+    },
+    "incidentModeSelect": {
+      "title": "Active vs historical",
+      "body": "Switch between active incidents and historical records to explore recent events over time."
+    },
+    "cableFilter": {
+      "title": "Cable filter",
+      "body": "Filter the map to show all cables, only normal cables, or only outages."
+    },
+    "changeLanguage": {
+      "title": "Language",
+      "body": "Toggle the interface language between English and Traditional Chinese."
+    },
+    "timeline": {
+      "title": "Timeline",
+      "body": "Open the timeline view to review cable uptime and outage history."
+    },
+    "help": {
+      "title": "Guided tour",
+      "body": "Start this tour again any time if you want a quick refresher."
+    },
+    "about": {
+      "title": "About",
+      "body": "Learn more about this project, data sources, and version history."
+    }
   },
   "incidents": {
     "title": "Incidents List",
