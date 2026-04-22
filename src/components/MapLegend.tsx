@@ -1,4 +1,7 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "usehooks-ts";
 
 const legendItems = [
   {
@@ -35,9 +38,12 @@ const legendItems = [
 
 export default function MapLegend() {
   const { t } = useTranslation();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [collapsed, setCollapsed] = useState(false);
+  const isCollapsed = isMobile && collapsed;
 
   return (
-    <div className="relative min-w-[188px] rounded-xl bg-white/5 p-2 text-white shadow-lg backdrop-blur-md text-shadow-sm">
+    <div className="relative w-full min-w-0 rounded-xl bg-white/5 p-2 text-white shadow-lg backdrop-blur-md text-shadow-sm">
       <div className="pointer-events-none absolute inset-0 size-full rounded-xl border border-white/5" />
       <div
         className="pointer-events-none absolute inset-0 rounded-xl border border-white/10 bg-white/10"
@@ -47,34 +53,54 @@ export default function MapLegend() {
         }}
       />
       <div className="relative flex flex-col gap-2">
-        <div className="text-center">
-          <p className="text-sm opacity-75">
-            {t("legend.title")}
-          </p>
-          <p className="text-[11px] leading-4 text-white/50">
-            {t("legend.description")}
-          </p>
-        </div>
-        <div className="flex flex-col gap-1.5 rounded-lg bg-black/10 px-2 py-1.5">
-          {legendItems.map((item) => (
-            <div key={item.key} className="flex items-center gap-2 text-xs">
-              {item.line ? (
-                <span
-                  className="block h-[3px] w-7 shrink-0 rounded-full"
-                  style={{ backgroundColor: item.color }}
+        <div className="relative min-w-0 text-center">
+          <div className="min-w-0">
+             <div className="relative flex items-center justify-center">
+              <p className="text-sm opacity-75">
+                {t("legend.title")}
+              </p>
+              <button
+                type="button"
+                onClick={() => setCollapsed((value) => !value)}
+                className="absolute right-0 flex size-7 items-center justify-center rounded-full bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white md:hidden"
+                aria-expanded={!isCollapsed}
+                aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
+              >
+                <ChevronDown
+                  className={`size-4 transition-transform ${isCollapsed ? "-rotate-90" : "rotate-0"}`}
                 />
-              ) : (
-                <span
-                  className="block size-3 shrink-0 rounded-full ring-1 ring-white/25"
-                  style={{ backgroundColor: item.color }}
-                />
-              )}
-              <span className="text-white/80">
-                {t(`legend.items.${item.key}`)}
-              </span>
+              </button>
             </div>
-          ))}
+
+            {!isCollapsed && (
+              <p className="mt-1 text-[11px] leading-4 text-white/50">
+                {t("legend.description")}
+              </p>
+            )}
+          </div>
         </div>
+        {!isCollapsed && (
+          <div className="flex flex-col gap-1.5 rounded-lg bg-black/10 px-2 py-1.5">
+            {legendItems.map((item) => (
+              <div key={item.key} className="flex items-center gap-2 text-xs">
+                {item.line ? (
+                  <span
+                    className="block h-[3px] w-7 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                ) : (
+                  <span
+                    className="block size-3 shrink-0 rounded-full ring-1 ring-white/25"
+                    style={{ backgroundColor: item.color }}
+                  />
+                )}
+                <span className="min-w-0 break-words text-white/80">
+                  {t(`legend.items.${item.key}`)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
