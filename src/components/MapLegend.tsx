@@ -110,17 +110,19 @@ export default function MapLegend() {
           <div className="flex flex-col gap-1.5 rounded-lg bg-black/10 px-2 py-1.5">
             {visibleLegendItems.map((item) => (
               <div key={item.key} className="flex items-center gap-2 text-xs">
-                {item.line ? (
-                  <span
-                    className="block h-[3px] w-7 shrink-0 rounded-full"
-                    style={{ backgroundColor: item.color }}
-                  />
-                ) : (
-                  <span
-                    className="block size-3 shrink-0 rounded-full ring-1 ring-white/25"
-                    style={{ backgroundColor: item.color }}
-                  />
-                )}
+                <span className="flex w-7 shrink-0 items-center justify-center">
+                  {item.line ? (
+                    <span
+                      className="block h-[3px] w-7 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                  ) : (
+                    <span
+                      className="block size-3 rounded-full ring-1 ring-white/25"
+                      style={{ backgroundColor: item.color }}
+                    />
+                  )}
+                </span>
                 <span className="min-w-0 break-words text-white/80">
                   {t(`legend.items.${item.key}`)}
                 </span>
