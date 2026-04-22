@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useMediaQuery } from "usehooks-ts";
 
 interface CableWithEquipment {
   equipments?: unknown[];
@@ -52,9 +51,8 @@ const legendItems = [
 
 export default function MapLegend() {
   const { t } = useTranslation();
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const [collapsed, setCollapsed] = useState(false);
-  const isCollapsed = isMobile && collapsed;
+  const isCollapsed = collapsed;
 
   const { data: cables } = useQuery({
     queryKey: ["cables"],
@@ -89,7 +87,7 @@ export default function MapLegend() {
               <button
                 type="button"
                 onClick={() => setCollapsed((value) => !value)}
-                className="absolute right-0 flex size-7 items-center justify-center rounded-full bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white md:hidden"
+                className="absolute right-0 flex size-7 items-center justify-center rounded-full bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                 aria-expanded={!isCollapsed}
                 aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
               >
