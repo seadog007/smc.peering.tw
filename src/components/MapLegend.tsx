@@ -96,12 +96,6 @@ export default function MapLegend() {
                 />
               </button>
             </div>
-
-            {!isCollapsed && (
-              <p className="mt-1 text-[11px] leading-4 text-white/50">
-                {t("legend.description")}
-              </p>
-            )}
           </div>
         </div>
         {!isCollapsed && (
