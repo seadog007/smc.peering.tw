@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Drawer } from "vaul";
 import { useTranslation } from "react-i18next";
-import { Languages } from "lucide-react";
+import { CircleHelp, Languages } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarButton from "@/components/SidebarButton";
 import AboutDialog from "@/components/dialog/About";
 import TimelineDialog from "@/components/dialog/Timeline";
+import { useTourStore } from "@/stores/tour";
 
 import IncidentList from "@/components/IncidentList";
 import {
@@ -46,6 +47,7 @@ export default function Sidebar() {
       <Drawer.Portal>
         <Drawer.Content
           data-testid="content"
+          data-tour="incident-panel"
           className="border-b-none fixed right-2 bottom-0 left-2 z-10 mx-[-1px] flex h-full max-h-[calc(100svh-48px)] w-[calc(100vw-16px)] flex-col rounded-t-2xl border border-white/5 bg-[#19191B]/80 shadow-lg backdrop-blur-md"
         >
           <div
@@ -64,7 +66,10 @@ export default function Sidebar() {
       </Drawer.Portal>
     </Drawer.Root>
   ) : (
-    <div className="absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md">
+    <div
+      className="absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md"
+      data-tour="incident-panel"
+    >
       <div className="pointer-events-none absolute inset-0 size-full rounded-[22px] border border-white/5" />
       <div
         className="pointer-events-none absolute inset-0 rounded-[22px] border border-white/10 bg-white/10"
@@ -80,6 +85,7 @@ export default function Sidebar() {
 function SidebarContent() {
   const { t } = useTranslation();
   const [showHistorical, setShowHistorical] = useState(false);
+  const startTour = useTourStore((s) => s.startTour);
   return (
     <>
       <div className="relative z-10 flex h-full w-full flex-col gap-3 p-3">
@@ -99,12 +105,15 @@ function SidebarContent() {
           <div className="flex gap-2">
             <ChangeLanguageButton />
             <TimelineDialog />
+            <SidebarButton onClick={startTour}>
+              <CircleHelp className="size-5" />
+            </SidebarButton>
             <AboutDialog />
           </div>
         </div>
 
         <ScrollArea className="flex-1 overflow-y-auto rounded-lg border border-white/5 bg-white/5 shadow-lg">
-          <div className="px-4">
+          <div className="px-4" data-tour="incident-list">
             <IncidentList showHistorical={showHistorical} />
           </div>
         </ScrollArea>

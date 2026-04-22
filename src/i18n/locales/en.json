@@ -41,6 +41,25 @@
     "acknowledge": "I Understand",
     "dontShowAgain": "Don't show this warning again"
   },
+  "tour": {
+    "controls": {
+      "next": "Next",
+      "back": "Back",
+      "done": "Done"
+    },
+    "counter": {
+      "title": "Connectivity status",
+      "body": "This counter summarizes how many international routes are online vs affected, based on the latest incident data."
+    },
+    "legend": {
+      "title": "Map legend",
+      "body": "Use the legend to understand cable colors and symbols. You can collapse it if it blocks the map."
+    },
+    "incidents": {
+      "title": "Incident list",
+      "body": "Browse active and historical incidents here. Each item shows duration, cause, and any estimated repair information."
+    }
+  },
   "incidents": {
     "title": "Incidents List",
     "activeTitle": "Active Incidents",

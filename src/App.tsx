@@ -8,6 +8,7 @@ import Map from "./components/Map";
 import CurrentTime from "@/components/CurrentTime";
 import OutageCounter from "@/components/OutageCounter";
 import MapLegend from "@/components/MapLegend";
+import TourController from "@/components/TourController";
 import "./i18n";
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
       </div>
       <Sidebar />
       <IntroModal />
+      <TourController />
     </div>
   );
 }

@@ -68,7 +68,10 @@ export default function MapLegend() {
     : legendItems.filter((item) => item.key !== "equipment");
 
   return (
-    <div className="relative w-full min-w-0 rounded-xl bg-white/5 p-2 text-white shadow-lg backdrop-blur-md text-shadow-sm">
+    <div
+      className="relative w-full min-w-0 rounded-xl bg-white/5 p-2 text-white shadow-lg backdrop-blur-md text-shadow-sm"
+      data-tour="map-legend"
+    >
       <div className="pointer-events-none absolute inset-0 size-full rounded-xl border border-white/5" />
       <div
         className="pointer-events-none absolute inset-0 rounded-xl border border-white/10 bg-white/10"
