@@ -25,7 +25,7 @@
   },
   "legend": {
     "title": "Map Legend",
-    "description": "Normal cables keep each system's original color.",
+    "description": "Normal cables use different shades of blue to distinguish systems.",
     "items": {
       "normal": "Blue: Normal",
       "broken": "Red: Outage",

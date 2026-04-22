@@ -25,7 +25,7 @@
   },
   "legend": {
     "title": "地圖說明",
-    "description": "正常海纜沿用各系統原始配色。",
+    "description": "正常海纜以不同的藍色系顏色做系統區分",
     "items": {
       "normal": "藍色系：正常",
       "broken": "紅色：斷線",
