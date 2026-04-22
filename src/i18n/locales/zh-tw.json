@@ -27,10 +27,10 @@
     "title": "地圖說明",
     "description": "正常海纜沿用各系統原始配色。",
     "items": {
-      "normal": "正常 / 系統原色",
-      "broken": "斷線",
-      "partial": "部分斷線",
-      "retired": "已退役段落",
+      "normal": "藍色系：正常",
+      "broken": "紅色：斷線",
+      "partial": "黃色：部分斷線",
+      "retired": "黑色：已退役區段",
       "landingPoint": "上陸點",
       "equipment": "設備"
     }

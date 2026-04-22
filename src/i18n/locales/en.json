@@ -27,10 +27,10 @@
     "title": "Map Legend",
     "description": "Normal cables keep each system's original color.",
     "items": {
-      "normal": "Normal / system color",
-      "broken": "Outage",
-      "partial": "Partial outage",
-      "retired": "Retired segment",
+      "normal": "Blue: Normal",
+      "broken": "Red: Outage",
+      "partial": "Yellow: Partial Outage",
+      "retired": "Black: Retired Segment",
       "landingPoint": "Landing point",
       "equipment": "Equipment"
     }
