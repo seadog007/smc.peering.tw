@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import CableFilter from "./components/CableFilter";
 
 import IntroModal from "@/components/dialog/Intro";
+import LanguageSelectModal from "@/components/dialog/LanguageSelect";
 import Map from "./components/Map";
 import CurrentTime from "@/components/CurrentTime";
 import OutageCounter from "@/components/OutageCounter";
@@ -19,6 +20,12 @@ function App() {
   const [cableFilter, setCableFilter] = useState<"all" | "normal" | "broken">(
     "all",
   );
+
+  const [needsLanguageSelect, setNeedsLanguageSelect] = useState(false);
+  useEffect(() => {
+    const lng = (localStorage.getItem("i18nextLng") ?? "").trim();
+    if (!lng) setNeedsLanguageSelect(true);
+  }, []);
 
   return (
     <div className="relative h-svh w-full">
@@ -40,7 +47,11 @@ function App() {
         <CurrentTime />
       </div>
       <Sidebar />
-      <IntroModal />
+      <LanguageSelectModal
+        open={needsLanguageSelect}
+        onDone={() => setNeedsLanguageSelect(false)}
+      />
+      {!needsLanguageSelect && <IntroModal />}
     </div>
   );
 }

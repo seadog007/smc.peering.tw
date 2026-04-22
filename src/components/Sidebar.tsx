@@ -116,6 +116,7 @@ function SidebarContent() {
 function ChangeLanguageButton() {
   const { i18n } = useTranslation();
   function changeLanguage(lang: string) {
+    localStorage.setItem("i18nextLng", lang);
     i18n.changeLanguage(lang);
   }
   return (
