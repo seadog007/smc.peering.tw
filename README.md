@@ -171,6 +171,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.10.0** (2026-04-27): Add building segment visualization, Update cable data (Apricot, PLCN, TPU)
 - **v3.9.0** (2026-04-22): Add guided tour
 - **v3.8.0** (2026-04-22): Update dependencies, Add language selection modal
 - **v3.7.0** (2026-04-22): Add map legend

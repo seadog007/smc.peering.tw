@@ -381,6 +381,13 @@
         "changes": [
           "Add guided tour"
         ]
+      },
+      "3.10.0": {
+        "date": "2026-04-27",
+        "changes": [
+          "Add building segment visualization",
+          "Update cable data (Apricot, PLCN, TPU)"
+        ]
       }
     }
   }
