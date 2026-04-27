@@ -95,6 +95,7 @@ Data is automatically updated and converted to static format using GitHub Action
   "id": "cableID",
   "name": "Cable Display Name",
   "color": "#000000",
+  "building": (true|false),
   "available_path": [
     [
       "Country_1",
@@ -117,6 +118,7 @@ Data is automatically updated and converted to static format using GitHub Action
     {
       "id": "segmentID",
       "hidden": (true|false),
+      "building": (true|false),
       "color": "#000000",
       "coordinates": [
         [

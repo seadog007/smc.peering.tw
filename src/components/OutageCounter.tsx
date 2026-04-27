@@ -6,8 +6,9 @@ type Path = string[];
 interface CableLite {
   id: string;
   name: string;
+  building?: boolean;
   available_path?: Path[];
-  segments?: { id: string; retired?: boolean }[];
+  segments?: { id: string; retired?: boolean; building?: boolean }[];
 }
 
 interface Incident {
@@ -115,20 +116,20 @@ export default function OutageCounter() {
       cables.forEach((cable) => {
         if (!cable.available_path || cable.available_path.length === 0) return;
 
-        // Identify retired segments for this cable
-        const retiredSegments = new Set(
+        // Retired/building segments are not valid route nodes.
+        const unavailableSegments = new Set(
           cable.segments
-            ?.filter((s) => s.retired)
+            ?.filter((s) => s.retired || cable.building || s.building)
             .map((s) => s.id) || []
         );
 
-        // Filter out paths that contain any retired segment
+        // Filter out paths that contain any retired/building segment
         const validPaths = cable.available_path.filter((path) => {
-          // If the path contains a node (segment ID) that is marked as retired, exclude it.
+          // If the path contains a node (segment ID) that is unavailable, exclude it.
           // Note: 'path' array contains segment IDs mixed with country codes? 
           // Based on c2c.json: ["TW", "c2c-seg-2b", "c2c-seg-2a", "HK"]
           // "c2c-seg-2b" is a segment ID.
-          return !path.some((node) => retiredSegments.has(node));
+          return !path.some((node) => unavailableSegments.has(node));
         });
 
         if (validPaths.length === 0) return;
@@ -137,7 +138,10 @@ export default function OutageCounter() {
           activeIncidents
             .filter((incident) => incident.cableid === cable.id)
             .map((incident) => incident.segment?.trim())
-            .filter((id): id is string => Boolean(id && id.length > 0)),
+            .filter(
+              (id): id is string =>
+                Boolean(id && id.length > 0 && !unavailableSegments.has(id)),
+            ),
         );
 
         const pathGroups = groupPaths(validPaths);

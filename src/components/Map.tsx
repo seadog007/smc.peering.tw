@@ -66,6 +66,7 @@ interface Segment {
   coordinates: [number, number][];
   color?: string;
   retired?: boolean;
+  building?: boolean;
 }
 interface Equipment {
   id: string;
@@ -76,6 +77,7 @@ interface Cable {
   id: string;
   name: string;
   color?: string;
+  building?: boolean;
   segments: Segment[];
   equipments?: Equipment[];
   available_path?: string[][];
@@ -125,18 +127,22 @@ function getSegmentStatus(
   cable: Cable,
   incidents: Incident[],
 ) {
+  if (isBuildingSegment(segment, cable)) return "normal";
+
   const activeIncidents = incidents.filter(
     (incident) =>
       incident.cableid === cable.id &&
       (!incident.resolved_at || incident.resolved_at.trim() === ""),
   );
   if (activeIncidents.length > 0 && cable.available_path) {
-    // Only consider paths that do not contain retired segments (retired = no valid route).
-    const retiredSegmentIds = new Set(
-      cable.segments?.filter((s) => s.retired).map((s) => s.id) ?? [],
+    // Retired/building segments are not valid route nodes for incident propagation.
+    const unavailableSegmentIds = new Set(
+      cable.segments
+        ?.filter((s) => s.retired || isBuildingSegment(s, cable))
+        .map((s) => s.id) ?? [],
     );
     const validPaths = cable.available_path.filter(
-      (path) => !path.some((node) => retiredSegmentIds.has(node)),
+      (path) => !path.some((node) => unavailableSegmentIds.has(node)),
     );
     if (validPaths.length === 0) {
       // No valid paths; fall through to normal status.
@@ -149,7 +155,12 @@ function getSegmentStatus(
       if (disconnectedIncidents.length > 0) {
         const affectedSegments = disconnectedIncidents
           .map((incident) => incident.segment?.trim())
-          .filter((id): id is string => Boolean(id && id.length > 0));
+          .filter(
+            (id): id is string =>
+              Boolean(
+                id && id.length > 0 && !unavailableSegmentIds.has(id),
+              ),
+          );
         const brokenSegments = markBroken(validPaths, affectedSegments);
         if (brokenSegments.includes(segment.id)) return "broken";
       }
@@ -161,7 +172,10 @@ function getSegmentStatus(
       );
       const directPartialSegments = partialIncidents
         .map((incident) => incident.segment?.trim())
-        .filter((id): id is string => Boolean(id && id.length > 0));
+        .filter(
+          (id): id is string =>
+            Boolean(id && id.length > 0 && !unavailableSegmentIds.has(id)),
+        );
 
       const propagatedPartialSegments =
         directPartialSegments.length > 0
@@ -185,11 +199,16 @@ function getSegmentColor(
   incidents: Incident[],
 ) {
   if (segment.retired) return "#292a2f"; // Near background color
+  if (isBuildingSegment(segment, cable)) return "#292a2f";
   if (segment.color) return segment.color;
   const status = getSegmentStatus(segment, cable, incidents);
   if (status === "broken") return "#ff0000";
   if (status === "partial_disconnected") return "#fcc800";
   return cable.color || "#48A9FF";
+}
+
+function isBuildingSegment(segment: Segment, cable: Cable) {
+  return Boolean(cable.building || segment.building);
 }
 
 async function loadCables(): Promise<Cable[]> {
@@ -264,6 +283,7 @@ export default function MapWithCables({
         .forEach((segment) => {
           const status = getSegmentStatus(segment, cable, incidents);
           const color = getSegmentColor(segment, cable, incidents);
+          const building = isBuildingSegment(segment, cable);
 
           const shouldShow =
             cableFilter === "all" ||
@@ -304,6 +324,7 @@ export default function MapWithCables({
               lineWidth: status === "broken" || status === "partial_disconnected" ? 3 : 1.5,
               lineBlur: 0,
               lineOpacity: 1,
+              building,
             },
             geometry: {
               type: "LineString",
@@ -382,7 +403,7 @@ export default function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
-      interactiveLayerIds={["cables-hit", "cables-layer"]}
+      interactiveLayerIds={["cables-hit", "cables-layer", "cables-building-layer"]}
       doubleClickZoom={false}
       keyboard={false}
       attributionControl={false}
@@ -417,12 +438,26 @@ export default function MapWithCables({
         <Layer
           id="cables-layer"
           type="line"
+          filter={["!=", ["get", "building"], true] as any}
           layout={{ "line-join": "round", "line-cap": "round" }}
           paint={{
             "line-color": ["get", "color"],
             "line-width": ["get", "lineWidth"],
             "line-blur": ["get", "lineBlur"],
             "line-opacity": ["get", "lineOpacity"],
+          }}
+        />
+        <Layer
+          id="cables-building-layer"
+          type="line"
+          filter={["==", ["get", "building"], true] as any}
+          layout={{ "line-join": "round", "line-cap": "round" }}
+          paint={{
+            "line-color": ["get", "color"],
+            "line-width": ["get", "lineWidth"],
+            "line-blur": ["get", "lineBlur"],
+            "line-opacity": ["get", "lineOpacity"],
+            "line-dasharray": [2, 2],
           }}
         />
         {/* Invisible wide hit area to make hover/click easier */}

@@ -30,6 +30,7 @@
       "broken": "紅色：斷線",
       "partial": "黃色：部分斷線",
       "retired": "黑色：已退役區段",
+      "building": "黑色虛線：建設中區段",
       "landingPoint": "上陸點",
       "equipment": "設備"
     }
