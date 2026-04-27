@@ -379,7 +379,8 @@
       "3.9.0": {
         "date": "2026-04-22",
         "changes": [
-          "Add guided tour"
+          "Add guided tour",
+          "Add APG TW-SG available path"
         ]
       },
       "3.10.0": {
