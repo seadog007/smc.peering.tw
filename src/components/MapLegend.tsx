@@ -38,6 +38,12 @@ const legendItems = [
     line: true,
   },
   {
+    key: "building",
+    color: "#292a2f",
+    line: true,
+    dashed: true,
+  },
+  {
     key: "landingPoint",
     color: "#2563eb",
     line: false,
@@ -109,7 +115,15 @@ export default function MapLegend() {
                   {item.line ? (
                     <span
                       className="block h-[3px] w-7 rounded-full"
-                      style={{ backgroundColor: item.color }}
+                      style={{
+                        backgroundColor:
+                          "dashed" in item && item.dashed
+                            ? undefined
+                            : item.color,
+                        backgroundImage: "dashed" in item && item.dashed
+                          ? `repeating-linear-gradient(to right, ${item.color} 0 6px, transparent 6px 10px)`
+                          : undefined,
+                      }}
                     />
                   ) : (
                     <span

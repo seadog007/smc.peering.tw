@@ -30,6 +30,7 @@
       "broken": "Red: Outage",
       "partial": "Yellow: Partial Outage",
       "retired": "Black: Retired Segment",
+      "building": "Black dashed: Building Segment",
       "landingPoint": "Landing point",
       "equipment": "Equipment"
     }
