@@ -748,6 +748,17 @@
     "resolved_at": ""
   },
   {
+    "date": "2026-03-17T00:00:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b1",
+    "title": "",
+    "description": "From 數位發展部資料「距新北八里約27.9公里處斷纜」",
+    "reparing_at": "2026-05-25T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
     "date": "2026-03-21T00:00:00+08:00",
     "status": "disconnected",
     "reason": "unknown",
