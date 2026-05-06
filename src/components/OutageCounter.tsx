@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  computePathAvailability,
+  type CableStatusCable,
+  type CableStatusIncident,
+} from "@/lib/cable-status";
 
-type Path = string[];
-
-interface CableLite {
-  id: string;
+interface CableLite extends CableStatusCable {
   name: string;
-  building?: boolean;
-  available_path?: Path[];
-  segments?: { id: string; retired?: boolean; building?: boolean }[];
 }
 
-interface Incident {
+interface Incident extends CableStatusIncident {
   date: string;
   status: string;
   reason: string;
@@ -30,10 +29,12 @@ export default function OutageCounter() {
     let mounted = true;
 
     async function loadCablesLite(): Promise<CableLite[]> {
-      const modules = import.meta.glob("../data/cables/*.json");
-      const cablePromises = Object.values(modules).map(async (loader: any) => {
+      const modules = import.meta.glob<{ default: CableLite }>(
+        "../data/cables/*.json",
+      );
+      const cablePromises = Object.values(modules).map(async (loader) => {
         const module = await loader();
-        return (module as { default: CableLite }).default;
+        return module.default;
       });
       return Promise.all(cablePromises);
     }
@@ -48,184 +49,19 @@ export default function OutageCounter() {
       return incidentsData;
     }
 
-    function commonPrefixLength(paths: Path[]) {
-      if (paths.length === 0) return 0;
-      let prefixLen = paths[0].length;
-      for (const path of paths.slice(1)) {
-        prefixLen = Math.min(prefixLen, path.length);
-        for (let i = 0; i < prefixLen; i++) {
-          if (path[i] !== paths[0][i]) {
-            prefixLen = i;
-            break;
-          }
-        }
-      }
-      return prefixLen;
-    }
-
-    function groupPaths(paths: Path[]) {
-      const grouped: Path[][] = [];
-      const byFirstTwo = new Map<string, Path[]>();
-
-      for (const path of paths) {
-        if (path.length >= 2) {
-          const key = `${path[0]}|${path[1]}`;
-          const bucket = byFirstTwo.get(key) ?? [];
-          bucket.push(path);
-          byFirstTwo.set(key, bucket);
-        } else {
-          grouped.push([path]);
-        }
-      }
-
-      for (const bucket of byFirstTwo.values()) {
-        if (bucket.length > 1) {
-          grouped.push(bucket);
-        } else {
-          grouped.push([bucket[0]]);
-        }
-      }
-
-      return grouped;
-    }
-
-    function isDomesticPath(path: Path) {
-      if (path.length < 2) return false;
-      const start = path[0];
-      const end = path[path.length - 1];
-      return start.startsWith("TW") && end.startsWith("TW");
-    }
-
-    function computePathAvailability(
-      cables?: CableLite[],
-      incidents?: Incident[],
-    ) {
-      if (!cables || !incidents)
-        return { totalIntl: 0, remainingIntl: 0, totalDom: 0, remainingDom: 0 };
-
-      let totalIntl = 0;
-      let remainingIntl = 0;
-      let totalDom = 0;
-      let remainingDom = 0;
-
-      const activeIncidents = incidents.filter(
-        (incident) =>
-          !incident.resolved_at || incident.resolved_at.trim() === "",
-      );
-
-      cables.forEach((cable) => {
-        if (!cable.available_path || cable.available_path.length === 0) return;
-
-        // Retired/building segments are not valid route nodes.
-        const unavailableSegments = new Set(
-          cable.segments
-            ?.filter((s) => s.retired || cable.building || s.building)
-            .map((s) => s.id) || []
-        );
-
-        // Filter out paths that contain any retired/building segment
-        const validPaths = cable.available_path.filter((path) => {
-          // If the path contains a node (segment ID) that is unavailable, exclude it.
-          // Note: 'path' array contains segment IDs mixed with country codes? 
-          // Based on c2c.json: ["TW", "c2c-seg-2b", "c2c-seg-2a", "HK"]
-          // "c2c-seg-2b" is a segment ID.
-          return !path.some((node) => unavailableSegments.has(node));
-        });
-
-        if (validPaths.length === 0) return;
-
-        const downSegments = new Set(
-          activeIncidents
-            .filter((incident) => incident.cableid === cable.id)
-            .map((incident) => incident.segment?.trim())
-            .filter(
-              (id): id is string =>
-                Boolean(id && id.length > 0 && !unavailableSegments.has(id)),
-            ),
-        );
-
-        const pathGroups = groupPaths(validPaths);
-
-        pathGroups.forEach((paths) => {
-          if (paths.length === 0) return;
-
-          // Treat single paths as independent routes.
-          if (paths.length === 1) {
-            const path = paths[0];
-            const isUp = path.every((node) => !downSegments.has(node));
-            const domestic = isDomesticPath(path);
-            if (domestic) {
-              totalDom += 1;
-              if (isUp) remainingDom += 1;
-            } else {
-              totalIntl += 1;
-              if (isUp) remainingIntl += 1;
-            }
-            return;
-          }
-
-          // Shared backbone with multiple branches (e.g., APG)
-          const prefixLen = commonPrefixLength(paths);
-          // Require at least two shared nodes to consider grouped; otherwise fall back to independent counting.
-          if (prefixLen < 2) {
-            paths.forEach((path) => {
-              const isUp = path.every((node) => !downSegments.has(node));
-              const domestic = isDomesticPath(path);
-              if (domestic) {
-                totalDom += 1;
-                if (isUp) remainingDom += 1;
-              } else {
-                totalIntl += 1;
-                if (isUp) remainingIntl += 1;
-              }
-            });
-            return;
-          }
-
-          // Grouped path category: if all paths are domestic, treat as domestic; otherwise international.
-          const groupDomestic = paths.every((p) => isDomesticPath(p));
-
-          if (groupDomestic) {
-            totalDom += 1;
-          } else {
-            totalIntl += 1;
-          }
-
-          const shared = paths[0].slice(0, prefixLen);
-          const sharedDown = shared.some((node) => downSegments.has(node));
-          if (sharedDown) return;
-
-          const branchUp = paths.some((path) =>
-            path.slice(prefixLen).every((node) => !downSegments.has(node)),
-          );
-          if (!branchUp) return;
-
-          if (groupDomestic) {
-            remainingDom += 1;
-          } else {
-            remainingIntl += 1;
-          }
-        });
-      });
-
-      return { totalIntl, remainingIntl, totalDom, remainingDom };
-    }
-
     (async () => {
       try {
         const [cables, incidents] = await Promise.all([
           loadCablesLite(),
           loadIncidents(),
         ]);
-        //@ts-ignore 這是等等會用到的妙妙工具
-        const { totalDom, totalIntl, remainingDom, remainingIntl } =
+        const { totalIntl, remainingIntl } =
           computePathAvailability(cables, incidents);
         if (!mounted) return;
         setTotal(totalIntl);
         setOutages(totalIntl - remainingIntl);
-      } catch (err) {
+      } catch {
         // on error, fallback to nulls
-        // console.error(err);
         if (!mounted) return;
         setTotal(null);
         setOutages(null);
