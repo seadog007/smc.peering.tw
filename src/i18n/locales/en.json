@@ -109,6 +109,29 @@
     "uptimeLabel": "Uptime",
     "uptimePercentage": "{{value}}% uptime"
   },
+  "topology": {
+    "title": "Topology View",
+    "summary": {
+      "affectedIsps": "Affected ISPs",
+      "activeIncidents": "Active Incidents",
+      "nodes": "Topology Nodes"
+    },
+    "empty": {
+      "title": "No topology data available",
+      "description": "Add ISP dependency records to show affected providers."
+    },
+    "status": {
+      "online": "Online",
+      "partial_disconnected": "Partial Outage",
+      "disconnected": "Outage",
+      "unknown": "Unknown"
+    },
+    "types": {
+      "isp": "ISP",
+      "segment": "Cable Segment",
+      "destination": "Destination"
+    }
+  },
   "about": {
     "title": "About",
     "description": "Taiwan Submarine Cable Map is an interactive map that shows the status and historical incidents of Taiwan's submarine cables.",

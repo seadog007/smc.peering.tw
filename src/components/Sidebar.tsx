@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarButton from "@/components/SidebarButton";
 import AboutDialog from "@/components/dialog/About";
 import TimelineDialog from "@/components/dialog/Timeline";
+import TopologyDialog from "@/components/dialog/Topology";
 import { useTourStore } from "@/stores/tour";
 
 import IncidentList from "@/components/IncidentList";
@@ -109,6 +110,9 @@ function SidebarContent() {
             </div>
             <div data-tour="timeline-dialog">
               <TimelineDialog />
+            </div>
+            <div data-tour="topology-dialog">
+              <TopologyDialog />
             </div>
             <div data-tour="tour-help">
               <SidebarButton onClick={startTour}>

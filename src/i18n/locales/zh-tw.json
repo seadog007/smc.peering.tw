@@ -108,6 +108,29 @@
     "uptimeLabel": "可用率",
     "uptimePercentage": "{{value}}% 可用率"
   },
+  "topology": {
+    "title": "拓撲檢視",
+    "summary": {
+      "affectedIsps": "受影響 ISP",
+      "activeIncidents": "發生中事件",
+      "nodes": "拓撲節點"
+    },
+    "empty": {
+      "title": "尚無拓撲資料",
+      "description": "新增 ISP 相依資料後即可顯示受影響業者。"
+    },
+    "status": {
+      "online": "正常",
+      "partial_disconnected": "部分斷線",
+      "disconnected": "斷線",
+      "unknown": "未知"
+    },
+    "types": {
+      "isp": "ISP",
+      "segment": "海纜區段",
+      "destination": "目的地"
+    }
+  },
   "about": {
     "title": "關於",
     "description": "台灣海纜動態地圖是一個互動式地圖，顯示台灣海纜的狀態和歷史事件。",

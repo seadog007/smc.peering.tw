@@ -5,6 +5,12 @@ import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
 import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import { cn } from "@/lib/utils";
+import {
+  getSegmentColor,
+  getSegmentStatus,
+  isBuildingSegment,
+  type CableStatusIncident,
+} from "@/lib/cable-status";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { motion } from "motion/react";
 import landingPointsJson from "@/data/landing-points.json" with { type: "json" };
@@ -87,7 +93,7 @@ interface LandingPoint {
   name: string;
   coordinates: [number, number];
 }
-interface Incident {
+interface Incident extends CableStatusIncident {
   date: string;
   status: string;
   cableid: string;
@@ -96,119 +102,6 @@ interface Incident {
   description: string;
   resolved_at: string;
   reason?: string;
-}
-
-// Path-propagation logic: if any segment on a path is affected,
-// all segments on that path are considered broken (no available route).
-function markBroken(paths: string[][], inputNodes: string[]) {
-  const failedPaths = new Set<string>();
-  for (const node of inputNodes) {
-    for (const path of paths) {
-      if (path.includes(node)) failedPaths.add(JSON.stringify(path));
-    }
-  }
-  const failedPathsArray = Array.from(failedPaths).map(
-    (p) => JSON.parse(p) as string[],
-  );
-  const flatAll = paths.flat();
-  const flatFailed = failedPathsArray.flat();
-  const failedNodesSet = new Set(flatFailed);
-  const out: string[] = [];
-  for (const node of failedNodesSet) {
-    const countAll = flatAll.filter((n) => n === node).length;
-    const countFailed = flatFailed.filter((n) => n === node).length;
-    if (countAll === countFailed) out.push(node);
-  }
-  return out.sort();
-}
-
-function getSegmentStatus(
-  segment: Segment,
-  cable: Cable,
-  incidents: Incident[],
-) {
-  if (isBuildingSegment(segment, cable)) return "normal";
-
-  const activeIncidents = incidents.filter(
-    (incident) =>
-      incident.cableid === cable.id &&
-      (!incident.resolved_at || incident.resolved_at.trim() === ""),
-  );
-  if (activeIncidents.length > 0 && cable.available_path) {
-    // Retired/building segments are not valid route nodes for incident propagation.
-    const unavailableSegmentIds = new Set(
-      cable.segments
-        ?.filter((s) => s.retired || isBuildingSegment(s, cable))
-        .map((s) => s.id) ?? [],
-    );
-    const validPaths = cable.available_path.filter(
-      (path) => !path.some((node) => unavailableSegmentIds.has(node)),
-    );
-    if (validPaths.length === 0) {
-      // No valid paths; fall through to normal status.
-    } else {
-      // Run markBroken only on non-partial incidents so that partial_disconnected
-      // segments with alternative routes are not incorrectly marked as fully broken.
-      const disconnectedIncidents = activeIncidents.filter(
-        (incident) => incident.status !== "partial_disconnected",
-      );
-      if (disconnectedIncidents.length > 0) {
-        const affectedSegments = disconnectedIncidents
-          .map((incident) => incident.segment?.trim())
-          .filter(
-            (id): id is string =>
-              Boolean(
-                id && id.length > 0 && !unavailableSegmentIds.has(id),
-              ),
-          );
-        const brokenSegments = markBroken(validPaths, affectedSegments);
-        if (brokenSegments.includes(segment.id)) return "broken";
-      }
-
-      // For partial_disconnected, also propagate along the same logical paths
-      // so upstream/downstream segments share the partial highlight.
-      const partialIncidents = activeIncidents.filter(
-        (incident) => incident.status === "partial_disconnected",
-      );
-      const directPartialSegments = partialIncidents
-        .map((incident) => incident.segment?.trim())
-        .filter(
-          (id): id is string =>
-            Boolean(id && id.length > 0 && !unavailableSegmentIds.has(id)),
-        );
-
-      const propagatedPartialSegments =
-        directPartialSegments.length > 0
-          ? markBroken(validPaths, directPartialSegments)
-          : [];
-
-      const partialSegmentsSet = new Set([
-        ...directPartialSegments,
-        ...propagatedPartialSegments,
-      ]);
-
-      if (partialSegmentsSet.has(segment.id)) return "partial_disconnected";
-    }
-  }
-  return "normal";
-}
-
-function getSegmentColor(
-  segment: Segment,
-  cable: Cable,
-  incidents: Incident[],
-) {
-  if (segment.retired) return "#292a2f"; // Near background color
-  if (isBuildingSegment(segment, cable)) return "#292a2f";
-  if (segment.color) return segment.color;
-  const status = getSegmentStatus(segment, cable, incidents);
-  if (status === "broken") return "#ff0000";
-  if (status === "partial_disconnected") return "#fcc800";
-  return cable.color || "#48A9FF";
-}
-
-function isBuildingSegment(segment: Segment, cable: Cable) {
-  return Boolean(cable.building || segment.building);
 }
 
 async function loadCables(): Promise<Cable[]> {
