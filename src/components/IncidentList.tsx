@@ -1,22 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { cn, useFormatDate } from "@/lib/utils";
-import {
-  TriangleAlert,
-  Check,
-  XCircle,
-  CalendarClock,
-  HelpCircle,
-  Wrench,
-  Activity,
-  FishSymbol,
-  ShieldAlert,
-  TornadoIcon,
-  Clock,
-  Mountain,
-  Cpu,
-  type LucideIcon,
-} from "lucide-react";
+import { TriangleAlert, Check, XCircle, CalendarClock } from "lucide-react";
 
 const REASON_KEYS = [
   "unknown",
@@ -29,21 +14,6 @@ const REASON_KEYS = [
   "land",
   "equipment",
 ] as const;
-
-const REASON_STYLES: Record<
-  (typeof REASON_KEYS)[number],
-  { pillClass: string; Icon: LucideIcon }
-> = {
-  unknown: { pillClass: "bg-slate-500/40 text-slate-300", Icon: HelpCircle },
-  maintenance: { pillClass: "bg-blue-500/40 text-blue-300", Icon: Wrench },
-  earthquake: { pillClass: "bg-yellow-950/40 text-yellow-600", Icon: Activity },
-  fishing: { pillClass: "bg-sky-500/40 text-sky-300", Icon: FishSymbol },
-  sabotage: { pillClass: "bg-red-500/40 text-red-300", Icon: ShieldAlert },
-  typhoon: { pillClass: "bg-blue-600/40 text-blue-400", Icon: TornadoIcon },
-  aging: { pillClass: "bg-violet-500/40 text-violet-300", Icon: Clock },
-  land: { pillClass: "bg-emerald-500/40 text-emerald-300", Icon: Mountain },
-  equipment: { pillClass: "bg-orange-600/40 text-orange-300", Icon: Cpu },
-};
 
 interface Incident {
   date: string;
@@ -173,30 +143,6 @@ export default function IncidentList({
                     <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
                     <div className="absolute inset-0 rounded-full border-t border-white/2.5" />
                   </div>
-                  {(() => {
-                    const reasonKey =
-                      incident.reason &&
-                      (REASON_KEYS as readonly string[]).includes(incident.reason)
-                        ? (incident.reason as (typeof REASON_KEYS)[number])
-                        : "unknown";
-                    const { pillClass: reasonPillClass, Icon: ReasonIcon } =
-                      REASON_STYLES[reasonKey];
-                    return (
-                      <div
-                        className={cn(
-                          "relative rounded-full px-1.5 py-1 text-xs",
-                          reasonPillClass,
-                        )}
-                      >
-                        <span className="flex items-center gap-1 drop-shadow-md drop-shadow-black/20">
-                          <ReasonIcon className="size-4" />
-                          {t(`incidents.reason.${reasonKey}`)}
-                        </span>
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/5 to-transparent" />
-                        <div className="absolute inset-0 rounded-full border-t border-white/2.5" />
-                      </div>
-                    );
-                  })()}
                 </div>
               </div>
               <h3 className="text-lg font-semibold">{incident.title}</h3>
@@ -204,6 +150,21 @@ export default function IncidentList({
               <p className="text-sm text-white/80">{incident.description}</p>
 
               <div className="mt-1.5 flex flex-col gap-1 border-t border-white/10 pt-1.5 text-sm text-white/70 empty:hidden">
+                {incident.reason &&
+                  incident.reason !== "unknown" &&
+                  (REASON_KEYS as readonly string[]).includes(
+                    incident.reason,
+                  ) && (
+                    <div className="flex items-center justify-between gap-1">
+                      <span>{t("common.reason")}</span>
+                      <span className="text-right text-white/50">
+                        {t(
+                          `incidents.reason.${incident.reason as (typeof REASON_KEYS)[number]}`,
+                        )}
+                      </span>
+                    </div>
+                  )}
+
                 {incident.reparing_at && incident.reparing_at !== "" && (
                   <div className="flex items-center justify-between gap-1">
                     <span>{t("incidents.reparing_at")}</span>
