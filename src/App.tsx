@@ -29,10 +29,10 @@ function App() {
   }, []);
 
   return (
-    <div className="relative h-svh w-full">
+    <>
       <Map cableFilter={cableFilter} />
       <div
-        className="absolute top-2 z-10 max-md:right-2 md:left-2"
+        className="absolute top-[calc(env(safe-area-inset-top)+8px)] z-10 max-md:right-2 md:left-2"
         data-tour="cable-filter"
       >
         <CableFilter
@@ -47,7 +47,7 @@ function App() {
           <MapLegend />
         </div>
       </div>
-      <div className="absolute right-2 z-10 max-md:bottom-[168px] md:right-[416px] md:bottom-2">
+      <div className="absolute right-2 bottom-2 z-10 max-md:bottom-[178px]">
         <CurrentTime />
       </div>
       <Sidebar />
@@ -57,7 +57,7 @@ function App() {
         onDone={() => setNeedsLanguageSelect(false)}
       />
       {!needsLanguageSelect && <IntroModal />}
-    </div>
+    </>
   );
 }
 

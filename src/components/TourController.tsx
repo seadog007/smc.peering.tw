@@ -12,10 +12,7 @@ export default function TourController() {
   const { t } = useTranslation();
   const setStartTour = useTourStore((s) => s.setStartTour);
 
-  const [tourAutoStartAllowed] = useLocalStorage(
-    "tourAutoStartAllowed",
-    false,
-  );
+  const [tourAutoStartAllowed] = useLocalStorage("tourAutoStartAllowed", false);
   const [tourTriggered, setTourTriggered] = useLocalStorage(
     "tourTriggered",
     false,
@@ -184,4 +181,3 @@ export default function TourController() {
 
   return null;
 }
-

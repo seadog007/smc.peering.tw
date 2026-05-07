@@ -1,4 +1,10 @@
 {
+  "tab": {
+    "incidents": "Incidents",
+    "about": "About",
+    "timeline": "Timeline",
+    "topology": "Topology"
+  },
   "common": {
     "active": "Active",
     "resolved": "Resolved",
@@ -30,7 +36,7 @@
       "broken": "Red: Outage",
       "partial": "Yellow: Partial Outage",
       "retired": "Black: Retired Segment",
-      "building": "Black dashed: Building Segment",
+      "building": "Dashed: Building Segment",
       "landingPoint": "Landing point",
       "equipment": "Equipment"
     }
@@ -147,9 +153,7 @@
     "version": {
       "1.0.0": {
         "date": "2025-06-15",
-        "changes": [
-          "Initial release"
-        ]
+        "changes": ["Initial release"]
       },
       "1.0.1": {
         "date": "2025-06-16",
@@ -160,57 +164,39 @@
       },
       "1.1.0": {
         "date": "2025-06-18",
-        "changes": [
-          "Added Version History"
-        ]
+        "changes": ["Added Version History"]
       },
       "1.1.1": {
         "date": "2025-06-18",
-        "changes": [
-          "Added EAC1 Segment E Cable Data"
-        ]
+        "changes": ["Added EAC1 Segment E Cable Data"]
       },
       "1.2.0": {
         "date": "2025-06-19",
-        "changes": [
-          "Added Mobile Version Map"
-        ]
+        "changes": ["Added Mobile Version Map"]
       },
       "1.2.1": {
         "date": "2025-06-19",
-        "changes": [
-          "Fixed Mobile Button Position"
-        ]
+        "changes": ["Fixed Mobile Button Position"]
       },
       "1.2.2": {
         "date": "2025-06-21",
-        "changes": [
-          "Added NCP S5, S6, S1.4 Cable Data"
-        ]
+        "changes": ["Added NCP S5, S6, S1.4 Cable Data"]
       },
       "1.2.3": {
         "date": "2025-07-11",
-        "changes": [
-          "Added Hover Info when mouse is on the cable"
-        ]
+        "changes": ["Added Hover Info when mouse is on the cable"]
       },
       "1.2.4": {
         "date": "2025-07-12",
-        "changes": [
-          "Added TSE-1 Cable Data"
-        ]
+        "changes": ["Added TSE-1 Cable Data"]
       },
       "1.2.5": {
         "date": "2025-07-12",
-        "changes": [
-          "Updated APCN2 to accurate version"
-        ]
+        "changes": ["Updated APCN2 to accurate version"]
       },
       "1.2.6": {
         "date": "2025-07-12",
-        "changes": [
-          "Updated C2C Cable Data, Added Seg 2C, 3A"
-        ]
+        "changes": ["Updated C2C Cable Data, Added Seg 2C, 3A"]
       },
       "1.3.0": {
         "date": "2025-07-13",
@@ -231,15 +217,11 @@
       },
       "1.3.2": {
         "date": "2025-07-14",
-        "changes": [
-          "Fixed cable data build script"
-        ]
+        "changes": ["Fixed cable data build script"]
       },
       "1.3.3": {
         "date": "2025-08-22",
-        "changes": [
-          "Added SJC2 S4 Cable Data"
-        ]
+        "changes": ["Added SJC2 S4 Cable Data"]
       },
       "2.0.0": {
         "date": "2025-09-03",
@@ -254,33 +236,23 @@
       },
       "2.0.1": {
         "date": "2025-09-13",
-        "changes": [
-          "Trying to fix performance issue"
-        ]
+        "changes": ["Trying to fix performance issue"]
       },
       "2.0.2": {
         "date": "2025-09-14",
-        "changes": [
-          "Trying to fix performance issue"
-        ]
+        "changes": ["Trying to fix performance issue"]
       },
       "2.1.0": {
         "date": "2025-09-14",
-        "changes": [
-          "Made cable data smoother"
-        ]
+        "changes": ["Made cable data smoother"]
       },
       "2.1.1": {
         "date": "2025-10-18",
-        "changes": [
-          "Fixed incidents data sorting issue"
-        ]
+        "changes": ["Fixed incidents data sorting issue"]
       },
       "2.1.2": {
         "date": "2025-10-18",
-        "changes": [
-          "Added OKTW Grafana link"
-        ]
+        "changes": ["Added OKTW Grafana link"]
       },
       "3.0.0": {
         "date": "2025-12-11",
@@ -292,10 +264,7 @@
       },
       "3.1.0": {
         "date": "2025-12-12",
-        "changes": [
-          "Added outage counter to map UI",
-          "Added dark mode favicon"
-        ]
+        "changes": ["Added outage counter to map UI", "Added dark mode favicon"]
       },
       "3.2.0": {
         "date": "2025-12-26",
@@ -315,28 +284,19 @@
       },
       "3.3.1": {
         "date": "2026-01-03",
-        "changes": [
-          "Updated landing points"
-        ]
+        "changes": ["Updated landing points"]
       },
       "3.3.2": {
         "date": "2026-01-17",
-        "changes": [
-          "Fixed datetime string for Firefox",
-          "Updated dependencies"
-        ]
+        "changes": ["Fixed datetime string for Firefox", "Updated dependencies"]
       },
       "3.3.3": {
         "date": "2026-01-17",
-        "changes": [
-          "Reverted convert_incidents.py output path change"
-        ]
+        "changes": ["Reverted convert_incidents.py output path change"]
       },
       "3.4.0": {
         "date": "2026-01-17",
-        "changes": [
-          "Added scheduled incident status"
-        ]
+        "changes": ["Added scheduled incident status"]
       },
       "3.5.0": {
         "date": "2026-03-10",
@@ -358,53 +318,35 @@
       },
       "3.6.0": {
         "date": "2026-03-16",
-        "changes": [
-          "Add incident reason field"
-        ]
+        "changes": ["Add incident reason field"]
       },
       "3.6.1": {
         "date": "2026-03-16",
-        "changes": [
-          "Fix outage counter wording"
-        ]
+        "changes": ["Fix outage counter wording"]
       },
       "3.6.2": {
         "date": "2026-03-16",
-        "changes": [
-          "Add rough PLCN data for outage visualization and counting"
-        ]
+        "changes": ["Add rough PLCN data for outage visualization and counting"]
       },
       "3.6.3": {
         "date": "2026-03-16",
-        "changes": [
-          "Add APRICOT data"
-        ]
+        "changes": ["Add APRICOT data"]
       },
       "3.6.4": {
         "date": "2026-04-22",
-        "changes": [
-          "Fix outage counter text alignment"
-        ]
+        "changes": ["Fix outage counter text alignment"]
       },
       "3.7.0": {
         "date": "2026-04-22",
-        "changes": [
-          "Add map legend"
-        ]
+        "changes": ["Add map legend"]
       },
       "3.8.0": {
         "date": "2026-04-22",
-        "changes": [
-          "Update dependencies",
-          "Add language selection modal"
-        ]
+        "changes": ["Update dependencies", "Add language selection modal"]
       },
       "3.9.0": {
         "date": "2026-04-22",
-        "changes": [
-          "Add guided tour",
-          "Add APG TW-SG available path"
-        ]
+        "changes": ["Add guided tour", "Add APG TW-SG available path"]
       },
       "3.10.0": {
         "date": "2026-04-27",

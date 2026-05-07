@@ -135,24 +135,22 @@ export default function MapLegend() {
                         <span
                           className="block h-[3px] w-7 rounded-full"
                           style={{
-                            backgroundColor:
+                            backgroundColor: item.color,
+                            boxShadow: `0 1px 2.5px color-mix(in srgb, ${item.color} 40%, transparent)`,
+                            maskImage:
                               "dashed" in item && item.dashed
-                                ? undefined
-                                : item.color,
-                            backgroundImage:
-                              "dashed" in item && item.dashed
-                                ? `repeating-linear-gradient(to right, ${item.color} 0 6px, transparent 6px 10px)`
+                                ? "repeating-linear-gradient(to right, black 0 6px, transparent 6px 10px)"
                                 : undefined,
                           }}
                         />
                       ) : (
                         <span
-                          className="block size-3 rounded-full ring-1 ring-white/25"
+                          className="block size-3 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 ring-1 ring-white"
                           style={{ backgroundColor: item.color }}
                         />
                       )}
                     </span>
-                    <span className="min-w-0 break-words text-white/80">
+                    <span className="min-w-0 tracking-tight break-words text-white/80">
                       {t(`legend.items.${item.key}`)}
                     </span>
                   </div>

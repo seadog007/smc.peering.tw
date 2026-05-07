@@ -1,23 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Network } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import SidebarButton from "@/components/SidebarButton";
 import {
   getTopologyEdgeStatus,
   getTopologyNodeStatuses,
@@ -136,7 +121,10 @@ function createLayoutNodes(
   });
 
   const sortedLevels = Array.from(groups.keys()).sort((a, b) => a - b);
-  const maxRows = Math.max(1, ...Array.from(groups.values()).map((group) => group.length));
+  const maxRows = Math.max(
+    1,
+    ...Array.from(groups.values()).map((group) => group.length),
+  );
   const height = Math.max(360, NODE_HEIGHT + 104 + (maxRows - 1) * 84);
   const width = Math.max(
     760,
@@ -190,11 +178,7 @@ function truncateLabel(label: string, maxLength = 22) {
   return `${label.slice(0, maxLength - 3)}...`;
 }
 
-function TopologyStatusBadge({
-  status,
-}: {
-  status: TopologyRuntimeStatus;
-}) {
+function TopologyStatusBadge({ status }: { status: TopologyRuntimeStatus }) {
   const { t } = useTranslation();
   return (
     <span
@@ -219,7 +203,7 @@ function TopologyStat({
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
       <div className="text-xs text-white/55">{label}</div>
-      <div className="mt-1 text-xl font-semibold tabular-nums text-white">
+      <div className="mt-1 text-xl font-semibold text-white tabular-nums">
         {value}
       </div>
     </div>
@@ -229,10 +213,10 @@ function TopologyStat({
 function EmptyTopology() {
   const { t } = useTranslation();
   return (
-    <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
+    <div className="flex min-h-[320px] items-center justify-center rounded-lg text-center">
       <div className="flex max-w-sm flex-col items-center gap-3">
         <div className="flex size-12 items-center justify-center rounded-lg border border-white/10 bg-black/20">
-          <Network className="size-6 text-white/70" />
+          <Network className="size-6 opacity-75" />
         </div>
         <div>
           <div className="text-base font-semibold text-white">
@@ -318,19 +302,8 @@ function TopologySvg({
                 stroke={colors.stroke}
                 strokeOpacity={0.75}
               />
-              <circle
-                cx={node.width - 16}
-                cy={16}
-                r={5}
-                fill={colors.dot}
-              />
-              <text
-                x={14}
-                y={22}
-                fill="#f8fafc"
-                fontSize={13}
-                fontWeight={600}
-              >
+              <circle cx={node.width - 16} cy={16} r={5} fill={colors.dot} />
+              <text x={14} y={22} fill="#f8fafc" fontSize={13} fontWeight={600}>
                 {truncateLabel(node.label)}
               </text>
               <text x={14} y={40} fill="#94a3b8" fontSize={10}>
@@ -403,55 +376,28 @@ function TopologyContent({
   );
 }
 
-export default function TopologyDialog() {
+export default function TopologyView({ isActive }: { isActive: boolean }) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
   const hasTopologyData = TOPOLOGY_DATA.nodes.length > 0;
 
   const { data: cables = [], isLoading: cablesLoading } = useQuery({
     queryKey: ["topology", "cables"],
     queryFn: loadCables,
-    enabled: open && hasTopologyData,
+    enabled: isActive && hasTopologyData,
   });
 
   const { data: incidents = [], isLoading: incidentsLoading } = useQuery({
     queryKey: ["incidents"],
     queryFn: loadIncidents,
-    enabled: open && hasTopologyData,
+    enabled: isActive && hasTopologyData,
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DialogTrigger asChild>
-            <SidebarButton>
-              <Network className="size-5" />
-            </SidebarButton>
-          </DialogTrigger>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{t("topology.title")}</p>
-        </TooltipContent>
-      </Tooltip>
-      <DialogContent className="p-0 sm:max-w-5xl">
-        <ScrollArea className="h-full max-h-[82vh] overflow-y-auto">
-          <div className="p-6">
-            <DialogHeader className="mb-3">
-              <DialogTitle>{t("topology.title")}</DialogTitle>
-              <DialogDescription className="sr-only">
-                {t("topology.title")}
-              </DialogDescription>
-            </DialogHeader>
-            <TopologyContent
-              topology={TOPOLOGY_DATA}
-              cables={cables}
-              incidents={incidents}
-              isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
-            />
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+    <TopologyContent
+      topology={TOPOLOGY_DATA}
+      cables={cables}
+      incidents={incidents}
+      isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
+    />
   );
 }
