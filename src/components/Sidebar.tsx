@@ -364,7 +364,10 @@ function MobileSidebar() {
                     <TimelineView isActive={snap !== SNAP_PEEK} />
                   )}
                   {activeTab === "topology" && (
-                    <TopologyView isActive={snap !== SNAP_PEEK} />
+                    <TopologyView
+                      isActive={snap !== SNAP_PEEK}
+                      allowDirectionSwitch={false}
+                    />
                   )}
                 </div>
               </MaskedScroll>

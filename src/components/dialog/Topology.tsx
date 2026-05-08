@@ -512,13 +512,15 @@ function LoadingTopology() {
 function TopologySvg({
   topology,
   nodeStatuses,
+  allowDirectionSwitch = true,
 }: {
   topology: TopologyData;
   nodeStatuses: Record<string, TopologyRuntimeStatus>;
+  allowDirectionSwitch?: boolean;
 }) {
   const { t } = useTranslation();
   const viewportRef = useRef<HTMLDivElement>(null);
-  const [direction, setDirection] =
+  const [selectedDirection, setSelectedDirection] =
     useState<TopologyDirection>("horizontal");
   const [folding, setFolding] = useState<TopologyFolding>("two");
   const [zoom, setZoom] = useState(1);
@@ -534,6 +536,7 @@ function TopologySvg({
     x: 0,
     y: 0,
   });
+  const direction = allowDirectionSwitch ? selectedDirection : "horizontal";
   const layout = useMemo(
     () =>
       createLayoutNodes(topology.nodes, nodeStatuses, { direction, folding }),
@@ -666,21 +669,23 @@ function TopologySvg({
     <div className="rounded-lg border border-white/10 bg-black/20">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 p-2">
         <div className="flex flex-wrap items-center gap-2">
-          <TopologySegmentedControl
-            label={t("topology.controls.direction")}
-            options={[
-              {
-                value: "horizontal",
-                label: t("topology.controls.horizontal"),
-              },
-              {
-                value: "vertical",
-                label: t("topology.controls.vertical"),
-              },
-            ]}
-            value={direction}
-            onChange={setDirection}
-          />
+          {allowDirectionSwitch && (
+            <TopologySegmentedControl
+              label={t("topology.controls.direction")}
+              options={[
+                {
+                  value: "horizontal",
+                  label: t("topology.controls.horizontal"),
+                },
+                {
+                  value: "vertical",
+                  label: t("topology.controls.vertical"),
+                },
+              ]}
+              value={selectedDirection}
+              onChange={setSelectedDirection}
+            />
+          )}
           <TopologySegmentedControl
             label={t("topology.controls.folding")}
             options={foldingOptions}
@@ -885,11 +890,13 @@ function TopologyContent({
   cables,
   incidents,
   isLoading,
+  allowDirectionSwitch = true,
 }: {
   topology: TopologyData;
   cables: CableStatusCable[];
   incidents: Incident[];
   isLoading: boolean;
+  allowDirectionSwitch?: boolean;
 }) {
   const { t } = useTranslation();
   const nodeStatuses = useMemo(
@@ -928,7 +935,11 @@ function TopologyContent({
         />
       </div>
 
-      <TopologySvg topology={topology} nodeStatuses={nodeStatuses} />
+      <TopologySvg
+        topology={topology}
+        nodeStatuses={nodeStatuses}
+        allowDirectionSwitch={allowDirectionSwitch}
+      />
 
       <div className="flex flex-wrap gap-2">
         {STATUS_ORDER.map((status) => (
@@ -939,7 +950,13 @@ function TopologyContent({
   );
 }
 
-export function TopologyView({ isActive }: { isActive: boolean }) {
+export function TopologyView({
+  isActive,
+  allowDirectionSwitch = true,
+}: {
+  isActive: boolean;
+  allowDirectionSwitch?: boolean;
+}) {
   const hasTopologyData = TOPOLOGY_DATA.nodes.length > 0;
 
   const { data: cables = [], isLoading: cablesLoading } = useQuery({
@@ -960,6 +977,7 @@ export function TopologyView({ isActive }: { isActive: boolean }) {
       cables={cables}
       incidents={incidents}
       isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
+      allowDirectionSwitch={allowDirectionSwitch}
     />
   );
 }
