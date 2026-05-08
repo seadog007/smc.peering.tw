@@ -382,7 +382,10 @@ function MobileSidebar() {
 }
 
 export default function Sidebar() {
+  const { i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const isEnglish = i18n.language.startsWith("en");
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -396,7 +399,10 @@ export default function Sidebar() {
     <MobileSidebar />
   ) : (
     <div
-      className="absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] w-[400px] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md"
+      className={cn(
+        "absolute top-2 right-2 z-10 flex h-[calc(100svh-16px)] rounded-2xl bg-[#19191B]/80 shadow-lg backdrop-blur-md",
+        isEnglish ? "w-[460px]" : "w-[400px]",
+      )}
       data-tour="incident-panel"
     >
       <div className="pointer-events-none absolute inset-0 size-full rounded-[22px] border border-white/5" />
