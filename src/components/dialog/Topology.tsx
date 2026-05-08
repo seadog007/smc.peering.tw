@@ -403,22 +403,34 @@ function TopologyContent({
   );
 }
 
-export default function TopologyDialog() {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+export function TopologyView({ isActive }: { isActive: boolean }) {
   const hasTopologyData = TOPOLOGY_DATA.nodes.length > 0;
 
   const { data: cables = [], isLoading: cablesLoading } = useQuery({
     queryKey: ["topology", "cables"],
     queryFn: loadCables,
-    enabled: open && hasTopologyData,
+    enabled: isActive && hasTopologyData,
   });
 
   const { data: incidents = [], isLoading: incidentsLoading } = useQuery({
     queryKey: ["incidents"],
     queryFn: loadIncidents,
-    enabled: open && hasTopologyData,
+    enabled: isActive && hasTopologyData,
   });
+
+  return (
+    <TopologyContent
+      topology={TOPOLOGY_DATA}
+      cables={cables}
+      incidents={incidents}
+      isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
+    />
+  );
+}
+
+export default function TopologyDialog() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -443,12 +455,7 @@ export default function TopologyDialog() {
                 {t("topology.title")}
               </DialogDescription>
             </DialogHeader>
-            <TopologyContent
-              topology={TOPOLOGY_DATA}
-              cables={cables}
-              incidents={incidents}
-              isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
-            />
+            <TopologyView isActive={open} />
           </div>
         </ScrollArea>
       </DialogContent>

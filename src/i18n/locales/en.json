@@ -1,4 +1,10 @@
 {
+  "tab": {
+    "incidents": "Incidents",
+    "timeline": "Timeline",
+    "topology": "Topology",
+    "about": "About"
+  },
   "common": {
     "active": "Active",
     "resolved": "Resolved",

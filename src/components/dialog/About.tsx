@@ -1,4 +1,6 @@
 import { Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import type { ReactNode } from "react";
 import SidebarButton from "@/components/SidebarButton";
 import {
   Dialog,
@@ -14,7 +16,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useTranslation } from "react-i18next";
 
 type VersionHistory = Record<
   string,
@@ -23,48 +24,82 @@ type VersionHistory = Record<
     changes: string[];
   }
 >;
+
+function VersionHistoryList({ heading }: { heading: ReactNode }) {
+  const { t } = useTranslation();
+  const versionHistory = t("version.version", {
+    returnObjects: true,
+  }) as unknown as VersionHistory;
+
+  return (
+    <div className="mt-6 font-normal">
+      <div className="flex flex-col divide-y">
+        {heading}
+        {Object.entries(versionHistory)
+          .reverse()
+          .map(([version, versionData]) => (
+            <div key={version} className="py-2">
+              <div className="mb-1 flex items-center justify-between gap-2 text-base">
+                <div className="font-semibold text-gray-200 tabular-nums">
+                  {version}
+                </div>
+                <div className="text-sm text-gray-400">{versionData.date}</div>
+              </div>
+              <ul className="flex flex-col gap-0.5">
+                {Object.entries(versionData.changes).map(
+                  ([change, changeData]) => (
+                    <li
+                      key={change}
+                      className="relative pl-4 text-gray-300 before:absolute before:left-0 before:font-semibold before:text-gray-400 before:content-['•']"
+                    >
+                      {changeData}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function AboutBodyContent({ versionHeading }: { versionHeading: ReactNode }) {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.techstack") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.datacollect") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.datasource") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.sponsor") }} />
+      <p dangerouslySetInnerHTML={{ __html: t("about.github") }} />
+      <VersionHistoryList heading={versionHeading} />
+    </>
+  );
+}
+
+export function AboutContent() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col gap-2 text-sm text-white/80">
+      <AboutBodyContent
+        versionHeading={
+          <div className="pb-2 text-base font-semibold text-white">
+            {t("version.history")}
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
 export default function AboutDialog() {
   const { t } = useTranslation();
-  const genVersionHistory = () => {
-    const versionHistory = t("version.version", {
-      returnObjects: true,
-    }) as unknown as VersionHistory;
-    return (
-      <div className="mt-6 font-normal">
-        <div className="flex flex-col divide-y">
-          <DialogHeader className="pb-2">
-            <DialogTitle> {t("version.history")}</DialogTitle>
-          </DialogHeader>
-          {Object.entries(versionHistory)
-            .reverse()
-            .map(([version, versionData]) => (
-              <div key={version} className="py-2">
-                <div className="mb-1 flex items-center justify-between gap-2 text-base">
-                  <div className="font-semibold text-gray-200 tabular-nums">
-                    {version}
-                  </div>
-                  <div className="text-sm text-gray-400">
-                    {versionData.date}
-                  </div>
-                </div>
-                <ul className="flex flex-col gap-0.5">
-                  {Object.entries(versionData.changes).map(
-                    ([change, changeData]) => (
-                      <li
-                        key={change}
-                        className="relative pl-4 text-gray-300 before:absolute before:left-0 before:font-semibold before:text-gray-400 before:content-['•']"
-                      >
-                        {changeData}
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </div>
-            ))}{" "}
-        </div>
-      </div>
-    );
-  };
+
   return (
     <Dialog>
       <Tooltip>
@@ -88,15 +123,13 @@ export default function AboutDialog() {
 
             <DialogDescription asChild>
               <div>
-                <p dangerouslySetInnerHTML={{ __html: t("about.description") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.developer") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.techstack") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.datacollect") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.datasource") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.sponsor") }} />
-                <p dangerouslySetInnerHTML={{ __html: t("about.github") }} />
-
-                {genVersionHistory()}
+                <AboutBodyContent
+                  versionHeading={
+                    <DialogHeader className="pb-2">
+                      <DialogTitle> {t("version.history")}</DialogTitle>
+                    </DialogHeader>
+                  }
+                />
               </div>
             </DialogDescription>
           </div>

@@ -1,4 +1,10 @@
 {
+  "tab": {
+    "incidents": "事件",
+    "timeline": "時間軸",
+    "topology": "拓撲",
+    "about": "關於"
+  },
   "common": {
     "active": "發生中",
     "resolved": "已排除",
