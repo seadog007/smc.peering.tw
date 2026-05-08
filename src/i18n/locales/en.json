@@ -389,6 +389,12 @@
           "Add building segment visualization",
           "Update cable data (Apricot, PLCN, TPU)"
         ]
+      },
+      "3.10.1": {
+        "date": "2026-05-09",
+        "changes": [
+          "Update map legend background and animate collapse/expand"
+        ]
       }
     }
   }
