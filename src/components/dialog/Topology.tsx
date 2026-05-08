@@ -45,6 +45,15 @@ interface LayoutNode extends TopologyNode {
   status: TopologyRuntimeStatus;
 }
 
+interface PointerPoint {
+  x: number;
+  y: number;
+}
+
+interface PinchState {
+  distance: number;
+}
+
 type TopologyDirection = "horizontal" | "vertical";
 type TopologyFolding = "one" | "two";
 
@@ -328,6 +337,19 @@ function snapZoom(value: number, direction: "down" | "nearest" = "nearest") {
   return clampZoom(rounded * ZOOM_STEP);
 }
 
+function getPinchMetrics(pointers: Map<number, PointerPoint>) {
+  const [first, second] = Array.from(pointers.values());
+  if (!first || !second) return null;
+
+  return {
+    distance: Math.hypot(second.x - first.x, second.y - first.y),
+    midpoint: {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    },
+  };
+}
+
 function getFitTransform(
   layout: { width: number; height: number },
   viewport: { width: number; height: number },
@@ -502,6 +524,10 @@ function TopologySvg({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
+  const zoomRef = useRef(zoom);
+  const panRef = useRef(pan);
+  const activePointersRef = useRef(new Map<number, PointerPoint>());
+  const pinchRef = useRef<PinchState | null>(null);
   const panStartRef = useRef({
     panX: 0,
     panY: 0,
@@ -538,6 +564,39 @@ function TopologySvg({
             label: t("topology.controls.oneRow"),
           },
         ];
+  const applyTransform = (nextZoom: number, nextPan: PointerPoint) => {
+    zoomRef.current = nextZoom;
+    panRef.current = nextPan;
+    setZoom(nextZoom);
+    setPan(nextPan);
+  };
+  const zoomAtViewportPoint = (nextZoom: number, point: PointerPoint) => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const viewportPoint = {
+      x: point.x - rect.left,
+      y: point.y - rect.top,
+    };
+    const currentZoom = zoomRef.current;
+    const currentPan = panRef.current;
+    const clampedZoom = clampZoom(nextZoom);
+    const graphPoint = {
+      x: (viewportPoint.x - currentPan.x) / currentZoom,
+      y: (viewportPoint.y - currentPan.y) / currentZoom,
+    };
+
+    applyTransform(clampedZoom, {
+      x: viewportPoint.x - graphPoint.x * clampedZoom,
+      y: viewportPoint.y - graphPoint.y * clampedZoom,
+    });
+  };
+  const setButtonZoom = (getNextZoom: (currentZoom: number) => number) => {
+    const nextZoom = getNextZoom(zoomRef.current);
+    zoomRef.current = nextZoom;
+    setZoom(nextZoom);
+  };
   const fitToViewport = () => {
     const viewport = viewportRef.current;
     if (!viewport) return;
@@ -546,8 +605,39 @@ function TopologySvg({
       width: viewport.clientWidth,
       height: viewport.clientHeight,
     });
-    setZoom(next.zoom);
-    setPan(next.pan);
+    applyTransform(next.zoom, next.pan);
+  };
+  const handlePointerRelease = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+
+    const viewport = event.currentTarget;
+    activePointersRef.current.delete(event.pointerId);
+
+    if (viewport.hasPointerCapture(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId);
+    }
+
+    const pinchMetrics = getPinchMetrics(activePointersRef.current);
+    if (pinchMetrics) {
+      pinchRef.current = { distance: pinchMetrics.distance };
+      setIsPanning(false);
+      return;
+    }
+
+    pinchRef.current = null;
+    const remainingPointer = Array.from(activePointersRef.current.values())[0];
+    if (remainingPointer) {
+      panStartRef.current = {
+        x: remainingPointer.x,
+        y: remainingPointer.y,
+        panX: panRef.current.x,
+        panY: panRef.current.y,
+      };
+      setIsPanning(true);
+      return;
+    }
+
+    setIsPanning(false);
   };
 
   useEffect(() => {
@@ -558,16 +648,14 @@ function TopologySvg({
       width: viewport.clientWidth,
       height: viewport.clientHeight,
     });
-    setZoom(initial.zoom);
-    setPan(initial.pan);
+    applyTransform(initial.zoom, initial.pan);
 
     const resizeObserver = new ResizeObserver(() => {
       const next = getFitTransform(layout, {
         width: viewport.clientWidth,
         height: viewport.clientHeight,
       });
-      setZoom(next.zoom);
-      setPan(next.pan);
+      applyTransform(next.zoom, next.pan);
     });
 
     resizeObserver.observe(viewport);
@@ -603,7 +691,9 @@ function TopologySvg({
         <div className="flex items-center gap-2">
           <TopologyZoomButton
             label="Zoom out"
-            onClick={() => setZoom((value) => snapZoom(value - ZOOM_STEP))}
+            onClick={() =>
+              setButtonZoom((value) => snapZoom(value - ZOOM_STEP))
+            }
             disabled={!canZoomOut}
           >
             <Minus className="size-4" />
@@ -613,7 +703,9 @@ function TopologySvg({
           </div>
           <TopologyZoomButton
             label="Zoom in"
-            onClick={() => setZoom((value) => snapZoom(value + ZOOM_STEP))}
+            onClick={() =>
+              setButtonZoom((value) => snapZoom(value + ZOOM_STEP))
+            }
             disabled={!canZoomIn}
           >
             <Plus className="size-4" />
@@ -625,46 +717,92 @@ function TopologySvg({
       </div>
       <div
         ref={viewportRef}
+        data-vaul-no-drag=""
         className={`h-[420px] overflow-hidden md:h-[520px] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
         style={{ touchAction: "none", userSelect: "none" }}
+        onWheel={(event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          const deltaModeMultiplier =
+            event.deltaMode === 1
+              ? 16
+              : event.deltaMode === 2
+                ? event.currentTarget.clientHeight
+                : 1;
+          const normalizedDelta = event.deltaY * deltaModeMultiplier;
+          const nextZoom =
+            zoomRef.current * Math.exp(normalizedDelta * -0.0015);
+
+          zoomAtViewportPoint(nextZoom, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+        }}
         onPointerDown={(event) => {
+          event.stopPropagation();
           const viewport = event.currentTarget;
           if (event.pointerType === "mouse" && event.button !== 0) return;
 
           event.preventDefault();
+          activePointersRef.current.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+          viewport.setPointerCapture(event.pointerId);
+
+          const pinchMetrics = getPinchMetrics(activePointersRef.current);
+          if (pinchMetrics) {
+            pinchRef.current = { distance: pinchMetrics.distance };
+            setIsPanning(false);
+            return;
+          }
+
+          pinchRef.current = null;
           panStartRef.current = {
             x: event.clientX,
             y: event.clientY,
-            panX: pan.x,
-            panY: pan.y,
+            panX: panRef.current.x,
+            panY: panRef.current.y,
           };
           setIsPanning(true);
-          viewport.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
-          const viewport = event.currentTarget;
-          if (!viewport || !isPanning) return;
+          event.stopPropagation();
+          if (!activePointersRef.current.has(event.pointerId)) return;
 
           event.preventDefault();
+          activePointersRef.current.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+
+          const pinchMetrics = getPinchMetrics(activePointersRef.current);
+          if (pinchMetrics) {
+            if (pinchRef.current && pinchRef.current.distance > 0) {
+              const nextZoom =
+                zoomRef.current *
+                (pinchMetrics.distance / pinchRef.current.distance);
+              zoomAtViewportPoint(nextZoom, pinchMetrics.midpoint);
+            }
+
+            pinchRef.current = { distance: pinchMetrics.distance };
+            setIsPanning(false);
+            return;
+          }
+
+          if (!isPanning) return;
+
           const deltaX = event.clientX - panStartRef.current.x;
           const deltaY = event.clientY - panStartRef.current.y;
-          setPan({
+          const nextPan = {
             x: panStartRef.current.panX + deltaX,
             y: panStartRef.current.panY + deltaY,
-          });
+          };
+          panRef.current = nextPan;
+          setPan(nextPan);
         }}
-        onPointerUp={(event) => {
-          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-          }
-          setIsPanning(false);
-        }}
-        onPointerCancel={(event) => {
-          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-          }
-          setIsPanning(false);
-        }}
+        onPointerUp={handlePointerRelease}
+        onPointerCancel={handlePointerRelease}
       >
         <svg
           role="img"
