@@ -395,6 +395,12 @@
         "changes": [
           "Update map legend background and animate collapse/expand"
         ]
+      },
+      "3.10.2": {
+        "date": "2026-05-09",
+        "changes": [
+          "Center map legend title"
+        ]
       }
     }
   }
