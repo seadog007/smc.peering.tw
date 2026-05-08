@@ -88,12 +88,12 @@ export default function MapLegend() {
         }}
       />
       <div className="relative flex flex-col md:flex-col-reverse">
-        <div className="relative flex items-center justify-between">
-          <p className="pl-2 text-sm opacity-75">{t("legend.title")}</p>
+        <div className="relative flex min-h-7 items-center justify-center">
+          <p className="text-sm opacity-75">{t("legend.title")}</p>
           <motion.button
             type="button"
             onClick={() => setCollapsed((value) => !value)}
-            className="right-0 flex size-7 items-center justify-center rounded-full text-white/70 backdrop-blur-lg transition-colors hover:bg-white/10 hover:text-white"
+            className="absolute right-0 flex size-7 items-center justify-center rounded-full text-white/70 backdrop-blur-lg transition-colors hover:bg-white/10 hover:text-white"
             aria-expanded={!isCollapsed}
             aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
             whileHover={{
