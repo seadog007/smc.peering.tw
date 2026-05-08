@@ -504,7 +504,7 @@ function LoadingTopology() {
         <Skeleton className="h-[70px] rounded-lg" />
         <Skeleton className="h-[70px] rounded-lg" />
       </div>
-      <Skeleton className="h-[clamp(200px,calc(100svh-380px),600px)] rounded-lg md:h-[520px]" />
+      <Skeleton className="h-[clamp(200px,calc(100svh-380px),600px)] rounded-lg md:h-[clamp(240px,calc(82vh-300px),520px)]" />
     </div>
   );
 }
@@ -723,7 +723,7 @@ function TopologySvg({
       <div
         ref={viewportRef}
         data-vaul-no-drag=""
-        className={`h-[clamp(200px,calc(100svh-380px),600px)] overflow-hidden md:h-[520px] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
+        className={`h-[clamp(200px,calc(100svh-380px),600px)] overflow-hidden md:h-[clamp(240px,calc(82vh-300px),520px)] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
         style={{ touchAction: "none", userSelect: "none" }}
         onWheel={(event) => {
           event.stopPropagation();
