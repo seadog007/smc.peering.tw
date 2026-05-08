@@ -597,8 +597,18 @@ function TopologySvg({
   };
   const setButtonZoom = (getNextZoom: (currentZoom: number) => number) => {
     const nextZoom = getNextZoom(zoomRef.current);
-    zoomRef.current = nextZoom;
-    setZoom(nextZoom);
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      zoomRef.current = nextZoom;
+      setZoom(nextZoom);
+      return;
+    }
+
+    const rect = viewport.getBoundingClientRect();
+    zoomAtViewportPoint(nextZoom, {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
   };
   const fitToViewport = () => {
     const viewport = viewportRef.current;
