@@ -135,6 +135,16 @@
       "isp": "ISP",
       "segment": "海纜區段",
       "destination": "目的地"
+    },
+    "controls": {
+      "direction": "排列方向",
+      "horizontal": "水平",
+      "vertical": "垂直",
+      "folding": "折行模式",
+      "oneRow": "單列",
+      "twoRows": "兩列",
+      "oneColumn": "單欄",
+      "twoColumns": "兩欄"
     }
   },
   "about": {

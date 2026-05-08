@@ -45,11 +45,23 @@ interface LayoutNode extends TopologyNode {
   status: TopologyRuntimeStatus;
 }
 
+type TopologyDirection = "horizontal" | "vertical";
+type TopologyFolding = "one" | "two";
+
+interface TopologyLayoutOptions {
+  direction: TopologyDirection;
+  folding: TopologyFolding;
+}
+
 const TOPOLOGY_DATA = topologyJson as TopologyData;
 const SVG_PADDING_X = 72;
-const LEVEL_GAP = 244;
+const SVG_PADDING_Y = 48;
+const LEVEL_GAP = 112;
+const NODE_COLUMN_GAP = 196;
+const NODE_ROW_GAP = 84;
 const NODE_WIDTH = 168;
 const NODE_HEIGHT = 52;
+const FOLDING_THRESHOLD = 10;
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.25;
@@ -125,9 +137,19 @@ function getNodeColumn(node: TopologyNode) {
   return 1;
 }
 
+function createFoldedGroups(nodes: TopologyNode[], folding: TopologyFolding) {
+  if (folding === "one" || nodes.length <= FOLDING_THRESHOLD) return [nodes];
+
+  const splitIndex = Math.ceil(nodes.length / 2);
+  return [nodes.slice(0, splitIndex), nodes.slice(splitIndex)].filter(
+    (group) => group.length > 0,
+  );
+}
+
 function createLayoutNodes(
   nodes: TopologyNode[],
   nodeStatuses: Record<string, TopologyRuntimeStatus>,
+  options: TopologyLayoutOptions,
 ) {
   const groups = new Map<number, TopologyNode[]>();
 
@@ -139,30 +161,113 @@ function createLayoutNodes(
   });
 
   const sortedLevels = Array.from(groups.keys()).sort((a, b) => a - b);
-  const maxRows = Math.max(1, ...Array.from(groups.values()).map((group) => group.length));
-  const height = Math.max(360, NODE_HEIGHT + 104 + (maxRows - 1) * 84);
-  const width = Math.max(
-    760,
-    SVG_PADDING_X * 2 + NODE_WIDTH + (sortedLevels.length - 1) * LEVEL_GAP,
+  const levelLayouts = sortedLevels.map((level) => {
+    const group = groups.get(level) ?? [];
+    const lanes = createFoldedGroups(group, options.folding);
+    const isVertical = options.direction === "vertical";
+    const laneLengths = lanes.map((lane) => lane.length);
+    const width = isVertical
+      ? Math.max(
+          NODE_WIDTH,
+          ...laneLengths.map(
+            (length) => NODE_WIDTH + Math.max(0, length - 1) * NODE_COLUMN_GAP,
+          ),
+        )
+      : NODE_WIDTH + Math.max(0, lanes.length - 1) * NODE_COLUMN_GAP;
+    const height = isVertical
+      ? NODE_HEIGHT + Math.max(0, lanes.length - 1) * NODE_ROW_GAP
+      : Math.max(
+          NODE_HEIGHT,
+          ...laneLengths.map(
+            (length) => NODE_HEIGHT + Math.max(0, length - 1) * NODE_ROW_GAP,
+          ),
+        );
+
+    return {
+      height,
+      lanes,
+      level,
+      width,
+    };
+  });
+  const maxLevelWidth = Math.max(
+    NODE_WIDTH,
+    ...levelLayouts.map((level) => level.width),
   );
+  const maxLevelHeight = Math.max(
+    NODE_HEIGHT,
+    ...levelLayouts.map((level) => level.height),
+  );
+  const width =
+    options.direction === "vertical"
+      ? Math.max(760, SVG_PADDING_X * 2 + maxLevelWidth)
+      : Math.max(
+          760,
+          SVG_PADDING_X * 2 +
+            levelLayouts.reduce((total, level) => total + level.width, 0) +
+            Math.max(0, levelLayouts.length - 1) * LEVEL_GAP,
+        );
+  const height =
+    options.direction === "vertical"
+      ? Math.max(
+          360,
+          SVG_PADDING_Y * 2 +
+            levelLayouts.reduce((total, level) => total + level.height, 0) +
+            Math.max(0, levelLayouts.length - 1) * LEVEL_GAP,
+        )
+      : Math.max(360, SVG_PADDING_Y * 2 + maxLevelHeight);
   const layoutNodes: LayoutNode[] = [];
 
-  sortedLevels.forEach((level, columnIndex) => {
-    const group = groups.get(level) ?? [];
-    const groupHeight = NODE_HEIGHT + Math.max(0, group.length - 1) * 84;
-    const startY = (height - groupHeight) / 2;
+  if (options.direction === "vertical") {
+    let y = SVG_PADDING_Y;
 
-    group.forEach((node, index) => {
-      layoutNodes.push({
-        ...node,
-        x: SVG_PADDING_X + columnIndex * LEVEL_GAP,
-        y: startY + index * 84,
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        status: nodeStatuses[node.id] ?? "unknown",
+    levelLayouts.forEach((levelLayout) => {
+      levelLayout.lanes.forEach((row, rowIndex) => {
+        const rowWidth =
+          NODE_WIDTH + Math.max(0, row.length - 1) * NODE_COLUMN_GAP;
+        const startX = (width - rowWidth) / 2;
+
+        row.forEach((node, index) => {
+          layoutNodes.push({
+            ...node,
+            x: startX + index * NODE_COLUMN_GAP,
+            y: y + rowIndex * NODE_ROW_GAP,
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+            status: nodeStatuses[node.id] ?? "unknown",
+          });
+        });
       });
+
+      y += levelLayout.height + LEVEL_GAP;
     });
-  });
+  } else {
+    let x = SVG_PADDING_X;
+
+    levelLayouts.forEach((levelLayout) => {
+      const levelStartY = (height - levelLayout.height) / 2;
+
+      levelLayout.lanes.forEach((column, columnIndex) => {
+        const columnHeight =
+          NODE_HEIGHT + Math.max(0, column.length - 1) * NODE_ROW_GAP;
+        const columnStartY =
+          levelStartY + (levelLayout.height - columnHeight) / 2;
+
+        column.forEach((node, index) => {
+          layoutNodes.push({
+            ...node,
+            x: x + columnIndex * NODE_COLUMN_GAP,
+            y: columnStartY + index * NODE_ROW_GAP,
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+            status: nodeStatuses[node.id] ?? "unknown",
+          });
+        });
+      });
+
+      x += levelLayout.width + LEVEL_GAP;
+    });
+  }
 
   return {
     height,
@@ -171,19 +276,38 @@ function createLayoutNodes(
   };
 }
 
-function getEdgePath(source: LayoutNode, target: LayoutNode) {
-  const sourceIsLeft = source.x <= target.x;
-  const startX = sourceIsLeft ? source.x + source.width : source.x;
-  const endX = sourceIsLeft ? target.x : target.x + target.width;
-  const startY = source.y + source.height / 2;
-  const endY = target.y + target.height / 2;
-  const direction = endX >= startX ? 1 : -1;
-  const controlOffset = Math.max(72, Math.abs(endX - startX) / 2);
+function getEdgePath(
+  source: LayoutNode,
+  target: LayoutNode,
+  direction: TopologyDirection,
+) {
+  if (direction === "horizontal") {
+    const sourceIsLeft = source.x <= target.x;
+    const startX = sourceIsLeft ? source.x + source.width : source.x;
+    const endX = sourceIsLeft ? target.x : target.x + target.width;
+    const startY = source.y + source.height / 2;
+    const endY = target.y + target.height / 2;
+    const directionMultiplier = sourceIsLeft ? 1 : -1;
+    const controlOffset = Math.max(72, Math.abs(endX - startX) / 2);
+
+    return [
+      `M ${startX} ${startY}`,
+      `C ${startX + controlOffset * directionMultiplier} ${startY}`,
+      `${endX - controlOffset * directionMultiplier} ${endY}`,
+      `${endX} ${endY}`,
+    ].join(" ");
+  }
+
+  const startX = source.x + source.width / 2;
+  const endX = target.x + target.width / 2;
+  const startY = source.y + source.height;
+  const endY = target.y;
+  const controlOffset = Math.max(48, Math.abs(endY - startY) / 2);
 
   return [
     `M ${startX} ${startY}`,
-    `C ${startX + controlOffset * direction} ${startY}`,
-    `${endX - controlOffset * direction} ${endY}`,
+    `C ${startX} ${startY + controlOffset}`,
+    `${endX} ${endY - controlOffset}`,
     `${endX} ${endY}`,
   ].join(" ");
 }
@@ -225,6 +349,45 @@ function getFitTransform(
       y: (viewport.height - layout.height * zoom) / 2,
     },
   };
+}
+
+function TopologySegmentedControl<TValue extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { value: TValue; label: string }[];
+  value: TValue;
+  onChange: (value: TValue) => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 p-1"
+      role="group"
+      aria-label={label}
+    >
+      {options.map((option) => {
+        const isActive = option.value === value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+              isActive
+                ? "bg-white text-slate-950"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
+            aria-pressed={isActive}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 function TopologyZoomButton({
@@ -331,6 +494,9 @@ function TopologySvg({
 }) {
   const { t } = useTranslation();
   const viewportRef = useRef<HTMLDivElement>(null);
+  const [direction, setDirection] =
+    useState<TopologyDirection>("horizontal");
+  const [folding, setFolding] = useState<TopologyFolding>("two");
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -341,12 +507,35 @@ function TopologySvg({
     y: 0,
   });
   const layout = useMemo(
-    () => createLayoutNodes(topology.nodes, nodeStatuses),
-    [topology.nodes, nodeStatuses],
+    () =>
+      createLayoutNodes(topology.nodes, nodeStatuses, { direction, folding }),
+    [topology.nodes, nodeStatuses, direction, folding],
   );
   const nodeById = new Map(layout.nodes.map((node) => [node.id, node]));
   const canZoomOut = zoom > MIN_ZOOM;
   const canZoomIn = zoom < MAX_ZOOM;
+  const foldingOptions =
+    direction === "horizontal"
+      ? [
+          {
+            value: "two" as const,
+            label: t("topology.controls.twoColumns"),
+          },
+          {
+            value: "one" as const,
+            label: t("topology.controls.oneColumn"),
+          },
+        ]
+      : [
+          {
+            value: "two" as const,
+            label: t("topology.controls.twoRows"),
+          },
+          {
+            value: "one" as const,
+            label: t("topology.controls.oneRow"),
+          },
+        ];
   const fitToViewport = () => {
     const viewport = viewportRef.current;
     if (!viewport) return;
@@ -381,31 +570,56 @@ function TopologySvg({
 
     resizeObserver.observe(viewport);
     return () => resizeObserver.disconnect();
-  }, [layout.height, layout.width]);
+  }, [direction, folding, layout.height, layout.width]);
 
   return (
     <div className="rounded-lg border border-white/10 bg-black/20">
-      <div className="flex items-center justify-end gap-2 border-b border-white/10 p-2">
-        <TopologyZoomButton
-          label="Zoom out"
-          onClick={() => setZoom((value) => snapZoom(value - ZOOM_STEP))}
-          disabled={!canZoomOut}
-        >
-          <Minus className="size-4" />
-        </TopologyZoomButton>
-        <div className="min-w-14 text-center text-xs font-medium tabular-nums text-white/70">
-          {Math.round(zoom * 100)}%
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 p-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <TopologySegmentedControl
+            label={t("topology.controls.direction")}
+            options={[
+              {
+                value: "horizontal",
+                label: t("topology.controls.horizontal"),
+              },
+              {
+                value: "vertical",
+                label: t("topology.controls.vertical"),
+              },
+            ]}
+            value={direction}
+            onChange={setDirection}
+          />
+          <TopologySegmentedControl
+            label={t("topology.controls.folding")}
+            options={foldingOptions}
+            value={folding}
+            onChange={setFolding}
+          />
         </div>
-        <TopologyZoomButton
-          label="Zoom in"
-          onClick={() => setZoom((value) => snapZoom(value + ZOOM_STEP))}
-          disabled={!canZoomIn}
-        >
-          <Plus className="size-4" />
-        </TopologyZoomButton>
-        <TopologyZoomButton label="Reset zoom" onClick={fitToViewport}>
-          <RotateCcw className="size-4" />
-        </TopologyZoomButton>
+        <div className="flex items-center gap-2">
+          <TopologyZoomButton
+            label="Zoom out"
+            onClick={() => setZoom((value) => snapZoom(value - ZOOM_STEP))}
+            disabled={!canZoomOut}
+          >
+            <Minus className="size-4" />
+          </TopologyZoomButton>
+          <div className="min-w-14 text-center text-xs font-medium tabular-nums text-white/70">
+            {Math.round(zoom * 100)}%
+          </div>
+          <TopologyZoomButton
+            label="Zoom in"
+            onClick={() => setZoom((value) => snapZoom(value + ZOOM_STEP))}
+            disabled={!canZoomIn}
+          >
+            <Plus className="size-4" />
+          </TopologyZoomButton>
+          <TopologyZoomButton label="Reset zoom" onClick={fitToViewport}>
+            <RotateCcw className="size-4" />
+          </TopologyZoomButton>
+        </div>
       </div>
       <div
         ref={viewportRef}
@@ -474,7 +688,7 @@ function TopologySvg({
               return (
                 <path
                   key={edge.id ?? `${edge.source}-${edge.target}`}
-                  d={getEdgePath(source, target)}
+                  d={getEdgePath(source, target, direction)}
                   stroke={color}
                   strokeWidth={2.5}
                   strokeOpacity={status === "unknown" ? 0.45 : 0.75}

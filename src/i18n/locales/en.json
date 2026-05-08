@@ -136,6 +136,16 @@
       "isp": "ISP",
       "segment": "Cable Segment",
       "destination": "Destination"
+    },
+    "controls": {
+      "direction": "Layout direction",
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "folding": "Folding mode",
+      "oneRow": "One row",
+      "twoRows": "2 rows",
+      "oneColumn": "One column",
+      "twoColumns": "2 columns"
     }
   },
   "about": {
