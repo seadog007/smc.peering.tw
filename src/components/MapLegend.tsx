@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "motion/react";
 
 interface CableWithEquipment {
   equipments?: unknown[];
@@ -86,59 +87,80 @@ export default function MapLegend() {
             "radial-gradient(circle at top, black 0%, transparent 60%)",
         }}
       />
-      <div className="relative flex flex-col gap-2 md:flex-col-reverse">
-        <div className="relative min-w-0 text-center">
-          <div className="min-w-0">
-             <div className="relative flex items-center justify-center">
-              <p className="text-sm opacity-75">
-                {t("legend.title")}
-              </p>
-              <button
-                type="button"
-                onClick={() => setCollapsed((value) => !value)}
-                className="absolute right-0 flex size-7 items-center justify-center rounded-full bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-                aria-expanded={!isCollapsed}
-                aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
-              >
-                <ChevronDown
-                  className={`size-4 transition-transform ${isCollapsed ? "-rotate-180" : "rotate-0"}`}
-                />
-              </button>
-            </div>
-          </div>
+      <div className="relative flex flex-col md:flex-col-reverse">
+        <div className="relative flex items-center justify-between">
+          <p className="pl-2 text-sm opacity-75">{t("legend.title")}</p>
+          <motion.button
+            type="button"
+            onClick={() => setCollapsed((value) => !value)}
+            className="right-0 flex size-7 items-center justify-center rounded-full text-white/70 backdrop-blur-lg transition-colors hover:bg-white/10 hover:text-white"
+            aria-expanded={!isCollapsed}
+            aria-label={isCollapsed ? "Show map legend" : "Hide map legend"}
+            whileHover={{
+              scale: 1.05,
+            }}
+            whileTap={{
+              scale: 0.95,
+            }}
+          >
+            <ChevronDown
+              className={`size-4 transition-transform ${isCollapsed ? "-rotate-180" : "rotate-0"}`}
+            />
+          </motion.button>
         </div>
-        {!isCollapsed && (
-          <div className="flex flex-col gap-1.5 rounded-lg bg-black/10 px-2 py-1.5">
-            {visibleLegendItems.map((item) => (
-              <div key={item.key} className="flex items-center gap-2 text-xs">
-                <span className="flex w-7 shrink-0 items-center justify-center">
-                  {item.line ? (
-                    <span
-                      className="block h-[3px] w-7 rounded-full"
-                      style={{
-                        backgroundColor:
-                          "dashed" in item && item.dashed
-                            ? undefined
-                            : item.color,
-                        backgroundImage: "dashed" in item && item.dashed
-                          ? `repeating-linear-gradient(to right, ${item.color} 0 6px, transparent 6px 10px)`
-                          : undefined,
-                      }}
-                    />
-                  ) : (
-                    <span
-                      className="block size-3 rounded-full ring-1 ring-white/25"
-                      style={{ backgroundColor: item.color }}
-                    />
-                  )}
-                </span>
-                <span className="min-w-0 break-words text-white/80">
-                  {t(`legend.items.${item.key}`)}
-                </span>
+        <AnimatePresence initial={false}>
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, filter: "blur(4px)" }}
+              animate={{ opacity: 1, height: "auto", filter: "blur(0px)" }}
+              exit={{ opacity: 0, height: 0, filter: "blur(4px)" }}
+              className="overflow-hidden"
+            >
+              <div className="relative flex flex-col gap-1.5 rounded-lg bg-white/10 px-2 py-1.5 max-md:mt-2 md:mb-2">
+                <div className="pointer-events-none absolute inset-0 size-full rounded-lg border border-white/5" />
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-lg border border-white/10 bg-white/10"
+                  style={{
+                    maskImage:
+                      "radial-gradient(circle at top, black 0%, transparent 60%)",
+                  }}
+                />
+                {visibleLegendItems.map((item) => (
+                  <div
+                    key={item.key}
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <span className="flex w-7 shrink-0 items-center justify-center">
+                      {item.line ? (
+                        <span
+                          className="block h-[3px] w-7 rounded-full"
+                          style={{
+                            backgroundColor:
+                              "dashed" in item && item.dashed
+                                ? undefined
+                                : item.color,
+                            backgroundImage:
+                              "dashed" in item && item.dashed
+                                ? `repeating-linear-gradient(to right, ${item.color} 0 6px, transparent 6px 10px)`
+                                : undefined,
+                          }}
+                        />
+                      ) : (
+                        <span
+                          className="block size-3 rounded-full ring-1 ring-white/25"
+                          style={{ backgroundColor: item.color }}
+                        />
+                      )}
+                    </span>
+                    <span className="min-w-0 break-words text-white/80">
+                      {t(`legend.items.${item.key}`)}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
