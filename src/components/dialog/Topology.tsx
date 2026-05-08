@@ -442,9 +442,11 @@ function TopologyStat({
   value: string | number;
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-      <div className="text-xs text-white/55">{label}</div>
-      <div className="mt-1 text-xl font-semibold tabular-nums text-white">
+    <div className="min-w-0 rounded-lg border border-white/10 bg-white/5 px-2 py-2 sm:px-3">
+      <div className="truncate text-[11px] text-white/55 sm:text-xs">
+        {label}
+      </div>
+      <div className="mt-1 text-lg font-semibold tabular-nums text-white sm:text-xl">
         {value}
       </div>
     </div>
@@ -773,7 +775,7 @@ function TopologyContent({
 
   return (
     <div className="w-full space-y-3 md:w-[976px] md:max-w-[976px]">
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2">
         <TopologyStat
           label={t("topology.summary.affectedIsps")}
           value={`${affectedIspCount}/${ispNodes.length}`}
