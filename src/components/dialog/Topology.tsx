@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Network } from "lucide-react";
+import { Minus, Network, Plus, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
@@ -50,6 +50,9 @@ const SVG_PADDING_X = 72;
 const LEVEL_GAP = 244;
 const NODE_WIDTH = 168;
 const NODE_HEIGHT = 52;
+const MIN_ZOOM = 0.25;
+const MAX_ZOOM = 2;
+const ZOOM_STEP = 0.25;
 const STATUS_ORDER: TopologyRuntimeStatus[] = [
   "online",
   "partial_disconnected",
@@ -190,6 +193,65 @@ function truncateLabel(label: string, maxLength = 22) {
   return `${label.slice(0, maxLength - 3)}...`;
 }
 
+function clampZoom(value: number) {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
+}
+
+function snapZoom(value: number, direction: "down" | "nearest" = "nearest") {
+  const scaled = value / ZOOM_STEP;
+  const rounded =
+    direction === "down" ? Math.floor(scaled) : Math.round(scaled);
+  return clampZoom(rounded * ZOOM_STEP);
+}
+
+function getFitTransform(
+  layout: { width: number; height: number },
+  viewport: { width: number; height: number },
+) {
+  const padding = 32;
+  const availableWidth = Math.max(1, viewport.width - padding);
+  const availableHeight = Math.max(1, viewport.height - padding);
+  const fitZoom = Math.min(
+    availableWidth / layout.width,
+    availableHeight / layout.height,
+    1,
+  );
+  const zoom = snapZoom(fitZoom, "down");
+
+  return {
+    zoom,
+    pan: {
+      x: (viewport.width - layout.width * zoom) / 2,
+      y: (viewport.height - layout.height * zoom) / 2,
+    },
+  };
+}
+
+function TopologyZoomButton({
+  children,
+  label,
+  onClick,
+  disabled,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex size-8 items-center justify-center rounded-md border border-white/10 bg-white/10 text-white/80 transition-colors hover:bg-white/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+    >
+      {children}
+    </button>
+  );
+}
+
 function TopologyStatusBadge({
   status,
 }: {
@@ -249,7 +311,7 @@ function EmptyTopology() {
 
 function LoadingTopology() {
   return (
-    <div className="space-y-3">
+    <div className="w-full min-w-[760px] space-y-3">
       <div className="grid gap-2 sm:grid-cols-3">
         <Skeleton className="h-[70px] rounded-lg" />
         <Skeleton className="h-[70px] rounded-lg" />
@@ -268,78 +330,198 @@ function TopologySvg({
   nodeStatuses: Record<string, TopologyRuntimeStatus>;
 }) {
   const { t } = useTranslation();
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panStartRef = useRef({
+    panX: 0,
+    panY: 0,
+    x: 0,
+    y: 0,
+  });
   const layout = useMemo(
     () => createLayoutNodes(topology.nodes, nodeStatuses),
     [topology.nodes, nodeStatuses],
   );
   const nodeById = new Map(layout.nodes.map((node) => [node.id, node]));
+  const canZoomOut = zoom > MIN_ZOOM;
+  const canZoomIn = zoom < MAX_ZOOM;
+  const fitToViewport = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const next = getFitTransform(layout, {
+      width: viewport.clientWidth,
+      height: viewport.clientHeight,
+    });
+    setZoom(next.zoom);
+    setPan(next.pan);
+  };
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const initial = getFitTransform(layout, {
+      width: viewport.clientWidth,
+      height: viewport.clientHeight,
+    });
+    setZoom(initial.zoom);
+    setPan(initial.pan);
+
+    const resizeObserver = new ResizeObserver(() => {
+      const next = getFitTransform(layout, {
+        width: viewport.clientWidth,
+        height: viewport.clientHeight,
+      });
+      setZoom(next.zoom);
+      setPan(next.pan);
+    });
+
+    resizeObserver.observe(viewport);
+    return () => resizeObserver.disconnect();
+  }, [layout.height, layout.width]);
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-white/10 bg-black/20">
-      <svg
-        role="img"
-        aria-label={t("topology.title")}
-        viewBox={`0 0 ${layout.width} ${layout.height}`}
-        className="min-h-[360px] w-full min-w-[760px]"
-      >
-        <g fill="none">
-          {topology.edges.map((edge) => {
-            const source = nodeById.get(edge.source);
-            const target = nodeById.get(edge.target);
-            if (!source || !target) return null;
-            const status = getTopologyEdgeStatus(edge, nodeStatuses);
-            const color = STATUS_COLORS[status].line;
+    <div className="rounded-lg border border-white/10 bg-black/20">
+      <div className="flex items-center justify-end gap-2 border-b border-white/10 p-2">
+        <TopologyZoomButton
+          label="Zoom out"
+          onClick={() => setZoom((value) => snapZoom(value - ZOOM_STEP))}
+          disabled={!canZoomOut}
+        >
+          <Minus className="size-4" />
+        </TopologyZoomButton>
+        <div className="min-w-14 text-center text-xs font-medium tabular-nums text-white/70">
+          {Math.round(zoom * 100)}%
+        </div>
+        <TopologyZoomButton
+          label="Zoom in"
+          onClick={() => setZoom((value) => snapZoom(value + ZOOM_STEP))}
+          disabled={!canZoomIn}
+        >
+          <Plus className="size-4" />
+        </TopologyZoomButton>
+        <TopologyZoomButton label="Reset zoom" onClick={fitToViewport}>
+          <RotateCcw className="size-4" />
+        </TopologyZoomButton>
+      </div>
+      <div
+        ref={viewportRef}
+        className={`h-[420px] overflow-hidden md:h-[520px] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
+        style={{ touchAction: "none", userSelect: "none" }}
+        onPointerDown={(event) => {
+          const viewport = event.currentTarget;
+          if (event.pointerType === "mouse" && event.button !== 0) return;
 
+          event.preventDefault();
+          panStartRef.current = {
+            x: event.clientX,
+            y: event.clientY,
+            panX: pan.x,
+            panY: pan.y,
+          };
+          setIsPanning(true);
+          viewport.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          const viewport = event.currentTarget;
+          if (!viewport || !isPanning) return;
+
+          event.preventDefault();
+          const deltaX = event.clientX - panStartRef.current.x;
+          const deltaY = event.clientY - panStartRef.current.y;
+          setPan({
+            x: panStartRef.current.panX + deltaX,
+            y: panStartRef.current.panY + deltaY,
+          });
+        }}
+        onPointerUp={(event) => {
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+          setIsPanning(false);
+        }}
+        onPointerCancel={(event) => {
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+          setIsPanning(false);
+        }}
+      >
+        <svg
+          role="img"
+          aria-label={t("topology.title")}
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
+          className="block"
+          style={{
+            width: `${layout.width}px`,
+            height: `${layout.height}px`,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: "0 0",
+            willChange: "transform",
+          }}
+        >
+          <g fill="none">
+            {topology.edges.map((edge) => {
+              const source = nodeById.get(edge.source);
+              const target = nodeById.get(edge.target);
+              if (!source || !target) return null;
+              const status = getTopologyEdgeStatus(edge, nodeStatuses);
+              const color = STATUS_COLORS[status].line;
+
+              return (
+                <path
+                  key={edge.id ?? `${edge.source}-${edge.target}`}
+                  d={getEdgePath(source, target)}
+                  stroke={color}
+                  strokeWidth={2.5}
+                  strokeOpacity={status === "unknown" ? 0.45 : 0.75}
+                />
+              );
+            })}
+          </g>
+
+          {layout.nodes.map((node) => {
+            const colors = STATUS_COLORS[node.status];
             return (
-              <path
-                key={edge.id ?? `${edge.source}-${edge.target}`}
-                d={getEdgePath(source, target)}
-                stroke={color}
-                strokeWidth={2.5}
-                strokeOpacity={status === "unknown" ? 0.45 : 0.75}
-              />
+              <g key={node.id} transform={`translate(${node.x} ${node.y})`}>
+                <title>
+                  {node.label} - {t(`topology.status.${node.status}`)}
+                </title>
+                <rect
+                  width={node.width}
+                  height={node.height}
+                  rx={8}
+                  fill={colors.fill}
+                  fillOpacity={0.9}
+                  stroke={colors.stroke}
+                  strokeOpacity={0.75}
+                />
+                <circle
+                  cx={node.width - 16}
+                  cy={16}
+                  r={5}
+                  fill={colors.dot}
+                />
+                <text
+                  x={14}
+                  y={22}
+                  fill="#f8fafc"
+                  fontSize={13}
+                  fontWeight={600}
+                >
+                  {truncateLabel(node.label)}
+                </text>
+                <text x={14} y={40} fill="#94a3b8" fontSize={10}>
+                  {t(`topology.types.${node.type}`)}
+                </text>
+              </g>
             );
           })}
-        </g>
-
-        {layout.nodes.map((node) => {
-          const colors = STATUS_COLORS[node.status];
-          return (
-            <g key={node.id} transform={`translate(${node.x} ${node.y})`}>
-              <title>
-                {node.label} - {t(`topology.status.${node.status}`)}
-              </title>
-              <rect
-                width={node.width}
-                height={node.height}
-                rx={8}
-                fill={colors.fill}
-                fillOpacity={0.9}
-                stroke={colors.stroke}
-                strokeOpacity={0.75}
-              />
-              <circle
-                cx={node.width - 16}
-                cy={16}
-                r={5}
-                fill={colors.dot}
-              />
-              <text
-                x={14}
-                y={22}
-                fill="#f8fafc"
-                fontSize={13}
-                fontWeight={600}
-              >
-                {truncateLabel(node.label)}
-              </text>
-              <text x={14} y={40} fill="#94a3b8" fontSize={10}>
-                {t(`topology.types.${node.type}`)}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+        </svg>
+      </div>
     </div>
   );
 }
@@ -376,7 +558,7 @@ function TopologyContent({
   const activeIncidentCount = incidents.filter(isActiveIncident).length;
 
   return (
-    <div className="space-y-3">
+    <div className="w-full space-y-3 md:w-[976px] md:max-w-[976px]">
       <div className="grid gap-2 sm:grid-cols-3">
         <TopologyStat
           label={t("topology.summary.affectedIsps")}
