@@ -151,15 +151,10 @@ Data is automatically updated and converted to static format using GitHub Action
       "label": "Segment Name",
       "type": "segment",
       "level": 1,
-      "dependency": {
-        "type": "path",
-        "cableId": "cableID",
-        "path": [
-          "TW",
-          "segmentID",
-          "JP"
-        ]
-      }
+      "dependency": [
+        "segmentID",
+        "anotherSegmentID"
+      ]
     }
   ],
   "edges": [
@@ -171,7 +166,7 @@ Data is automatically updated and converted to static format using GitHub Action
 }
 ```
 
-Topology dependencies can target one segment (`type: "segment"` with `segmentId`) or one available path (`type: "path"` with `path`).
+Topology dependencies are ordered segment ID arrays representing one logical route. Any listed segment with `disconnected` status makes the node disconnected; otherwise any `partial_disconnected` segment makes the node partially disconnected. Segment IDs must exist in `src/data/cables/*.json`.
 Use `level` to place nodes in separate topology ranks; lower levels render first.
 
 ## Contributing

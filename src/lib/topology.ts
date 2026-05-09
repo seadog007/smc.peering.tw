@@ -1,25 +1,13 @@
 import {
-  getPathTopologyStatus,
   getSegmentTopologyStatus,
   type CableStatusCable,
   type CableStatusIncident,
-  type Path,
   type TopologyRuntimeStatus,
 } from "@/lib/cable-status";
 
 export type TopologyNodeType = "isp" | "segment" | "destination";
 
-export type TopologyDependency =
-  | {
-      type: "segment";
-      cableId: string;
-      segmentId: string;
-    }
-  | {
-      type: "path";
-      cableId: string;
-      path: Path;
-    };
+export type TopologyDependency = string[];
 
 export interface TopologyNode {
   id: string;
@@ -44,17 +32,25 @@ export type TopologyStatusMap = Record<string, TopologyRuntimeStatus>;
 
 function getDependencyStatus(
   dependency: TopologyDependency,
-  cableById: Map<string, CableStatusCable>,
+  cableBySegmentId: Map<string, CableStatusCable>,
   incidents: CableStatusIncident[],
 ): TopologyRuntimeStatus {
-  const cable = cableById.get(dependency.cableId);
-  if (!cable) return "unknown";
+  if (dependency.length === 0) return "unknown";
 
-  if (dependency.type === "segment") {
-    return getSegmentTopologyStatus(cable, dependency.segmentId, incidents);
+  const statuses = dependency.map((segmentId) => {
+    const cable = cableBySegmentId.get(segmentId);
+    if (!cable) return "unknown";
+    return getSegmentTopologyStatus(cable, segmentId, incidents);
+  });
+
+  if (statuses.some((status) => status === "disconnected")) {
+    return "disconnected";
   }
-
-  return getPathTopologyStatus(cable, dependency.path, incidents);
+  if (statuses.some((status) => status === "partial_disconnected")) {
+    return "partial_disconnected";
+  }
+  if (statuses.some((status) => status === "online")) return "online";
+  return "unknown";
 }
 
 function getOutgoingNodeIds(nodeId: string, edges: TopologyEdge[]) {
@@ -113,13 +109,18 @@ export function getTopologyNodeStatuses(
   cables: CableStatusCable[],
   incidents: CableStatusIncident[],
 ): TopologyStatusMap {
-  const cableById = new Map(cables.map((cable) => [cable.id, cable]));
+  const cableBySegmentId = new Map<string, CableStatusCable>();
+  for (const cable of cables) {
+    for (const segment of cable.segments ?? []) {
+      cableBySegmentId.set(segment.id, cable);
+    }
+  }
   const directStatuses = new Map<string, TopologyRuntimeStatus>();
   const statuses = new Map<string, TopologyRuntimeStatus>();
 
   for (const node of topology.nodes) {
     const status = node.dependency
-      ? getDependencyStatus(node.dependency, cableById, incidents)
+      ? getDependencyStatus(node.dependency, cableBySegmentId, incidents)
       : undefined;
     if (status) {
       directStatuses.set(node.id, status);
