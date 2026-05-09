@@ -23,6 +23,7 @@ import {
   getTopologyNodeStatuses,
   isAffectedTopologyStatus,
   type TopologyData,
+  type TopologyEdge,
   type TopologyNode,
 } from "@/lib/topology";
 import {
@@ -54,6 +55,13 @@ interface PinchState {
   distance: number;
 }
 
+interface SelectionStart {
+  nodeId: string | null;
+  pointerId: number;
+  x: number;
+  y: number;
+}
+
 type TopologyDirection = "horizontal" | "vertical";
 type TopologyFolding = "one" | "two";
 
@@ -74,6 +82,7 @@ const FOLDING_THRESHOLD = 10;
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 2;
 const ZOOM_STEP = 0.25;
+const CLICK_MOVE_TOLERANCE = 6;
 const STATUS_ORDER: TopologyRuntimeStatus[] = [
   "online",
   "partial_disconnected",
@@ -321,6 +330,49 @@ function getEdgePath(
   ].join(" ");
 }
 
+function getEdgeKey(edge: TopologyEdge) {
+  return edge.id ?? `${edge.source}-${edge.target}`;
+}
+
+function getTopologyNodeIdFromTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return null;
+  return (
+    target
+      .closest("[data-topology-node-id]")
+      ?.getAttribute("data-topology-node-id") ?? null
+  );
+}
+
+function getRelatedTopologyPath(nodeId: string, edges: TopologyEdge[]) {
+  const nodeIds = new Set([nodeId]);
+  const edgeIds = new Set<string>();
+
+  const walk = (currentNodeId: string, direction: "incoming" | "outgoing") => {
+    for (const edge of edges) {
+      const nextNodeId =
+        direction === "outgoing"
+          ? edge.source === currentNodeId
+            ? edge.target
+            : null
+          : edge.target === currentNodeId
+            ? edge.source
+            : null;
+      if (!nextNodeId) continue;
+
+      edgeIds.add(getEdgeKey(edge));
+      if (nodeIds.has(nextNodeId)) continue;
+
+      nodeIds.add(nextNodeId);
+      walk(nextNodeId, direction);
+    }
+  };
+
+  walk(nodeId, "incoming");
+  walk(nodeId, "outgoing");
+
+  return { edgeIds, nodeIds };
+}
+
 function truncateLabel(label: string, maxLength = 22) {
   if (label.length <= maxLength) return label;
   return `${label.slice(0, maxLength - 3)}...`;
@@ -526,10 +578,12 @@ function TopologySvg({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const zoomRef = useRef(zoom);
   const panRef = useRef(pan);
   const activePointersRef = useRef(new Map<number, PointerPoint>());
   const pinchRef = useRef<PinchState | null>(null);
+  const selectionStartRef = useRef<SelectionStart | null>(null);
   const panStartRef = useRef({
     panX: 0,
     panY: 0,
@@ -543,6 +597,13 @@ function TopologySvg({
     [topology.nodes, nodeStatuses, direction, folding],
   );
   const nodeById = new Map(layout.nodes.map((node) => [node.id, node]));
+  const relatedPath = useMemo(
+    () =>
+      selectedNodeId
+        ? getRelatedTopologyPath(selectedNodeId, topology.edges)
+        : null,
+    [selectedNodeId, topology.edges],
+  );
   const canZoomOut = zoom > MIN_ZOOM;
   const canZoomIn = zoom < MAX_ZOOM;
   const foldingOptions =
@@ -624,6 +685,18 @@ function TopologySvg({
     event.stopPropagation();
 
     const viewport = event.currentTarget;
+    const selectionStart = selectionStartRef.current;
+    const canSelect =
+      event.type === "pointerup" &&
+      Boolean(selectionStart) &&
+      selectionStart?.pointerId === event.pointerId &&
+      activePointersRef.current.size === 1 &&
+      pinchRef.current === null &&
+      Math.hypot(
+        event.clientX - selectionStart.x,
+        event.clientY - selectionStart.y,
+      ) <= CLICK_MOVE_TOLERANCE;
+
     activePointersRef.current.delete(event.pointerId);
 
     if (viewport.hasPointerCapture(event.pointerId)) {
@@ -648,6 +721,14 @@ function TopologySvg({
       };
       setIsPanning(true);
       return;
+    }
+
+    if (canSelect) {
+      setSelectedNodeId(selectionStart?.nodeId ?? null);
+    }
+
+    if (selectionStart?.pointerId === event.pointerId) {
+      selectionStartRef.current = null;
     }
 
     setIsPanning(false);
@@ -759,6 +840,12 @@ function TopologySvg({
           if (event.pointerType === "mouse" && event.button !== 0) return;
 
           event.preventDefault();
+          selectionStartRef.current = {
+            nodeId: getTopologyNodeIdFromTarget(event.target),
+            pointerId: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+          };
           activePointersRef.current.set(event.pointerId, {
             x: event.clientX,
             y: event.clientY,
@@ -768,6 +855,7 @@ function TopologySvg({
           const pinchMetrics = getPinchMetrics(activePointersRef.current);
           if (pinchMetrics) {
             pinchRef.current = { distance: pinchMetrics.distance };
+            selectionStartRef.current = null;
             setIsPanning(false);
             return;
           }
@@ -839,34 +927,77 @@ function TopologySvg({
               if (!source || !target) return null;
               const status = getTopologyEdgeStatus(edge, nodeStatuses);
               const color = STATUS_COLORS[status].line;
+              const edgeKey = getEdgeKey(edge);
+              const selectionActive = Boolean(relatedPath);
+              const isRelated =
+                !selectionActive || relatedPath?.edgeIds.has(edgeKey);
+              const edgePath = getEdgePath(source, target, direction);
 
               return (
-                <path
-                  key={edge.id ?? `${edge.source}-${edge.target}`}
-                  d={getEdgePath(source, target, direction)}
-                  stroke={color}
-                  strokeWidth={2.5}
-                  strokeOpacity={status === "unknown" ? 0.45 : 0.75}
-                />
+                <g key={edgeKey}>
+                  {selectionActive && isRelated && (
+                    <path
+                      d={edgePath}
+                      stroke="#f8fafc"
+                      strokeWidth={7}
+                      strokeLinecap="round"
+                      strokeOpacity={0.22}
+                    />
+                  )}
+                  <path
+                    d={edgePath}
+                    stroke={color}
+                    strokeWidth={selectionActive && isRelated ? 4 : 2.5}
+                    strokeLinecap="round"
+                    strokeOpacity={
+                      isRelated ? (status === "unknown" ? 0.45 : 0.85) : 0.12
+                    }
+                    style={{ transition: "opacity 150ms ease" }}
+                  />
+                </g>
               );
             })}
           </g>
 
           {layout.nodes.map((node) => {
             const colors = STATUS_COLORS[node.status];
+            const selectionActive = Boolean(relatedPath);
+            const isSelected = selectedNodeId === node.id;
+            const isRelated =
+              !selectionActive || relatedPath?.nodeIds.has(node.id);
             return (
-              <g key={node.id} transform={`translate(${node.x} ${node.y})`}>
+              <g
+                key={node.id}
+                data-topology-node-id={node.id}
+                transform={`translate(${node.x} ${node.y})`}
+                opacity={isRelated ? 1 : 0.22}
+                style={{ cursor: "pointer", transition: "opacity 150ms ease" }}
+              >
                 <title>
                   {node.label} - {t(`topology.status.${node.status}`)}
                 </title>
+                {isSelected && (
+                  <rect
+                    x={-5}
+                    y={-5}
+                    width={node.width + 10}
+                    height={node.height + 10}
+                    rx={11}
+                    fill="none"
+                    stroke="#f8fafc"
+                    strokeOpacity={0.45}
+                    strokeWidth={2}
+                  />
+                )}
                 <rect
                   width={node.width}
                   height={node.height}
                   rx={8}
                   fill={colors.fill}
                   fillOpacity={0.9}
-                  stroke={colors.stroke}
-                  strokeOpacity={0.75}
+                  stroke={isSelected ? "#f8fafc" : colors.stroke}
+                  strokeOpacity={isSelected ? 0.95 : 0.75}
+                  strokeWidth={isSelected ? 2.5 : 1}
                 />
                 <circle
                   cx={node.width - 16}
