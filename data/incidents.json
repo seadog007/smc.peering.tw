@@ -731,7 +731,7 @@
     "reason": "unknown",
     "cableid": "eac2",
     "segment": "eac2-seg-2b1",
-    "title": "",
+    "title": "EAC2 區段 2B1 斷纜",
     "description": "From 數位發展部資料「距新北八里約27.9公里處斷纜」",
     "reparing_at": "2026-05-25T00:00:00+08:00",
     "resolved_at": ""
@@ -753,7 +753,7 @@
     "reason": "unknown",
     "cableid": "twtm3",
     "segment": "twtm3-seg-b",
-    "title": "台馬三號芯線受損",
+    "title": "台馬三號東引北竿段芯線受損",
     "description": "From 中華電信公告「中華電信公司台馬第三海纜(東引至北竿區段)於3月30日發生芯線障礙，訊務已於第一時間疏轉，客戶服務不受影響。中華電信公司技術團隊已派員全力搶修中，敬請客戶安心。」From 數位發展部「距東引約2.64公里處發生部分芯線受損障礙」",
     "reparing_at": "",
     "resolved_at": ""
@@ -786,7 +786,7 @@
     "reason": "maintenance",
     "cableid": "tpe",
     "segment": "",
-    "title": "",
+    "title": "TPE 計劃性維護",
     "description": "From 中華電信公告「為提升國際通訊品質，中華電信公司橫太平洋快速海纜(TPE)，預計於4月12日至4月29日進行計畫性維護作業，維護期間將啟動訊務調度支援機制，客戶服務不受影響，敬請客戶安心。」",
     "reparing_at": "2026-04-29T00:00:00+08:00",
     "resolved_at": "2026-04-19T08:00:00+08:00"
@@ -797,7 +797,7 @@
     "reason": "unknown",
     "cableid": "twtm3",
     "segment": "twtm3-seg-b",
-    "title": "",
+    "title": "台馬三號東引北竿段斷纜",
     "description": "From 中華電信公告「中華電信公司台馬第三海纜 (東引至北竿區段) 於 4 月 29 日發生芯線障礙，訊務已於第一時間全數切換疏轉至微波電路，以確保客戶服務不中斷。惟微波易受天候因素干擾，部分上網服務可能出現輕微延遲。 中華電信公司技術團隊已派員全力搶修中」From 數位發展部「距東引約2.64公里處斷纜」",
     "reparing_at": "",
     "resolved_at": ""
@@ -808,7 +808,7 @@
     "reason": "equipment",
     "cableid": "c2c",
     "segment": "c2c-seg-2b",
-    "title": "",
+    "title": "C2C 香港方向傳輸中斷",
     "description": "HK CLS 風扇故障，服務降級",
     "reparing_at": "",
     "resolved_at": "2026-04-30T16:35:00+08:00"
