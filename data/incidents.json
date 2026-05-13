@@ -812,5 +812,16 @@
     "description": "HK CLS 風扇故障，服務降級",
     "reparing_at": "",
     "resolved_at": "2026-04-30T16:35:00+08:00"
+  },
+  {
+    "date": "2026-05-13T14:49:34+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "sjc2",
+    "segment": "",
+    "title": "SJC2 新加坡方向傳輸中斷",
+    "description": "本站觀測 SJC2 於 2026/05/13 14:39:34 (UTC+8) 傳輸下線，影響 Hinet 往新加坡方向延遲與容量，遠傳因上游使用路由改變，延遲下降約 20ms",
+    "reparing_at": "",
+    "resolved_at": ""
   }
 ]
