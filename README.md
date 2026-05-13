@@ -171,6 +171,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.10.3** (2026-05-13): Fixed SJC2 HK Path
 - **v3.10.2** (2026-05-09): Center map legend title
 - **v3.10.1** (2026-05-09): Update map legend background and animate collapse/expand
 - **v3.10.0** (2026-04-27): Add building segment visualization, Update cable data (Apricot, PLCN, TPU)

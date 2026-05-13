@@ -401,6 +401,12 @@
         "changes": [
           "Center map legend title"
         ]
+      },
+      "3.10.3": {
+        "date": "2026-05-13",
+        "changes": [
+          "Fixed SJC2 HK Path"
+        ]
       }
     }
   }
