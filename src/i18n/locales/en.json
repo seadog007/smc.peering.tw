@@ -407,6 +407,12 @@
         "changes": [
           "Fixed SJC2 HK Path"
         ]
+      },
+      "3.10.4": {
+        "date": "2026-05-13",
+        "changes": [
+          "Fixed SJC2 Segment ID"
+        ]
       }
     }
   }
