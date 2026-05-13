@@ -622,9 +622,9 @@
     "cableid": "apricot",
     "segment": "apricot-seg-6",
     "title": "Apricot 6 段斷線",
-    "description": "From 中華電信公告，距宜蘭頭城約 47.7 公里處斷纜",
+    "description": "From 中華電信公告「中華電信公司杏子海纜(Apricot) S6區段於01月03日發生芯線障礙，訊務已疏轉至其它國際海纜，服務不受影響」。From 數位發展部「距宜蘭頭城約 47.7 公里處斷纜」，後新增「距宜蘭頭城約49.6公里處斷纜」。",
     "reparing_at": "2026-05-03T00:00:00+08:00",
-    "resolved_at": ""
+    "resolved_at": "2026-05-13T00:00:00+08:00"
   },
   {
     "date": "2026-01-13T08:34:02+08:00",
@@ -818,7 +818,7 @@
     "status": "disconnected",
     "reason": "unknown",
     "cableid": "sjc2",
-    "segment": "sjc2-seg-5a",
+    "segment": "sjc2-seg-Unknown-BU4A-BU3",
     "title": "SJC2 新加坡方向傳輸中斷",
     "description": "本站觀測 SJC2 於 2026/05/13 14:39:34 (UTC+8) 傳輸下線，影響 Hinet 往新加坡方向延遲與容量，遠傳因上游使用路由改變，延遲下降約 20ms",
     "reparing_at": "",
