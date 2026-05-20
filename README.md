@@ -171,6 +171,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.10.5** (2026-05-20): Added TPE Segment 3S, 4
 - **v3.10.4** (2026-05-13): Fixed SJC2 Segment ID
 - **v3.10.3** (2026-05-13): Fixed SJC2 HK Path
 - **v3.10.2** (2026-05-09): Center map legend title

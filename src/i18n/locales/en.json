@@ -413,6 +413,12 @@
         "changes": [
           "Fixed SJC2 Segment ID"
         ]
+      },
+      "3.10.5": {
+        "date": "2026-05-20",
+        "changes": [
+          "Added TPE Segment 3S, 4"
+        ]
       }
     }
   }
