@@ -393,7 +393,7 @@
     "title": "台馬二號斷線",
     "description": "From 數位發展部資料，「距離淡水沙崙約180 公里處發生部分芯線受損障礙」。12/3 Update「距淡水沙崙約117公里處發生部分芯線受損障礙」",
     "reparing_at": "",
-    "resolved_at": "2025-10-08T00:00:00+08:00"
+    "resolved_at": ""
   },
   {
     "date": "2025-10-17T20:00:00+08:00",
@@ -770,6 +770,17 @@
     "resolved_at": "2026-04-19T08:00:00+08:00"
   },
   {
+    "date": "2026-04-24T00:00:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "eac2",
+    "segment": "eac2-seg-2b2",
+    "title": "EAC2 東南亞方向斷線",
+    "description": "區段 2B2（菲律賓-新加坡）斷線（1111.68km from PH CLS、1475km from SG CLS、Between RS3-23 & RS3-24）",
+    "reparing_at": "2026-07-12T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
     "date": "2026-04-29T00:00:00+08:00",
     "status": "disconnected",
     "reason": "unknown",
@@ -821,7 +832,7 @@
     "segment": "",
     "title": "TSE-1 計畫性維護",
     "description": "為提升國際通訊品質，中華電信公司海峽光纜一號 (TSE-1)，預計於 5 月 15 日至 6 月 11 日進行計畫性維護作業",
-    "reparing_at": "2026-06-11T00:00:00+08:00",
+    "reparing_at": "2026-06-14T00:00:00+08:00",
     "resolved_at": ""
   }
 ]
