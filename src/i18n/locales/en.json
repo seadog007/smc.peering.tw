@@ -1,4 +1,10 @@
 {
+  "tab": {
+    "incidents": "Incidents",
+    "timeline": "Timeline",
+    "topology": "Topology",
+    "about": "About"
+  },
   "common": {
     "active": "Active",
     "resolved": "Resolved",
@@ -108,6 +114,39 @@
     "title": "Cables Uptime Timeline",
     "uptimeLabel": "Uptime",
     "uptimePercentage": "{{value}}% uptime"
+  },
+  "topology": {
+    "title": "Topology View",
+    "summary": {
+      "affectedIsps": "Affected ISPs",
+      "activeIncidents": "Active Incidents",
+      "nodes": "Topology Nodes"
+    },
+    "empty": {
+      "title": "No topology data available",
+      "description": "Add ISP dependency records to show affected providers."
+    },
+    "status": {
+      "online": "Online",
+      "partial_disconnected": "Partial Outage",
+      "disconnected": "Outage",
+      "unknown": "Unknown"
+    },
+    "types": {
+      "isp": "ISP",
+      "segment": "Cable Segment",
+      "destination": "Destination"
+    },
+    "controls": {
+      "direction": "Layout direction",
+      "horizontal": "Horizontal",
+      "vertical": "Vertical",
+      "folding": "Folding mode",
+      "oneRow": "One row",
+      "twoRows": "2 rows",
+      "oneColumn": "One column",
+      "twoColumns": "2 columns"
+    }
   },
   "about": {
     "title": "About",

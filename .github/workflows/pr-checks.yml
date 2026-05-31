@@ -26,6 +26,7 @@ jobs:
         mkdir -p src/data/cables
         echo '[{"id":"example","name":"Example Landing Point","coordinates":[121.12345,25.56789]}]' > src/data/landing-points.json
         echo '[{"date":"1900-01-01T00:00:00+08:00","status":"disconnected","cableid":"example","segment":"example","title":"Example","description":"Example","reparing_at":"","resolved_at":""}]' > src/data/incidents.json
+        echo '{"nodes":[],"edges":[]}' > src/data/topology.json
       
     - name: Run TypeScript check and build
       run: npm run build

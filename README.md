@@ -7,6 +7,7 @@ An interactive map application that displays the status and historical incidents
 - **Interactive Map**: View submarine cable routes and landing points using Leaflet maps
 - **Real-time Status**: Monitor active and historical incidents affecting submarine cables
 - **Uptime Timeline**: Visualize cable uptime data over the past year
+- **Topology View**: Show active incident impact across explicit ISP and cable segment dependencies
 - **Multi-language Support**: Available in English and Traditional Chinese
 - **Intro Screen**: Show an introduction screen on first visit
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
@@ -134,6 +135,39 @@ Data is automatically updated and converted to static format using GitHub Action
   ]
 }
 ```
+
+#### src/data/topology.json
+```
+{
+  "nodes": [
+    {
+      "id": "isp-id",
+      "label": "ISP Name",
+      "type": "isp",
+      "level": 0
+    },
+    {
+      "id": "segment-id",
+      "label": "Segment Name",
+      "type": "segment",
+      "level": 1,
+      "dependency": [
+        "segmentID",
+        "anotherSegmentID"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "isp-id",
+      "target": "segment-id"
+    }
+  ]
+}
+```
+
+Topology dependencies are ordered segment ID arrays representing one logical route. Any listed segment with `disconnected` status makes the node disconnected; otherwise any `partial_disconnected` segment makes the node partially disconnected. Segment IDs must exist in `src/data/cables/*.json`.
+Use `level` to place nodes in separate topology ranks; lower levels render first.
 
 ## Contributing
 

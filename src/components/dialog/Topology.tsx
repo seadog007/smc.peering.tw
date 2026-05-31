@@ -1,0 +1,1245 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Minus, Network, Plus, RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import SidebarButton from "@/components/SidebarButton";
+import {
+  getTopologyEdgeStatus,
+  getTopologyNodeStatuses,
+  isAffectedTopologyStatus,
+  type TopologyData,
+  type TopologyEdge,
+  type TopologyNode,
+} from "@/lib/topology";
+import {
+  isActiveIncident,
+  type CableStatusCable,
+  type CableStatusIncident,
+  type TopologyRuntimeStatus,
+} from "@/lib/cable-status";
+import topologyJson from "@/data/topology.json" with { type: "json" };
+
+interface Incident extends CableStatusIncident {
+  date: string;
+}
+
+interface LayoutNode extends TopologyNode {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  status: TopologyRuntimeStatus;
+}
+
+interface PointerPoint {
+  x: number;
+  y: number;
+}
+
+interface PinchState {
+  distance: number;
+}
+
+interface SelectionStart {
+  nodeId: string | null;
+  pointerId: number;
+  x: number;
+  y: number;
+}
+
+type TopologyDirection = "horizontal" | "vertical";
+type TopologyFolding = "one" | "two";
+
+interface TopologyLayoutOptions {
+  direction: TopologyDirection;
+  folding: TopologyFolding;
+}
+
+const TOPOLOGY_DATA = topologyJson as TopologyData;
+const SVG_PADDING_X = 72;
+const SVG_PADDING_Y = 48;
+const LEVEL_GAP = 112;
+const NODE_COLUMN_GAP = 196;
+const NODE_ROW_GAP = 84;
+const NODE_WIDTH = 168;
+const NODE_HEIGHT = 52;
+const FOLDING_THRESHOLD = 10;
+const MIN_ZOOM = 0.25;
+const MAX_ZOOM = 2;
+const ZOOM_STEP = 0.25;
+const CLICK_MOVE_TOLERANCE = 6;
+const STATUS_ORDER: TopologyRuntimeStatus[] = [
+  "online",
+  "partial_disconnected",
+  "disconnected",
+  "unknown",
+];
+
+const STATUS_COLORS: Record<
+  TopologyRuntimeStatus,
+  { fill: string; stroke: string; line: string; dot: string }
+> = {
+  online: {
+    fill: "#052e26",
+    stroke: "#34d399",
+    line: "#34d399",
+    dot: "#34d399",
+  },
+  partial_disconnected: {
+    fill: "#3b2f05",
+    stroke: "#facc15",
+    line: "#facc15",
+    dot: "#facc15",
+  },
+  disconnected: {
+    fill: "#3b0a0a",
+    stroke: "#f87171",
+    line: "#f87171",
+    dot: "#f87171",
+  },
+  unknown: {
+    fill: "#111827",
+    stroke: "#64748b",
+    line: "#64748b",
+    dot: "#94a3b8",
+  },
+};
+
+const STATUS_BADGE_CLASSES: Record<TopologyRuntimeStatus, string> = {
+  online: "border-emerald-400/25 bg-emerald-500/15 text-emerald-100",
+  partial_disconnected: "border-yellow-400/25 bg-yellow-500/15 text-yellow-100",
+  disconnected: "border-red-400/25 bg-red-500/15 text-red-100",
+  unknown: "border-slate-400/25 bg-slate-500/15 text-slate-100",
+};
+
+async function loadCables(): Promise<CableStatusCable[]> {
+  const modules = import.meta.glob<{ default: CableStatusCable }>(
+    "/src/data/cables/*.json",
+  );
+  const cablePromises = Object.values(modules).map(async (loader) => {
+    const module = await loader();
+    return module.default;
+  });
+  return Promise.all(cablePromises);
+}
+
+async function loadIncidents(): Promise<Incident[]> {
+  const res = await fetch("/data/incidents.json");
+  if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
+  const incidentsData = (await res.json()) as Incident[];
+  incidentsData.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+  return incidentsData;
+}
+
+function getNodeColumn(node: TopologyNode) {
+  if (typeof node.level === "number") return node.level;
+  if (node.type === "isp") return 0;
+  if (node.type === "destination") return 2;
+  return 1;
+}
+
+function createFoldedGroups(nodes: TopologyNode[], folding: TopologyFolding) {
+  if (folding === "one" || nodes.length <= FOLDING_THRESHOLD) return [nodes];
+
+  const splitIndex = Math.ceil(nodes.length / 2);
+  return [nodes.slice(0, splitIndex), nodes.slice(splitIndex)].filter(
+    (group) => group.length > 0,
+  );
+}
+
+function getMedian(values: number[]) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
+}
+
+// Resolve the cross-axis positions of one lane so that nodes keep their order
+// with a minimum spacing, while staying centered on their desired (connectivity
+// driven) positions. `desired[i] === null` means the node has no constraint yet.
+function resolveLanePositions(desired: (number | null)[], stride: number) {
+  const count = desired.length;
+  if (count === 0) return [];
+
+  const positions: number[] = new Array(count);
+  for (let i = 0; i < count; i += 1) {
+    const value = desired[i];
+    if (value !== null) {
+      positions[i] = value;
+    } else {
+      positions[i] = i > 0 ? positions[i - 1] + stride : 0;
+    }
+  }
+
+  for (let i = 1; i < count; i += 1) {
+    const minPosition = positions[i - 1] + stride;
+    if (positions[i] < minPosition) positions[i] = minPosition;
+  }
+
+  const known = desired.filter((value): value is number => value !== null);
+  const targetMean = known.length
+    ? known.reduce((total, value) => total + value, 0) / known.length
+    : positions.reduce((total, value) => total + value, 0) / count;
+  const currentMean =
+    positions.reduce((total, value) => total + value, 0) / count;
+  const shift = targetMean - currentMean;
+
+  return positions.map((value) => value + shift);
+}
+
+// Assign each node a cross-axis center (y in horizontal layouts, x in vertical
+// layouts) by aligning it with the median of its incoming neighbors. This keeps
+// linear chains straight: a node follows whatever it connects from on the
+// previous level instead of being independently centered within its own level.
+function assignCrossPositions(
+  levelLayouts: { lanes: TopologyNode[][] }[],
+  incomingById: Map<string, string[]>,
+  stride: number,
+) {
+  const centerById = new Map<string, number>();
+
+  for (const levelLayout of levelLayouts) {
+    for (const lane of levelLayout.lanes) {
+      const desired = lane.map((node) => {
+        const neighbors = incomingById.get(node.id) ?? [];
+        const centers = neighbors
+          .map((neighborId) => centerById.get(neighborId))
+          .filter((value): value is number => value !== undefined);
+        return centers.length ? getMedian(centers) : null;
+      });
+      const resolved = resolveLanePositions(desired, stride);
+      lane.forEach((node, index) => {
+        centerById.set(node.id, resolved[index]);
+      });
+    }
+  }
+
+  return centerById;
+}
+
+function createLayoutNodes(
+  nodes: TopologyNode[],
+  edges: TopologyEdge[],
+  nodeStatuses: Record<string, TopologyRuntimeStatus>,
+  options: TopologyLayoutOptions,
+) {
+  const groups = new Map<number, TopologyNode[]>();
+
+  nodes.forEach((node) => {
+    const level = getNodeColumn(node);
+    const group = groups.get(level) ?? [];
+    group.push(node);
+    groups.set(level, group);
+  });
+
+  const sortedLevels = Array.from(groups.keys()).sort((a, b) => a - b);
+  const levelLayouts = sortedLevels.map((level) => {
+    const group = groups.get(level) ?? [];
+    const lanes = createFoldedGroups(group, options.folding);
+    const isVertical = options.direction === "vertical";
+    const laneLengths = lanes.map((lane) => lane.length);
+    const width = isVertical
+      ? Math.max(
+          NODE_WIDTH,
+          ...laneLengths.map(
+            (length) => NODE_WIDTH + Math.max(0, length - 1) * NODE_COLUMN_GAP,
+          ),
+        )
+      : NODE_WIDTH + Math.max(0, lanes.length - 1) * NODE_COLUMN_GAP;
+    const height = isVertical
+      ? NODE_HEIGHT + Math.max(0, lanes.length - 1) * NODE_ROW_GAP
+      : Math.max(
+          NODE_HEIGHT,
+          ...laneLengths.map(
+            (length) => NODE_HEIGHT + Math.max(0, length - 1) * NODE_ROW_GAP,
+          ),
+        );
+
+    return {
+      height,
+      lanes,
+      level,
+      width,
+    };
+  });
+  const isVertical = options.direction === "vertical";
+  const levelsMainExtent =
+    levelLayouts.reduce(
+      (total, level) => total + (isVertical ? level.height : level.width),
+      0,
+    ) + Math.max(0, levelLayouts.length - 1) * LEVEL_GAP;
+
+  const incomingById = new Map<string, string[]>();
+  for (const edge of edges) {
+    const incoming = incomingById.get(edge.target) ?? [];
+    incoming.push(edge.source);
+    incomingById.set(edge.target, incoming);
+  }
+  const crossStride = isVertical ? NODE_COLUMN_GAP : NODE_ROW_GAP;
+  const crossCenterById = assignCrossPositions(
+    levelLayouts,
+    incomingById,
+    crossStride,
+  );
+
+  const layoutNodes: LayoutNode[] = [];
+
+  if (isVertical) {
+    let y = SVG_PADDING_Y;
+
+    levelLayouts.forEach((levelLayout) => {
+      levelLayout.lanes.forEach((row, rowIndex) => {
+        row.forEach((node) => {
+          const center = crossCenterById.get(node.id) ?? 0;
+          layoutNodes.push({
+            ...node,
+            x: center - NODE_WIDTH / 2,
+            y: y + rowIndex * NODE_ROW_GAP,
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+            status: nodeStatuses[node.id] ?? "unknown",
+          });
+        });
+      });
+
+      y += levelLayout.height + LEVEL_GAP;
+    });
+  } else {
+    let x = SVG_PADDING_X;
+
+    levelLayouts.forEach((levelLayout) => {
+      levelLayout.lanes.forEach((column, columnIndex) => {
+        column.forEach((node) => {
+          const center = crossCenterById.get(node.id) ?? 0;
+          layoutNodes.push({
+            ...node,
+            x: x + columnIndex * NODE_COLUMN_GAP,
+            y: center - NODE_HEIGHT / 2,
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+            status: nodeStatuses[node.id] ?? "unknown",
+          });
+        });
+      });
+
+      x += levelLayout.width + LEVEL_GAP;
+    });
+  }
+
+  if (layoutNodes.length === 0) {
+    return { height: 360, nodes: layoutNodes, width: 760 };
+  }
+
+  if (isVertical) {
+    const minX = Math.min(...layoutNodes.map((node) => node.x));
+    const shiftX = SVG_PADDING_X - minX;
+    layoutNodes.forEach((node) => {
+      node.x += shiftX;
+    });
+    const maxX = Math.max(...layoutNodes.map((node) => node.x + node.width));
+
+    return {
+      height: Math.max(360, SVG_PADDING_Y * 2 + levelsMainExtent),
+      nodes: layoutNodes,
+      width: Math.max(760, maxX + SVG_PADDING_X),
+    };
+  }
+
+  const minY = Math.min(...layoutNodes.map((node) => node.y));
+  const shiftY = SVG_PADDING_Y - minY;
+  layoutNodes.forEach((node) => {
+    node.y += shiftY;
+  });
+  const maxY = Math.max(...layoutNodes.map((node) => node.y + node.height));
+
+  return {
+    height: Math.max(360, maxY + SVG_PADDING_Y),
+    nodes: layoutNodes,
+    width: Math.max(760, SVG_PADDING_X * 2 + levelsMainExtent),
+  };
+}
+
+function getEdgePath(
+  source: LayoutNode,
+  target: LayoutNode,
+  direction: TopologyDirection,
+) {
+  if (direction === "horizontal") {
+    const sourceIsLeft = source.x <= target.x;
+    const startX = sourceIsLeft ? source.x + source.width : source.x;
+    const endX = sourceIsLeft ? target.x : target.x + target.width;
+    const startY = source.y + source.height / 2;
+    const endY = target.y + target.height / 2;
+    const directionMultiplier = sourceIsLeft ? 1 : -1;
+    const controlOffset = Math.max(72, Math.abs(endX - startX) / 2);
+
+    return [
+      `M ${startX} ${startY}`,
+      `C ${startX + controlOffset * directionMultiplier} ${startY}`,
+      `${endX - controlOffset * directionMultiplier} ${endY}`,
+      `${endX} ${endY}`,
+    ].join(" ");
+  }
+
+  const startX = source.x + source.width / 2;
+  const endX = target.x + target.width / 2;
+  const startY = source.y + source.height;
+  const endY = target.y;
+  const controlOffset = Math.max(48, Math.abs(endY - startY) / 2);
+
+  return [
+    `M ${startX} ${startY}`,
+    `C ${startX} ${startY + controlOffset}`,
+    `${endX} ${endY - controlOffset}`,
+    `${endX} ${endY}`,
+  ].join(" ");
+}
+
+function getEdgeKey(edge: TopologyEdge) {
+  return edge.id ?? `${edge.source}-${edge.target}`;
+}
+
+function getTopologyNodeIdFromTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return null;
+  return (
+    target
+      .closest("[data-topology-node-id]")
+      ?.getAttribute("data-topology-node-id") ?? null
+  );
+}
+
+function getRelatedTopologyPath(nodeId: string, edges: TopologyEdge[]) {
+  const nodeIds = new Set([nodeId]);
+  const edgeIds = new Set<string>();
+
+  const walk = (currentNodeId: string, direction: "incoming" | "outgoing") => {
+    for (const edge of edges) {
+      const nextNodeId =
+        direction === "outgoing"
+          ? edge.source === currentNodeId
+            ? edge.target
+            : null
+          : edge.target === currentNodeId
+            ? edge.source
+            : null;
+      if (!nextNodeId) continue;
+
+      edgeIds.add(getEdgeKey(edge));
+      if (nodeIds.has(nextNodeId)) continue;
+
+      nodeIds.add(nextNodeId);
+      walk(nextNodeId, direction);
+    }
+  };
+
+  walk(nodeId, "incoming");
+  walk(nodeId, "outgoing");
+
+  return { edgeIds, nodeIds };
+}
+
+function truncateLabel(label: string, maxLength = 22) {
+  if (label.length <= maxLength) return label;
+  return `${label.slice(0, maxLength - 3)}...`;
+}
+
+function clampZoom(value: number) {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
+}
+
+function snapZoom(value: number, direction: "down" | "nearest" = "nearest") {
+  const scaled = value / ZOOM_STEP;
+  const rounded =
+    direction === "down" ? Math.floor(scaled) : Math.round(scaled);
+  return clampZoom(rounded * ZOOM_STEP);
+}
+
+function getPinchMetrics(pointers: Map<number, PointerPoint>) {
+  const [first, second] = Array.from(pointers.values());
+  if (!first || !second) return null;
+
+  return {
+    distance: Math.hypot(second.x - first.x, second.y - first.y),
+    midpoint: {
+      x: (first.x + second.x) / 2,
+      y: (first.y + second.y) / 2,
+    },
+  };
+}
+
+function getFitTransform(
+  layout: { width: number; height: number },
+  viewport: { width: number; height: number },
+) {
+  const padding = 32;
+  const availableWidth = Math.max(1, viewport.width - padding);
+  const availableHeight = Math.max(1, viewport.height - padding);
+  const fitZoom = Math.min(
+    availableWidth / layout.width,
+    availableHeight / layout.height,
+    1,
+  );
+  const zoom = snapZoom(fitZoom, "down");
+
+  return {
+    zoom,
+    pan: {
+      x: (viewport.width - layout.width * zoom) / 2,
+      y: (viewport.height - layout.height * zoom) / 2,
+    },
+  };
+}
+
+function TopologySegmentedControl<TValue extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { value: TValue; label: string }[];
+  value: TValue;
+  onChange: (value: TValue) => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 p-1"
+      role="group"
+      aria-label={label}
+    >
+      {options.map((option) => {
+        const isActive = option.value === value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+              isActive
+                ? "bg-white text-slate-950"
+                : "text-white/70 hover:bg-white/10 hover:text-white"
+            }`}
+            aria-pressed={isActive}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function TopologyZoomButton({
+  children,
+  label,
+  onClick,
+  disabled,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex size-8 items-center justify-center rounded-md border border-white/10 bg-white/10 text-white/80 transition-colors hover:bg-white/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+    >
+      {children}
+    </button>
+  );
+}
+
+function TopologyStatusBadge({
+  status,
+}: {
+  status: TopologyRuntimeStatus;
+}) {
+  const { t } = useTranslation();
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs ${STATUS_BADGE_CLASSES[status]}`}
+    >
+      <span
+        className="size-2 rounded-full"
+        style={{ backgroundColor: STATUS_COLORS[status].dot }}
+      />
+      {t(`topology.status.${status}`)}
+    </span>
+  );
+}
+
+function TopologyStat({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) {
+  return (
+    <div className="min-w-0 rounded-lg border border-white/10 bg-white/5 px-2 py-2 sm:px-3">
+      <div className="truncate text-[11px] text-white/55 sm:text-xs">
+        {label}
+      </div>
+      <div className="mt-1 text-lg font-semibold tabular-nums text-white sm:text-xl">
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function EmptyTopology() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex min-h-[320px] items-center justify-center rounded-lg border border-white/10 bg-white/5 p-6 text-center">
+      <div className="flex max-w-sm flex-col items-center gap-3">
+        <div className="flex size-12 items-center justify-center rounded-lg border border-white/10 bg-black/20">
+          <Network className="size-6 text-white/70" />
+        </div>
+        <div>
+          <div className="text-base font-semibold text-white">
+            {t("topology.empty.title")}
+          </div>
+          <p className="mt-1 text-sm leading-relaxed text-white/60">
+            {t("topology.empty.description")}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LoadingTopology() {
+  return (
+    <div className="w-full min-w-[760px] space-y-3">
+      <div className="grid gap-2 sm:grid-cols-3">
+        <Skeleton className="h-[70px] rounded-lg" />
+        <Skeleton className="h-[70px] rounded-lg" />
+        <Skeleton className="h-[70px] rounded-lg" />
+      </div>
+      <Skeleton className="h-[clamp(200px,calc(100svh-380px),600px)] rounded-lg md:h-[clamp(240px,calc(82vh-300px),520px)]" />
+    </div>
+  );
+}
+
+function TopologySvg({
+  topology,
+  nodeStatuses,
+  allowDirectionSwitch = true,
+}: {
+  topology: TopologyData;
+  nodeStatuses: Record<string, TopologyRuntimeStatus>;
+  allowDirectionSwitch?: boolean;
+}) {
+  const { t } = useTranslation();
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [selectedDirection, setSelectedDirection] =
+    useState<TopologyDirection>("horizontal");
+  const [folding, setFolding] = useState<TopologyFolding>("two");
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const zoomRef = useRef(zoom);
+  const panRef = useRef(pan);
+  const activePointersRef = useRef(new Map<number, PointerPoint>());
+  const pinchRef = useRef<PinchState | null>(null);
+  const selectionStartRef = useRef<SelectionStart | null>(null);
+  const panStartRef = useRef({
+    panX: 0,
+    panY: 0,
+    x: 0,
+    y: 0,
+  });
+  const direction = allowDirectionSwitch ? selectedDirection : "horizontal";
+  const layout = useMemo(
+    () =>
+      createLayoutNodes(topology.nodes, topology.edges, nodeStatuses, {
+        direction,
+        folding,
+      }),
+    [topology.nodes, topology.edges, nodeStatuses, direction, folding],
+  );
+  const nodeById = new Map(layout.nodes.map((node) => [node.id, node]));
+  const relatedPath = useMemo(
+    () =>
+      selectedNodeId
+        ? getRelatedTopologyPath(selectedNodeId, topology.edges)
+        : null,
+    [selectedNodeId, topology.edges],
+  );
+  const canZoomOut = zoom > MIN_ZOOM;
+  const canZoomIn = zoom < MAX_ZOOM;
+  const foldingOptions =
+    direction === "horizontal"
+      ? [
+          {
+            value: "two" as const,
+            label: t("topology.controls.twoColumns"),
+          },
+          {
+            value: "one" as const,
+            label: t("topology.controls.oneColumn"),
+          },
+        ]
+      : [
+          {
+            value: "two" as const,
+            label: t("topology.controls.twoRows"),
+          },
+          {
+            value: "one" as const,
+            label: t("topology.controls.oneRow"),
+          },
+        ];
+  const applyTransform = (nextZoom: number, nextPan: PointerPoint) => {
+    zoomRef.current = nextZoom;
+    panRef.current = nextPan;
+    setZoom(nextZoom);
+    setPan(nextPan);
+  };
+  const zoomAtViewportPoint = (nextZoom: number, point: PointerPoint) => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const viewportPoint = {
+      x: point.x - rect.left,
+      y: point.y - rect.top,
+    };
+    const currentZoom = zoomRef.current;
+    const currentPan = panRef.current;
+    const clampedZoom = clampZoom(nextZoom);
+    const graphPoint = {
+      x: (viewportPoint.x - currentPan.x) / currentZoom,
+      y: (viewportPoint.y - currentPan.y) / currentZoom,
+    };
+
+    applyTransform(clampedZoom, {
+      x: viewportPoint.x - graphPoint.x * clampedZoom,
+      y: viewportPoint.y - graphPoint.y * clampedZoom,
+    });
+  };
+  const setButtonZoom = (getNextZoom: (currentZoom: number) => number) => {
+    const nextZoom = getNextZoom(zoomRef.current);
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      zoomRef.current = nextZoom;
+      setZoom(nextZoom);
+      return;
+    }
+
+    const rect = viewport.getBoundingClientRect();
+    zoomAtViewportPoint(nextZoom, {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+  };
+  const fitToViewport = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const next = getFitTransform(layout, {
+      width: viewport.clientWidth,
+      height: viewport.clientHeight,
+    });
+    applyTransform(next.zoom, next.pan);
+  };
+  const handlePointerRelease = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+
+    const viewport = event.currentTarget;
+    const selectionStart = selectionStartRef.current;
+    const canSelect =
+      event.type === "pointerup" &&
+      Boolean(selectionStart) &&
+      selectionStart?.pointerId === event.pointerId &&
+      activePointersRef.current.size === 1 &&
+      pinchRef.current === null &&
+      Math.hypot(
+        event.clientX - selectionStart.x,
+        event.clientY - selectionStart.y,
+      ) <= CLICK_MOVE_TOLERANCE;
+
+    activePointersRef.current.delete(event.pointerId);
+
+    if (viewport.hasPointerCapture(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId);
+    }
+
+    const pinchMetrics = getPinchMetrics(activePointersRef.current);
+    if (pinchMetrics) {
+      pinchRef.current = { distance: pinchMetrics.distance };
+      setIsPanning(false);
+      return;
+    }
+
+    pinchRef.current = null;
+    const remainingPointer = Array.from(activePointersRef.current.values())[0];
+    if (remainingPointer) {
+      panStartRef.current = {
+        x: remainingPointer.x,
+        y: remainingPointer.y,
+        panX: panRef.current.x,
+        panY: panRef.current.y,
+      };
+      setIsPanning(true);
+      return;
+    }
+
+    if (canSelect) {
+      setSelectedNodeId(selectionStart?.nodeId ?? null);
+    }
+
+    if (selectionStart?.pointerId === event.pointerId) {
+      selectionStartRef.current = null;
+    }
+
+    setIsPanning(false);
+  };
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const initial = getFitTransform(layout, {
+      width: viewport.clientWidth,
+      height: viewport.clientHeight,
+    });
+    applyTransform(initial.zoom, initial.pan);
+
+    const resizeObserver = new ResizeObserver(() => {
+      const next = getFitTransform(layout, {
+        width: viewport.clientWidth,
+        height: viewport.clientHeight,
+      });
+      applyTransform(next.zoom, next.pan);
+    });
+
+    resizeObserver.observe(viewport);
+    return () => resizeObserver.disconnect();
+  }, [direction, folding, layout.height, layout.width]);
+
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/20">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 p-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {allowDirectionSwitch && (
+            <TopologySegmentedControl
+              label={t("topology.controls.direction")}
+              options={[
+                {
+                  value: "horizontal",
+                  label: t("topology.controls.horizontal"),
+                },
+                {
+                  value: "vertical",
+                  label: t("topology.controls.vertical"),
+                },
+              ]}
+              value={selectedDirection}
+              onChange={setSelectedDirection}
+            />
+          )}
+          <TopologySegmentedControl
+            label={t("topology.controls.folding")}
+            options={foldingOptions}
+            value={folding}
+            onChange={setFolding}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <TopologyZoomButton
+            label="Zoom out"
+            onClick={() =>
+              setButtonZoom((value) => snapZoom(value - ZOOM_STEP))
+            }
+            disabled={!canZoomOut}
+          >
+            <Minus className="size-4" />
+          </TopologyZoomButton>
+          <div className="min-w-14 text-center text-xs font-medium tabular-nums text-white/70">
+            {Math.round(zoom * 100)}%
+          </div>
+          <TopologyZoomButton
+            label="Zoom in"
+            onClick={() =>
+              setButtonZoom((value) => snapZoom(value + ZOOM_STEP))
+            }
+            disabled={!canZoomIn}
+          >
+            <Plus className="size-4" />
+          </TopologyZoomButton>
+          <TopologyZoomButton label="Reset zoom" onClick={fitToViewport}>
+            <RotateCcw className="size-4" />
+          </TopologyZoomButton>
+        </div>
+      </div>
+      <div
+        ref={viewportRef}
+        data-vaul-no-drag=""
+        className={`h-[clamp(200px,calc(100svh-380px),600px)] overflow-hidden md:h-[clamp(240px,calc(82vh-300px),520px)] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
+        style={{ touchAction: "none", userSelect: "none" }}
+        onWheel={(event) => {
+          event.stopPropagation();
+          event.preventDefault();
+          const deltaModeMultiplier =
+            event.deltaMode === 1
+              ? 16
+              : event.deltaMode === 2
+                ? event.currentTarget.clientHeight
+                : 1;
+          const normalizedDelta = event.deltaY * deltaModeMultiplier;
+          const nextZoom =
+            zoomRef.current * Math.exp(normalizedDelta * -0.0015);
+
+          zoomAtViewportPoint(nextZoom, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+        }}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          const viewport = event.currentTarget;
+          if (event.pointerType === "mouse" && event.button !== 0) return;
+
+          event.preventDefault();
+          selectionStartRef.current = {
+            nodeId: getTopologyNodeIdFromTarget(event.target),
+            pointerId: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+          };
+          activePointersRef.current.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+          viewport.setPointerCapture(event.pointerId);
+
+          const pinchMetrics = getPinchMetrics(activePointersRef.current);
+          if (pinchMetrics) {
+            pinchRef.current = { distance: pinchMetrics.distance };
+            selectionStartRef.current = null;
+            setIsPanning(false);
+            return;
+          }
+
+          pinchRef.current = null;
+          panStartRef.current = {
+            x: event.clientX,
+            y: event.clientY,
+            panX: panRef.current.x,
+            panY: panRef.current.y,
+          };
+          setIsPanning(true);
+        }}
+        onPointerMove={(event) => {
+          event.stopPropagation();
+          if (!activePointersRef.current.has(event.pointerId)) return;
+
+          event.preventDefault();
+          activePointersRef.current.set(event.pointerId, {
+            x: event.clientX,
+            y: event.clientY,
+          });
+
+          const pinchMetrics = getPinchMetrics(activePointersRef.current);
+          if (pinchMetrics) {
+            if (pinchRef.current && pinchRef.current.distance > 0) {
+              const nextZoom =
+                zoomRef.current *
+                (pinchMetrics.distance / pinchRef.current.distance);
+              zoomAtViewportPoint(nextZoom, pinchMetrics.midpoint);
+            }
+
+            pinchRef.current = { distance: pinchMetrics.distance };
+            setIsPanning(false);
+            return;
+          }
+
+          if (!isPanning) return;
+
+          const deltaX = event.clientX - panStartRef.current.x;
+          const deltaY = event.clientY - panStartRef.current.y;
+          const nextPan = {
+            x: panStartRef.current.panX + deltaX,
+            y: panStartRef.current.panY + deltaY,
+          };
+          panRef.current = nextPan;
+          setPan(nextPan);
+        }}
+        onPointerUp={handlePointerRelease}
+        onPointerCancel={handlePointerRelease}
+      >
+        <svg
+          role="img"
+          aria-label={t("topology.title")}
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
+          className="block"
+          style={{
+            width: `${layout.width}px`,
+            height: `${layout.height}px`,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: "0 0",
+            willChange: "transform",
+          }}
+        >
+          <g fill="none">
+            {topology.edges.map((edge) => {
+              const source = nodeById.get(edge.source);
+              const target = nodeById.get(edge.target);
+              if (!source || !target) return null;
+              const status = getTopologyEdgeStatus(edge, nodeStatuses);
+              const color = STATUS_COLORS[status].line;
+              const edgeKey = getEdgeKey(edge);
+              const selectionActive = Boolean(relatedPath);
+              const isRelated =
+                !selectionActive || relatedPath?.edgeIds.has(edgeKey);
+              const edgePath = getEdgePath(source, target, direction);
+
+              return (
+                <g key={edgeKey}>
+                  {selectionActive && isRelated && (
+                    <path
+                      d={edgePath}
+                      stroke="#f8fafc"
+                      strokeWidth={7}
+                      strokeLinecap="round"
+                      strokeOpacity={0.22}
+                    />
+                  )}
+                  <path
+                    d={edgePath}
+                    stroke={color}
+                    strokeWidth={selectionActive && isRelated ? 4 : 2.5}
+                    strokeLinecap="round"
+                    strokeOpacity={
+                      isRelated ? (status === "unknown" ? 0.45 : 0.85) : 0.12
+                    }
+                    style={{ transition: "opacity 150ms ease" }}
+                  />
+                </g>
+              );
+            })}
+          </g>
+
+          {layout.nodes.map((node) => {
+            const colors = STATUS_COLORS[node.status];
+            const selectionActive = Boolean(relatedPath);
+            const isSelected = selectedNodeId === node.id;
+            const isRelated =
+              !selectionActive || relatedPath?.nodeIds.has(node.id);
+            return (
+              <g
+                key={node.id}
+                data-topology-node-id={node.id}
+                transform={`translate(${node.x} ${node.y})`}
+                opacity={isRelated ? 1 : 0.22}
+                style={{ cursor: "pointer", transition: "opacity 150ms ease" }}
+              >
+                <title>
+                  {node.label} - {t(`topology.status.${node.status}`)}
+                </title>
+                {isSelected && (
+                  <rect
+                    x={-5}
+                    y={-5}
+                    width={node.width + 10}
+                    height={node.height + 10}
+                    rx={11}
+                    fill="none"
+                    stroke="#f8fafc"
+                    strokeOpacity={0.45}
+                    strokeWidth={2}
+                  />
+                )}
+                <rect
+                  width={node.width}
+                  height={node.height}
+                  rx={8}
+                  fill={colors.fill}
+                  fillOpacity={0.9}
+                  stroke={isSelected ? "#f8fafc" : colors.stroke}
+                  strokeOpacity={isSelected ? 0.95 : 0.75}
+                  strokeWidth={isSelected ? 2.5 : 1}
+                />
+                <circle
+                  cx={node.width - 16}
+                  cy={16}
+                  r={5}
+                  fill={colors.dot}
+                />
+                <text
+                  x={14}
+                  y={22}
+                  fill="#f8fafc"
+                  fontSize={13}
+                  fontWeight={600}
+                >
+                  {truncateLabel(node.label)}
+                </text>
+                <text x={14} y={40} fill="#94a3b8" fontSize={10}>
+                  {t(`topology.types.${node.type}`)}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function TopologyContent({
+  topology,
+  cables,
+  incidents,
+  isLoading,
+  allowDirectionSwitch = true,
+}: {
+  topology: TopologyData;
+  cables: CableStatusCable[];
+  incidents: Incident[];
+  isLoading: boolean;
+  allowDirectionSwitch?: boolean;
+}) {
+  const { t } = useTranslation();
+  const nodeStatuses = useMemo(
+    () => getTopologyNodeStatuses(topology, cables, incidents),
+    [topology, cables, incidents],
+  );
+
+  if (topology.nodes.length === 0) {
+    return <EmptyTopology />;
+  }
+
+  if (isLoading) {
+    return <LoadingTopology />;
+  }
+
+  const ispNodes = topology.nodes.filter((node) => node.type === "isp");
+  const affectedIspCount = ispNodes.filter((node) =>
+    isAffectedTopologyStatus(nodeStatuses[node.id] ?? "unknown"),
+  ).length;
+  const activeIncidentCount = incidents.filter(isActiveIncident).length;
+
+  return (
+    <div className="w-full space-y-3 md:w-[976px] md:max-w-[976px]">
+      <div className="grid grid-cols-3 gap-2">
+        <TopologyStat
+          label={t("topology.summary.affectedIsps")}
+          value={`${affectedIspCount}/${ispNodes.length}`}
+        />
+        <TopologyStat
+          label={t("topology.summary.activeIncidents")}
+          value={activeIncidentCount}
+        />
+        <TopologyStat
+          label={t("topology.summary.nodes")}
+          value={topology.nodes.length}
+        />
+      </div>
+
+      <TopologySvg
+        topology={topology}
+        nodeStatuses={nodeStatuses}
+        allowDirectionSwitch={allowDirectionSwitch}
+      />
+
+      <div className="flex flex-wrap gap-2">
+        {STATUS_ORDER.map((status) => (
+          <TopologyStatusBadge key={status} status={status} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TopologyView({
+  isActive,
+  allowDirectionSwitch = true,
+}: {
+  isActive: boolean;
+  allowDirectionSwitch?: boolean;
+}) {
+  const hasTopologyData = TOPOLOGY_DATA.nodes.length > 0;
+
+  const { data: cables = [], isLoading: cablesLoading } = useQuery({
+    queryKey: ["topology", "cables"],
+    queryFn: loadCables,
+    enabled: isActive && hasTopologyData,
+  });
+
+  const { data: incidents = [], isLoading: incidentsLoading } = useQuery({
+    queryKey: ["incidents"],
+    queryFn: loadIncidents,
+    enabled: isActive && hasTopologyData,
+  });
+
+  return (
+    <TopologyContent
+      topology={TOPOLOGY_DATA}
+      cables={cables}
+      incidents={incidents}
+      isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
+      allowDirectionSwitch={allowDirectionSwitch}
+    />
+  );
+}
+
+export default function TopologyDialog() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <SidebarButton>
+              <Network className="size-5" />
+            </SidebarButton>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t("topology.title")}</p>
+        </TooltipContent>
+      </Tooltip>
+      <DialogContent className="p-0 sm:max-w-5xl">
+        <ScrollArea className="h-full max-h-[82vh] overflow-y-auto">
+          <div className="p-6">
+            <DialogHeader className="mb-3">
+              <DialogTitle>{t("topology.title")}</DialogTitle>
+              <DialogDescription className="sr-only">
+                {t("topology.title")}
+              </DialogDescription>
+            </DialogHeader>
+            <TopologyView isActive={open} />
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
+  );
+}

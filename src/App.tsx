@@ -10,6 +10,7 @@ import CurrentTime from "@/components/CurrentTime";
 import OutageCounter from "@/components/OutageCounter";
 import MapLegend from "@/components/MapLegend";
 import TourController from "@/components/TourController";
+import { cn } from "@/lib/utils";
 import "./i18n";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
+  const isEnglish = i18n.language.startsWith("en");
 
   const [cableFilter, setCableFilter] = useState<"all" | "normal" | "broken">(
     "all",
@@ -32,7 +34,7 @@ function App() {
     <div className="relative h-svh w-full">
       <Map cableFilter={cableFilter} />
       <div
-        className="absolute top-2 z-10 max-md:right-2 md:left-2"
+        className="absolute top-[calc(env(safe-area-inset-top)+8px)] z-10 max-md:right-2 md:top-2 md:left-2"
         data-tour="cable-filter"
       >
         <CableFilter
@@ -47,7 +49,12 @@ function App() {
           <MapLegend />
         </div>
       </div>
-      <div className="absolute right-2 z-10 max-md:bottom-[168px] md:right-[416px] md:bottom-2">
+      <div
+        className={cn(
+          "absolute right-2 z-10 max-md:bottom-[178px] md:bottom-2",
+          isEnglish ? "md:right-[476px]" : "md:right-[416px]",
+        )}
+      >
         <CurrentTime />
       </div>
       <Sidebar />

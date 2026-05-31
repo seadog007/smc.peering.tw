@@ -1,13 +1,13 @@
 import { History } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,21 +19,19 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TimelineContent from "@/components/dialog/TimelineContent";
 import SidebarButton from "@/components/SidebarButton";
-export default function AboutDialog() {
+
+export function TimelineView({ isActive }: { isActive: boolean }) {
   const { t } = useTranslation();
   const now = new Date();
   const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
   const [cables, setCables] = useState<{ id: string; name: string }[]>([]);
-  const [open, setOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const hasLoaded = shouldRender && cables.length > 0;
 
   useEffect(() => {
-    if (!open || cables.length > 0) {
+    if (!isActive || cables.length > 0) {
       return;
     }
-    // Dynamically import cable data only when dialog is open
-    // Dynamically import cable data only when dialog is open
     const loadCables = async () => {
       const cableFiles = import.meta.glob<{
         default: { id: string; name: string; building?: boolean };
@@ -52,10 +50,10 @@ export default function AboutDialog() {
       setCables(loadedCables);
     };
     void loadCables();
-  }, [open, cables.length]);
+  }, [isActive, cables.length]);
 
   useEffect(() => {
-    if (!open) {
+    if (!isActive) {
       setShouldRender(false);
       return;
     }
@@ -67,7 +65,55 @@ export default function AboutDialog() {
     return () => {
       window.clearTimeout(handle);
     };
-  }, [open]);
+  }, [isActive]);
+
+  if (hasLoaded) {
+    return (
+      <TimelineContent
+        cables={cables}
+        startDate={timelineRange}
+        endDate={now}
+      />
+    );
+  }
+
+  return (
+    <div className="w-full divide-y">
+      {cables.map((cable) => {
+        return (
+          <div key={cable.id} className="py-1">
+            <div className="flex items-start justify-between gap-6">
+              <div className="shrink-0">
+                <div className="text-lg font-semibold">{cable.name}</div>
+                <Skeleton className="h-[18px] w-[3em] rounded-md" />
+              </div>
+              <div className="text-right">
+                <Skeleton className="h-[28px] w-[3em] rounded-md" />
+                <div className="text-xs tracking-wide text-white/50 uppercase">
+                  {t("timeline.uptimeLabel")}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-1">
+              <Skeleton className="h-8 w-full rounded-md" />
+            </div>
+            <div className="mt-1 flex justify-between text-xs text-white/50">
+              <Skeleton className="h-[14px] w-[4em] rounded-md" />
+              <Skeleton className="h-[14px] w-[4em] rounded-md" />
+              <Skeleton className="h-[14px] w-[4em] rounded-md" />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function TimelineDialog() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
@@ -89,45 +135,9 @@ export default function AboutDialog() {
               <DialogTitle> {t("timeline.title")}</DialogTitle>
             </DialogHeader>
             <DialogDescription asChild>
-              {hasLoaded ? (
-                <TimelineContent
-                  cables={cables}
-                  startDate={timelineRange}
-                  endDate={now}
-                />
-              ) : (
-                <div className="w-full divide-y">
-                  {cables.map((cable) => {
-                    return (
-                      <div key={cable.id} className="py-1">
-                        <div className="flex items-start justify-between gap-6">
-                          <div className="shrink-0">
-                            <div className="text-lg font-semibold">
-                              {cable.name}
-                            </div>
-                            <Skeleton className="h-[18px] w-[3em] rounded-md" />
-                          </div>
-                          <div className="text-right">
-                            <Skeleton className="h-[28px] w-[3em] rounded-md" />
-                            <div className="text-xs tracking-wide text-white/50 uppercase">
-                              {t("timeline.uptimeLabel")}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-1">
-                          <Skeleton className="h-8 w-full rounded-md" />
-                        </div>
-                        <div className="mt-1 flex justify-between text-xs text-white/50">
-                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                          <Skeleton className="h-[14px] w-[4em] rounded-md" />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div>
+                <TimelineView isActive={open} />
+              </div>
             </DialogDescription>
           </div>
         </ScrollArea>
