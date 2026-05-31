@@ -1,5 +1,6 @@
 import {
   getSegmentTopologyStatus,
+  TOPOLOGY_STATUS_RANK,
   type CableStatusCable,
   type CableStatusIncident,
   type TopologyRuntimeStatus,
@@ -149,11 +150,36 @@ export function getTopologyNodeStatuses(
   return Object.fromEntries(statuses);
 }
 
+function worseStatus(
+  a: TopologyRuntimeStatus,
+  b: TopologyRuntimeStatus,
+): TopologyRuntimeStatus {
+  return TOPOLOGY_STATUS_RANK[a] >= TOPOLOGY_STATUS_RANK[b] ? a : b;
+}
+
 export function getTopologyEdgeStatus(
   edge: TopologyEdge,
   nodeStatuses: TopologyStatusMap,
+  nodesById?: Map<string, TopologyNode>,
 ): TopologyRuntimeStatus {
-  return nodeStatuses[edge.target] ?? nodeStatuses[edge.source] ?? "unknown";
+  const sourceStatus = nodeStatuses[edge.source] ?? "unknown";
+  const targetStatus = nodeStatuses[edge.target] ?? "unknown";
+
+  // Only segment nodes carry the intrinsic status of a single physical path.
+  // ISP and destination nodes aggregate many sibling branches, so their status
+  // must not bleed onto an edge that touches a segment (otherwise a healthy
+  // branch is colored by an unrelated sibling failure). Prefer the segment
+  // endpoint(s); fall back to the target only when neither end is a segment.
+  const sourceIsSegment = nodesById?.get(edge.source)?.type === "segment";
+  const targetIsSegment = nodesById?.get(edge.target)?.type === "segment";
+
+  if (sourceIsSegment && targetIsSegment) {
+    return worseStatus(sourceStatus, targetStatus);
+  }
+  if (sourceIsSegment) return sourceStatus;
+  if (targetIsSegment) return targetStatus;
+
+  return targetStatus;
 }
 
 export function isAffectedTopologyStatus(status: TopologyRuntimeStatus) {

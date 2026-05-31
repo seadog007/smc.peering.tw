@@ -42,7 +42,7 @@ interface PathAvailability {
   remainingDom: number;
 }
 
-const TOPOLOGY_STATUS_RANK: Record<TopologyRuntimeStatus, number> = {
+export const TOPOLOGY_STATUS_RANK: Record<TopologyRuntimeStatus, number> = {
   unknown: -1,
   online: 0,
   partial_disconnected: 1,
