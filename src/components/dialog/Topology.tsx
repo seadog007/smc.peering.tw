@@ -164,8 +164,80 @@ function createFoldedGroups(nodes: TopologyNode[], folding: TopologyFolding) {
   );
 }
 
+function getMedian(values: number[]) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? (sorted[mid - 1] + sorted[mid]) / 2
+    : sorted[mid];
+}
+
+// Resolve the cross-axis positions of one lane so that nodes keep their order
+// with a minimum spacing, while staying centered on their desired (connectivity
+// driven) positions. `desired[i] === null` means the node has no constraint yet.
+function resolveLanePositions(desired: (number | null)[], stride: number) {
+  const count = desired.length;
+  if (count === 0) return [];
+
+  const positions: number[] = new Array(count);
+  for (let i = 0; i < count; i += 1) {
+    const value = desired[i];
+    if (value !== null) {
+      positions[i] = value;
+    } else {
+      positions[i] = i > 0 ? positions[i - 1] + stride : 0;
+    }
+  }
+
+  for (let i = 1; i < count; i += 1) {
+    const minPosition = positions[i - 1] + stride;
+    if (positions[i] < minPosition) positions[i] = minPosition;
+  }
+
+  const known = desired.filter((value): value is number => value !== null);
+  const targetMean = known.length
+    ? known.reduce((total, value) => total + value, 0) / known.length
+    : positions.reduce((total, value) => total + value, 0) / count;
+  const currentMean =
+    positions.reduce((total, value) => total + value, 0) / count;
+  const shift = targetMean - currentMean;
+
+  return positions.map((value) => value + shift);
+}
+
+// Assign each node a cross-axis center (y in horizontal layouts, x in vertical
+// layouts) by aligning it with the median of its incoming neighbors. This keeps
+// linear chains straight: a node follows whatever it connects from on the
+// previous level instead of being independently centered within its own level.
+function assignCrossPositions(
+  levelLayouts: { lanes: TopologyNode[][] }[],
+  incomingById: Map<string, string[]>,
+  stride: number,
+) {
+  const centerById = new Map<string, number>();
+
+  for (const levelLayout of levelLayouts) {
+    for (const lane of levelLayout.lanes) {
+      const desired = lane.map((node) => {
+        const neighbors = incomingById.get(node.id) ?? [];
+        const centers = neighbors
+          .map((neighborId) => centerById.get(neighborId))
+          .filter((value): value is number => value !== undefined);
+        return centers.length ? getMedian(centers) : null;
+      });
+      const resolved = resolveLanePositions(desired, stride);
+      lane.forEach((node, index) => {
+        centerById.set(node.id, resolved[index]);
+      });
+    }
+  }
+
+  return centerById;
+}
+
 function createLayoutNodes(
   nodes: TopologyNode[],
+  edges: TopologyEdge[],
   nodeStatuses: Record<string, TopologyRuntimeStatus>,
   options: TopologyLayoutOptions,
 ) {
@@ -208,47 +280,38 @@ function createLayoutNodes(
       width,
     };
   });
-  const maxLevelWidth = Math.max(
-    NODE_WIDTH,
-    ...levelLayouts.map((level) => level.width),
+  const isVertical = options.direction === "vertical";
+  const levelsMainExtent =
+    levelLayouts.reduce(
+      (total, level) => total + (isVertical ? level.height : level.width),
+      0,
+    ) + Math.max(0, levelLayouts.length - 1) * LEVEL_GAP;
+
+  const incomingById = new Map<string, string[]>();
+  for (const edge of edges) {
+    const incoming = incomingById.get(edge.target) ?? [];
+    incoming.push(edge.source);
+    incomingById.set(edge.target, incoming);
+  }
+  const crossStride = isVertical ? NODE_COLUMN_GAP : NODE_ROW_GAP;
+  const crossCenterById = assignCrossPositions(
+    levelLayouts,
+    incomingById,
+    crossStride,
   );
-  const maxLevelHeight = Math.max(
-    NODE_HEIGHT,
-    ...levelLayouts.map((level) => level.height),
-  );
-  const width =
-    options.direction === "vertical"
-      ? Math.max(760, SVG_PADDING_X * 2 + maxLevelWidth)
-      : Math.max(
-          760,
-          SVG_PADDING_X * 2 +
-            levelLayouts.reduce((total, level) => total + level.width, 0) +
-            Math.max(0, levelLayouts.length - 1) * LEVEL_GAP,
-        );
-  const height =
-    options.direction === "vertical"
-      ? Math.max(
-          360,
-          SVG_PADDING_Y * 2 +
-            levelLayouts.reduce((total, level) => total + level.height, 0) +
-            Math.max(0, levelLayouts.length - 1) * LEVEL_GAP,
-        )
-      : Math.max(360, SVG_PADDING_Y * 2 + maxLevelHeight);
+
   const layoutNodes: LayoutNode[] = [];
 
-  if (options.direction === "vertical") {
+  if (isVertical) {
     let y = SVG_PADDING_Y;
 
     levelLayouts.forEach((levelLayout) => {
       levelLayout.lanes.forEach((row, rowIndex) => {
-        const rowWidth =
-          NODE_WIDTH + Math.max(0, row.length - 1) * NODE_COLUMN_GAP;
-        const startX = (width - rowWidth) / 2;
-
-        row.forEach((node, index) => {
+        row.forEach((node) => {
+          const center = crossCenterById.get(node.id) ?? 0;
           layoutNodes.push({
             ...node,
-            x: startX + index * NODE_COLUMN_GAP,
+            x: center - NODE_WIDTH / 2,
             y: y + rowIndex * NODE_ROW_GAP,
             width: NODE_WIDTH,
             height: NODE_HEIGHT,
@@ -263,19 +326,13 @@ function createLayoutNodes(
     let x = SVG_PADDING_X;
 
     levelLayouts.forEach((levelLayout) => {
-      const levelStartY = (height - levelLayout.height) / 2;
-
       levelLayout.lanes.forEach((column, columnIndex) => {
-        const columnHeight =
-          NODE_HEIGHT + Math.max(0, column.length - 1) * NODE_ROW_GAP;
-        const columnStartY =
-          levelStartY + (levelLayout.height - columnHeight) / 2;
-
-        column.forEach((node, index) => {
+        column.forEach((node) => {
+          const center = crossCenterById.get(node.id) ?? 0;
           layoutNodes.push({
             ...node,
             x: x + columnIndex * NODE_COLUMN_GAP,
-            y: columnStartY + index * NODE_ROW_GAP,
+            y: center - NODE_HEIGHT / 2,
             width: NODE_WIDTH,
             height: NODE_HEIGHT,
             status: nodeStatuses[node.id] ?? "unknown",
@@ -287,10 +344,36 @@ function createLayoutNodes(
     });
   }
 
+  if (layoutNodes.length === 0) {
+    return { height: 360, nodes: layoutNodes, width: 760 };
+  }
+
+  if (isVertical) {
+    const minX = Math.min(...layoutNodes.map((node) => node.x));
+    const shiftX = SVG_PADDING_X - minX;
+    layoutNodes.forEach((node) => {
+      node.x += shiftX;
+    });
+    const maxX = Math.max(...layoutNodes.map((node) => node.x + node.width));
+
+    return {
+      height: Math.max(360, SVG_PADDING_Y * 2 + levelsMainExtent),
+      nodes: layoutNodes,
+      width: Math.max(760, maxX + SVG_PADDING_X),
+    };
+  }
+
+  const minY = Math.min(...layoutNodes.map((node) => node.y));
+  const shiftY = SVG_PADDING_Y - minY;
+  layoutNodes.forEach((node) => {
+    node.y += shiftY;
+  });
+  const maxY = Math.max(...layoutNodes.map((node) => node.y + node.height));
+
   return {
-    height,
+    height: Math.max(360, maxY + SVG_PADDING_Y),
     nodes: layoutNodes,
-    width,
+    width: Math.max(760, SVG_PADDING_X * 2 + levelsMainExtent),
   };
 }
 
@@ -593,8 +676,11 @@ function TopologySvg({
   const direction = allowDirectionSwitch ? selectedDirection : "horizontal";
   const layout = useMemo(
     () =>
-      createLayoutNodes(topology.nodes, nodeStatuses, { direction, folding }),
-    [topology.nodes, nodeStatuses, direction, folding],
+      createLayoutNodes(topology.nodes, topology.edges, nodeStatuses, {
+        direction,
+        folding,
+      }),
+    [topology.nodes, topology.edges, nodeStatuses, direction, folding],
   );
   const nodeById = new Map(layout.nodes.map((node) => [node.id, node]));
   const relatedPath = useMemo(
