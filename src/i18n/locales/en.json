@@ -458,6 +458,12 @@
         "changes": [
           "Added TPE Segment 3S, 4"
         ]
+      },
+      "3.11.0": {
+        "date": "2026-06-01",
+        "changes": [
+          "Added topology view"
+        ]
       }
     }
   }
