@@ -65,6 +65,7 @@ interface SelectionStart {
 
 type TopologyDirection = "horizontal" | "vertical";
 type TopologyFolding = "one" | "two";
+type TopologyVariant = "dialog" | "page";
 
 interface TopologyLayoutOptions {
   direction: TopologyDirection;
@@ -649,10 +650,12 @@ function TopologySvg({
   topology,
   nodeStatuses,
   allowDirectionSwitch = true,
+  variant = "dialog",
 }: {
   topology: TopologyData;
   nodeStatuses: Record<string, TopologyRuntimeStatus>;
   allowDirectionSwitch?: boolean;
+  variant?: TopologyVariant;
 }) {
   const { t } = useTranslation();
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -846,7 +849,9 @@ function TopologySvg({
   return (
     <div
       data-tour="topology-graph"
-      className="rounded-lg border border-white/10 bg-black/20"
+      className={`rounded-lg border border-white/10 bg-black/20 ${
+        variant === "page" ? "flex min-h-0 flex-1 flex-col" : ""
+      }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 p-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -904,7 +909,11 @@ function TopologySvg({
       <div
         ref={viewportRef}
         data-vaul-no-drag=""
-        className={`h-[clamp(200px,calc(100svh-380px),600px)] overflow-hidden md:h-[clamp(240px,calc(82vh-300px),520px)] ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
+        className={`overflow-hidden ${
+          variant === "page"
+            ? "min-h-0 flex-1"
+            : "h-[clamp(200px,calc(100svh-380px),600px)] md:h-[clamp(240px,calc(82vh-300px),520px)]"
+        } ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
         style={{ touchAction: "none", userSelect: "none" }}
         onWheel={(event) => {
           event.stopPropagation();
@@ -1015,7 +1024,7 @@ function TopologySvg({
               const source = nodeById.get(edge.source);
               const target = nodeById.get(edge.target);
               if (!source || !target) return null;
-              const status = getTopologyEdgeStatus(edge, nodeStatuses);
+              const status = getTopologyEdgeStatus(edge, nodeStatuses, nodeById);
               const color = STATUS_COLORS[status].line;
               const edgeKey = getEdgeKey(edge);
               const selectionActive = Boolean(relatedPath);
@@ -1122,12 +1131,14 @@ function TopologyContent({
   incidents,
   isLoading,
   allowDirectionSwitch = true,
+  variant = "dialog",
 }: {
   topology: TopologyData;
   cables: CableStatusCable[];
   incidents: Incident[];
   isLoading: boolean;
   allowDirectionSwitch?: boolean;
+  variant?: TopologyVariant;
 }) {
   const { t } = useTranslation();
   const nodeStatuses = useMemo(
@@ -1149,9 +1160,17 @@ function TopologyContent({
   ).length;
   const activeIncidentCount = incidents.filter(isActiveIncident).length;
 
+  const isPage = variant === "page";
+
   return (
-    <div className="w-full space-y-3 md:w-[976px] md:max-w-[976px]">
-      <div className="grid grid-cols-3 gap-2">
+    <div
+      className={
+        isPage
+          ? "flex h-full w-full flex-col gap-3"
+          : "w-full space-y-3 md:w-[976px] md:max-w-[976px]"
+      }
+    >
+      <div className={`grid grid-cols-3 gap-2 ${isPage ? "shrink-0" : ""}`}>
         <TopologyStat
           label={t("topology.summary.affectedIsps")}
           value={`${affectedIspCount}/${ispNodes.length}`}
@@ -1170,9 +1189,10 @@ function TopologyContent({
         topology={topology}
         nodeStatuses={nodeStatuses}
         allowDirectionSwitch={allowDirectionSwitch}
+        variant={variant}
       />
 
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap gap-2 ${isPage ? "shrink-0" : ""}`}>
         {STATUS_ORDER.map((status) => (
           <TopologyStatusBadge key={status} status={status} />
         ))}
@@ -1184,9 +1204,11 @@ function TopologyContent({
 export function TopologyView({
   isActive,
   allowDirectionSwitch = true,
+  variant = "dialog",
 }: {
   isActive: boolean;
   allowDirectionSwitch?: boolean;
+  variant?: TopologyVariant;
 }) {
   const hasTopologyData = TOPOLOGY_DATA.nodes.length > 0;
 
@@ -1209,6 +1231,7 @@ export function TopologyView({
       incidents={incidents}
       isLoading={hasTopologyData && (cablesLoading || incidentsLoading)}
       allowDirectionSwitch={allowDirectionSwitch}
+      variant={variant}
     />
   );
 }

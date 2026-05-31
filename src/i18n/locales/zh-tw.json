@@ -153,7 +153,8 @@
       "twoRows": "兩列",
       "oneColumn": "單欄",
       "twoColumns": "兩欄"
-    }
+    },
+    "backToMap": "返回地圖"
   },
   "about": {
     "title": "關於",

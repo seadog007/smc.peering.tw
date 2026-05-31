@@ -154,7 +154,8 @@
       "twoRows": "2 rows",
       "oneColumn": "One column",
       "twoColumns": "2 columns"
-    }
+    },
+    "backToMap": "Back to map"
   },
   "about": {
     "title": "About",
