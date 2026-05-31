@@ -834,5 +834,16 @@
     "description": "為提升國際通訊品質，中華電信公司海峽光纜一號 (TSE-1)，預計於 5 月 15 日至 6 月 11 日進行計畫性維護作業",
     "reparing_at": "2026-06-14T00:00:00+08:00",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-05-29T12:00:00+08:00",
+    "status": "disconnected",
+    "reason": "maintenance",
+    "cableid": "faster",
+    "segment": "faster-seg-5+6",
+    "title": "FASTER 計劃性維護",
+    "description": "日本志摩往美國方向約 735km 處外皮受損，台灣端配合關閉電力進行維修作業，全 4 芯傳輸中斷（台日 2 芯 + 台美 2 芯）",
+    "reparing_at": "2026-06-11T17:30:00+08:00",
+    "resolved_at": ""
   }
 ]
