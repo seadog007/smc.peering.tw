@@ -32,6 +32,7 @@ function waitForElement(
 export default function TourController() {
   const { t } = useTranslation();
   const setStartTour = useTourStore((s) => s.setStartTour);
+  const setTourActive = useTourStore((s) => s.setTourActive);
   const setTopologyTourOpen = useTourStore((s) => s.setTopologyTourOpen);
 
   const [tourAutoStartAllowed] = useLocalStorage(
@@ -74,6 +75,7 @@ export default function TourController() {
         runningRef.current = false;
         driverRef.current = null;
         setTopologyTourOpen(false);
+        setTourActive(false);
       },
       steps: [
         {
@@ -220,17 +222,18 @@ export default function TourController() {
       ],
     });
     return d;
-  }, [popoverClassName, setTopologyTourOpen, t]);
+  }, [popoverClassName, setTopologyTourOpen, setTourActive, t]);
 
   const startTour = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
 
     setTopologyTourOpen(false);
+    setTourActive(true);
     const d = buildDriver();
     driverRef.current = d;
     d.drive();
-  }, [buildDriver, setTopologyTourOpen]);
+  }, [buildDriver, setTopologyTourOpen, setTourActive]);
 
   useEffect(() => {
     setStartTour(startTour);
