@@ -428,6 +428,36 @@
           "Add building segment visualization",
           "Update cable data (Apricot, PLCN, TPU)"
         ]
+      },
+      "3.10.1": {
+        "date": "2026-05-09",
+        "changes": [
+          "Update map legend background and animate collapse/expand"
+        ]
+      },
+      "3.10.2": {
+        "date": "2026-05-09",
+        "changes": [
+          "Center map legend title"
+        ]
+      },
+      "3.10.3": {
+        "date": "2026-05-13",
+        "changes": [
+          "Fixed SJC2 HK Path"
+        ]
+      },
+      "3.10.4": {
+        "date": "2026-05-13",
+        "changes": [
+          "Fixed SJC2 Segment ID"
+        ]
+      },
+      "3.10.5": {
+        "date": "2026-05-20",
+        "changes": [
+          "Added TPE Segment 3S, 4"
+        ]
       }
     }
   }
