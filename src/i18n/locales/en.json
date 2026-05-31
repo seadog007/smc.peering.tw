@@ -81,6 +81,10 @@
       "title": "Timeline",
       "body": "Open the timeline view to review cable uptime and outage history."
     },
+    "topology": {
+      "title": "Topology View",
+      "body": "Open the topology view to see ISP and cable-segment dependencies and which connections are affected."
+    },
     "help": {
       "title": "Guided tour",
       "body": "Start this tour again any time if you want a quick refresher."

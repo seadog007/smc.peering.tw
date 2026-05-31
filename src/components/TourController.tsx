@@ -131,6 +131,17 @@ export default function TourController() {
           },
         },
         {
+          element: '[data-tour="topology-dialog"]',
+          popover: {
+            title: t("tour.topology.title"),
+            description: t("tour.topology.body"),
+            side: "left",
+            align: "start",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="topology-dialog"]'),
+          },
+        },
+        {
           element: '[data-tour="about-dialog"]',
           popover: {
             title: t("tour.about.title"),
