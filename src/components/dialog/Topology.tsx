@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import SidebarButton from "@/components/SidebarButton";
+import { useTourStore } from "@/stores/tour";
 import {
   getTopologyEdgeStatus,
   getTopologyNodeStatuses,
@@ -843,7 +844,10 @@ function TopologySvg({
   }, [direction, folding, layout.height, layout.width]);
 
   return (
-    <div className="rounded-lg border border-white/10 bg-black/20">
+    <div
+      data-tour="topology-graph"
+      className="rounded-lg border border-white/10 bg-black/20"
+    >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 p-2">
         <div className="flex flex-wrap items-center gap-2">
           {allowDirectionSwitch && (
@@ -1212,9 +1216,18 @@ export function TopologyView({
 export default function TopologyDialog() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const topologyTourOpen = useTourStore((s) => s.topologyTourOpen);
+  const effectiveOpen = open || topologyTourOpen;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={effectiveOpen}
+      onOpenChange={(next) => {
+        if (topologyTourOpen) return;
+        setOpen(next);
+      }}
+      modal={!topologyTourOpen}
+    >
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
@@ -1227,7 +1240,18 @@ export default function TopologyDialog() {
           <p>{t("topology.title")}</p>
         </TooltipContent>
       </Tooltip>
-      <DialogContent className="p-0 sm:max-w-5xl">
+      <DialogContent
+        className="p-0 sm:max-w-5xl"
+        onEscapeKeyDown={(event) => {
+          if (topologyTourOpen) event.preventDefault();
+        }}
+        onPointerDownOutside={(event) => {
+          if (topologyTourOpen) event.preventDefault();
+        }}
+        onInteractOutside={(event) => {
+          if (topologyTourOpen) event.preventDefault();
+        }}
+      >
         <ScrollArea className="h-full max-h-[82vh] overflow-y-auto">
           <div className="p-6">
             <DialogHeader className="mb-3">
@@ -1236,7 +1260,7 @@ export default function TopologyDialog() {
                 {t("topology.title")}
               </DialogDescription>
             </DialogHeader>
-            <TopologyView isActive={open} />
+            <TopologyView isActive={effectiveOpen} />
           </div>
         </ScrollArea>
       </DialogContent>

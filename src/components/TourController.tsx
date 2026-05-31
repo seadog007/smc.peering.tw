@@ -8,9 +8,31 @@ function getEl(selector: string) {
   return document.querySelector(selector) as HTMLElement | null;
 }
 
+function waitForElement(
+  selector: string,
+  timeout = 2500,
+): Promise<HTMLElement | null> {
+  return new Promise((resolve) => {
+    const existing = getEl(selector);
+    if (existing) {
+      resolve(existing);
+      return;
+    }
+    const start = Date.now();
+    const interval = window.setInterval(() => {
+      const el = getEl(selector);
+      if (el || Date.now() - start > timeout) {
+        window.clearInterval(interval);
+        resolve(el);
+      }
+    }, 50);
+  });
+}
+
 export default function TourController() {
   const { t } = useTranslation();
   const setStartTour = useTourStore((s) => s.setStartTour);
+  const setTopologyTourOpen = useTourStore((s) => s.setTopologyTourOpen);
 
   const [tourAutoStartAllowed] = useLocalStorage(
     "tourAutoStartAllowed",
@@ -51,6 +73,7 @@ export default function TourController() {
       onDestroyed: () => {
         runningRef.current = false;
         driverRef.current = null;
+        setTopologyTourOpen(false);
       },
       steps: [
         {
@@ -139,6 +162,31 @@ export default function TourController() {
             align: "start",
             popoverClass: popoverClassName,
             onPopoverRender: () => getEl('[data-tour="topology-dialog"]'),
+            onNextClick: () => {
+              setTopologyTourOpen(true);
+              void waitForElement('[data-tour="topology-graph"]').then(() => {
+                window.setTimeout(() => driverRef.current?.moveNext(), 150);
+              });
+            },
+          },
+        },
+        {
+          element: '[data-tour="topology-graph"]',
+          popover: {
+            title: t("tour.topologyGraph.title"),
+            description: t("tour.topologyGraph.body"),
+            side: "top",
+            align: "center",
+            popoverClass: popoverClassName,
+            onPopoverRender: () => getEl('[data-tour="topology-graph"]'),
+            onPrevClick: () => {
+              setTopologyTourOpen(false);
+              driverRef.current?.movePrevious();
+            },
+            onNextClick: () => {
+              setTopologyTourOpen(false);
+              driverRef.current?.moveNext();
+            },
           },
         },
         {
@@ -150,6 +198,12 @@ export default function TourController() {
             align: "start",
             popoverClass: popoverClassName,
             onPopoverRender: () => getEl('[data-tour="about-dialog"]'),
+            onPrevClick: () => {
+              setTopologyTourOpen(true);
+              void waitForElement('[data-tour="topology-graph"]').then(() => {
+                window.setTimeout(() => driverRef.current?.movePrevious(), 150);
+              });
+            },
           },
         },
         {
@@ -166,16 +220,17 @@ export default function TourController() {
       ],
     });
     return d;
-  }, [popoverClassName, t]);
+  }, [popoverClassName, setTopologyTourOpen, t]);
 
   const startTour = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
 
+    setTopologyTourOpen(false);
     const d = buildDriver();
     driverRef.current = d;
     d.drive();
-  }, [buildDriver]);
+  }, [buildDriver, setTopologyTourOpen]);
 
   useEffect(() => {
     setStartTour(startTour);

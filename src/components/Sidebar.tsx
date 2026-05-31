@@ -279,11 +279,25 @@ function MobileSidebar() {
   const [showHistorical, setShowHistorical] = useState(false);
   const [tabBarHeight, setTabBarHeight] = useState(72);
   const startTour = useTourStore((s) => s.startTour);
+  const topologyTourOpen = useTourStore((s) => s.topologyTourOpen);
+  const prevTopologyTourOpen = useRef(topologyTourOpen);
 
   const handleTabClick = (tab: TabId) => {
     setActiveTab(tab);
     if (snap !== SNAP_FULL) setSnap(SNAP_FULL);
   };
+
+  useEffect(() => {
+    const wasOpen = prevTopologyTourOpen.current;
+    prevTopologyTourOpen.current = topologyTourOpen;
+
+    if (topologyTourOpen) {
+      setActiveTab("topology");
+      setSnap(SNAP_FULL);
+    } else if (wasOpen) {
+      setSnap(SNAP_PEEK);
+    }
+  }, [topologyTourOpen]);
 
   return (
     <>

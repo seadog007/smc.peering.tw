@@ -83,7 +83,11 @@
     },
     "topology": {
       "title": "Topology View",
-      "body": "Open the topology view to see ISP and cable-segment dependencies and which connections are affected."
+      "body": "The topology view maps how ISPs depend on cable segments. Click Next and we'll open it for you."
+    },
+    "topologyGraph": {
+      "title": "Reading the graph",
+      "body": "Each node is an ISP or a cable segment, and links show their dependencies. Nodes and links are colored by status (normal, degraded, down) so you can quickly spot which ISPs are affected."
     },
     "help": {
       "title": "Guided tour",
