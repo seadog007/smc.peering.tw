@@ -472,6 +472,12 @@
         "changes": [
           "Added topology view"
         ]
+      },
+      "3.11.1": {
+        "date": "2026-06-01",
+        "changes": [
+          "Improved topology guided tour"
+        ]
       }
     }
   }
