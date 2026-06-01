@@ -479,6 +479,13 @@
         "changes": [
           "Improved topology guided tour"
         ]
+      },
+      "3.11.2": {
+        "date": "2026-06-01",
+        "changes": [
+          "Added full-page topology view",
+          "Improved topology edge status coloring"
+        ]
       }
     }
   }

@@ -205,6 +205,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.11.2** (2026-06-01): Added full-page topology view and improved edge status coloring
 - **v3.11.1** (2026-06-01): Improved topology guided tour
 - **v3.11.0** (2026-06-01): Added topology view
 - **v3.10.5** (2026-05-20): Added TPE Segment 3S, 4
