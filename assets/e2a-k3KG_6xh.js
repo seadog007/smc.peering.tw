@@ -1,0 +1,1 @@
+var e=`e2a`,t=`E2A`,n=`#78DEFF`,r=!0,i=[],a=[],o=[],s={id:`e2a`,name:`E2A`,color:n,building:!0,available_path:i,equipments:a,segments:o};export{i as available_path,r as building,n as color,s as default,a as equipments,e as id,t as name,o as segments};

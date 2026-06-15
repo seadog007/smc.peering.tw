@@ -1,0 +1,1 @@
+var e=`orca`,t=`ORCA`,n=`#717DFF`,r=!0,i=[],a=[],o=[],s={id:e,name:t,color:n,building:!0,available_path:i,equipments:a,segments:o};export{i as available_path,r as building,n as color,s as default,a as equipments,e as id,t as name,o as segments};
