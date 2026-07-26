@@ -845,5 +845,16 @@
     "description": "From 中華電信「中華電信公司亞太直達海纜(APG)於6月10日發生芯線障礙，訊務已於第一時間疏轉至其他國際海纜，客戶服務不受影響。 中華電信公司技術團隊已派員處理中，敬請見諒。」From 數位發展部「距越南峴港約226公里處斷纜」",
     "reparing_at": "",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-07-14T00:00:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "sjc2",
+    "segment": "sjc2-seg-Unknown-BU1-SG",
+    "title": "",
+    "description": "From 數位發展部「距新加坡樟宜約27公里處斷纜」",
+    "reparing_at": "2026-08-11T00:00:00+08:00",
+    "resolved_at": ""
   }
 ]
