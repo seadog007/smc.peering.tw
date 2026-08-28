@@ -834,5 +834,27 @@
     "description": "From 數位發展部「距新加坡樟宜約27公里處斷纜」",
     "reparing_at": "2026-08-11T00:00:00+08:00",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-08-25T04:14:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "sjc2",
+    "segment": "sjc2-seg-4",
+    "title": "SJC2 S4 香港方向斷線",
+    "description": "From 中華電信公告「08月25日發生電力異常，訊務已疏轉至其他國際海纜」From 數位發展部「距香港舂坎角約105公里處發生芯線漏電障礙」",
+    "reparing_at": "2026-09-24T00:00:00+08:00",
+    "resolved_at": ""
+  },
+  {
+    "date": "2026-08-27T00:00:00+08:00",
+    "status": "partial_disconnected",
+    "reason": "unknown",
+    "cableid": "eac1",
+    "segment": "eac1-seg-c",
+    "title": "EAC1 香港方向部分斷線",
+    "description": "From 數位發展部「距新北八里約567公里處發生部分芯線受損障礙」",
+    "reparing_at": "2026-11-15T00:00:00+08:00",
+    "resolved_at": ""
   }
 ]
