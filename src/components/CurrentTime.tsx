@@ -23,8 +23,9 @@ export default function TechClock() {
   };
 
   return (
-    <div className="text-sm text-white/25 tabular-nums">
-      {formatDateTime(time)}
+    <div className="text-right text-sm text-white/25 tabular-nums">
+      <div>CC BY-SA 4.0</div>
+      <div>{formatDateTime(time)}</div>
     </div>
   );
 }
