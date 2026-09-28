@@ -22,7 +22,8 @@
     "days": "天",
     "total": "總計",
     "affected": "受影響",
-    "outageStatus": "台灣對外連線狀況"
+    "outageStatus": "台灣對外連線狀況",
+    "outageStatusHint": "條數不等於連線能力。此處僅統計對外連線條數，不代表實際可用頻寬或傳輸容量。"
   },
   "filter": {
     "all": "全部",
