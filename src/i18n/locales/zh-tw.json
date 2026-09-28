@@ -25,6 +25,100 @@
     "outageStatus": "台灣對外連線狀況",
     "outageStatusHint": "條數不等於連線能力。此處僅統計對外連線條數，不代表實際可用頻寬或傳輸容量。"
   },
+  "incidentGlossary": {
+    "cls": {
+      "title": "海纜上陸站（Cable Landing Station）",
+      "description": "海底電纜在陸地端接入電信網路的設施。"
+    },
+    "repeater": {
+      "title": "中繼器（Repeater）",
+      "description": "海纜沿線放大光訊號的設備。標記為設備識別編號，格式依海纜系統而異。"
+    },
+    "shunt": {
+      "title": "漏電故障（Shunt Fault）",
+      "description": "海纜絕緣受損，供電導體向海水漏電，可能影響中繼器供電；不一定代表光纖已斷裂。"
+    },
+    "etr": {
+      "title": "預估修復時間（ETR）",
+      "description": "預估完成修復或恢復服務的時間，可能隨維修進度調整，並非保證完修時間。"
+    },
+    "stations": {
+      "tamsui": {
+        "title": "淡水海纜上陸站",
+        "description": "位於台灣新北市淡水區；TNS、Tamsui 與 Tanshui 為此處使用的名稱。"
+      },
+      "shantou": {
+        "title": "汕頭海纜上陸站",
+        "description": "位於中國廣東省汕頭市；SHT 為此處使用的汕頭縮寫。"
+      },
+      "bali": {
+        "title": "八里海纜上陸站",
+        "description": "位於台灣新北市八里區；此處的 Bali 或 Pa-li 指八里。"
+      },
+      "chungHomKok": {
+        "title": "舂坎角海纜上陸站",
+        "description": "位於香港舂坎角的海纜上陸站。"
+      },
+      "chongming": {
+        "title": "崇明海纜上陸站",
+        "description": "位於中國上海市崇明的海纜上陸站。"
+      },
+      "chikura": {
+        "title": "千倉海纜上陸站",
+        "description": "位於日本千葉縣南房總市千倉的海纜上陸站。"
+      }
+    },
+    "countries": {
+      "CN": {
+        "title": "中國",
+        "description": "ISO 3166-1 國家／地區代碼：CN（二字母）、CHN（三字母）。"
+      },
+      "GU": {
+        "title": "關島",
+        "description": "ISO 3166-1 國家／地區代碼：GU（二字母）、GUM（三字母）。"
+      },
+      "HK": {
+        "title": "香港",
+        "description": "ISO 3166-1 國家／地區代碼：HK（二字母）、HKG（三字母）。"
+      },
+      "JP": {
+        "title": "日本",
+        "description": "ISO 3166-1 國家／地區代碼：JP（二字母）、JPN（三字母）。"
+      },
+      "KR": {
+        "title": "韓國",
+        "description": "ISO 3166-1 國家／地區代碼：KR（二字母）、KOR（三字母）。"
+      },
+      "MY": {
+        "title": "馬來西亞",
+        "description": "ISO 3166-1 國家／地區代碼：MY（二字母）、MYS（三字母）。"
+      },
+      "PH": {
+        "title": "菲律賓",
+        "description": "ISO 3166-1 國家／地區代碼：PH（二字母）、PHL（三字母）。"
+      },
+      "SG": {
+        "title": "新加坡",
+        "description": "ISO 3166-1 國家／地區代碼：SG（二字母）、SGP（三字母）。"
+      },
+      "TH": {
+        "title": "泰國",
+        "description": "ISO 3166-1 國家／地區代碼：TH（二字母）、THA（三字母）。"
+      },
+      "TW": {
+        "title": "台灣",
+        "description": "ISO 3166-1 國家／地區代碼：TW（二字母）、TWN（三字母）。"
+      },
+      "US": {
+        "title": "美國",
+        "description": "ISO 3166-1 國家／地區代碼：US（二字母）、USA（三字母）。"
+      },
+      "VN": {
+        "title": "越南",
+        "description": "ISO 3166-1 國家／地區代碼：VN（二字母）、VNM（三字母）。"
+      }
+    }
+  },
   "cablePopup": {
     "chineseName": "中文全名",
     "englishAbbreviation": "MODA 英文簡稱",

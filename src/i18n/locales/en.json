@@ -25,6 +25,100 @@
     "outageStatus": "International Connectivity",
     "outageStatusHint": "Connection counts do not reflect connectivity capacity. These figures count international connections, not actual available bandwidth or transmission capacity."
   },
+  "incidentGlossary": {
+    "cls": {
+      "title": "Cable Landing Station (CLS)",
+      "description": "A facility where a submarine cable connects to telecommunications networks on land."
+    },
+    "repeater": {
+      "title": "Repeater",
+      "description": "Equipment along a submarine cable that amplifies optical signals. The label identifies the equipment; identifier formats vary by cable system."
+    },
+    "shunt": {
+      "title": "Shunt Fault",
+      "description": "Damage to cable insulation allows electrical current to leak into seawater, potentially affecting repeater power. It does not necessarily mean the optical fibers are broken."
+    },
+    "etr": {
+      "title": "Estimated Time of Repair (ETR)",
+      "description": "The estimated time to complete repairs or restore service. It may change as repairs progress and is not a guaranteed completion time."
+    },
+    "stations": {
+      "tamsui": {
+        "title": "Tamsui Cable Landing Station",
+        "description": "Located in Tamsui, New Taipei City, Taiwan. TNS, Tamsui, and Tanshui refer to this landing location."
+      },
+      "shantou": {
+        "title": "Shantou Cable Landing Station",
+        "description": "Located in Shantou, Guangdong, China. SHT is the abbreviation used here for Shantou."
+      },
+      "bali": {
+        "title": "Bali Cable Landing Station",
+        "description": "Located in Bali District, New Taipei City, Taiwan. Bali and Pa-li refer to this landing location."
+      },
+      "chungHomKok": {
+        "title": "Chung Hom Kok Cable Landing Station",
+        "description": "A cable landing station in Chung Hom Kok, Hong Kong."
+      },
+      "chongming": {
+        "title": "Chongming Cable Landing Station",
+        "description": "A cable landing station in Chongming, Shanghai, China."
+      },
+      "chikura": {
+        "title": "Chikura Cable Landing Station",
+        "description": "A cable landing station in Chikura, Minamiboso, Chiba Prefecture, Japan."
+      }
+    },
+    "countries": {
+      "CN": {
+        "title": "China",
+        "description": "ISO 3166-1 country/region codes: CN (alpha-2), CHN (alpha-3)."
+      },
+      "GU": {
+        "title": "Guam",
+        "description": "ISO 3166-1 country/region codes: GU (alpha-2), GUM (alpha-3)."
+      },
+      "HK": {
+        "title": "Hong Kong",
+        "description": "ISO 3166-1 country/region codes: HK (alpha-2), HKG (alpha-3)."
+      },
+      "JP": {
+        "title": "Japan",
+        "description": "ISO 3166-1 country/region codes: JP (alpha-2), JPN (alpha-3)."
+      },
+      "KR": {
+        "title": "South Korea",
+        "description": "ISO 3166-1 country/region codes: KR (alpha-2), KOR (alpha-3)."
+      },
+      "MY": {
+        "title": "Malaysia",
+        "description": "ISO 3166-1 country/region codes: MY (alpha-2), MYS (alpha-3)."
+      },
+      "PH": {
+        "title": "Philippines",
+        "description": "ISO 3166-1 country/region codes: PH (alpha-2), PHL (alpha-3)."
+      },
+      "SG": {
+        "title": "Singapore",
+        "description": "ISO 3166-1 country/region codes: SG (alpha-2), SGP (alpha-3)."
+      },
+      "TH": {
+        "title": "Thailand",
+        "description": "ISO 3166-1 country/region codes: TH (alpha-2), THA (alpha-3)."
+      },
+      "TW": {
+        "title": "Taiwan",
+        "description": "ISO 3166-1 country/region codes: TW (alpha-2), TWN (alpha-3)."
+      },
+      "US": {
+        "title": "United States",
+        "description": "ISO 3166-1 country/region codes: US (alpha-2), USA (alpha-3)."
+      },
+      "VN": {
+        "title": "Vietnam",
+        "description": "ISO 3166-1 country/region codes: VN (alpha-2), VNM (alpha-3)."
+      }
+    }
+  },
   "cablePopup": {
     "chineseName": "Chinese full name",
     "englishAbbreviation": "MODA English abbreviation",

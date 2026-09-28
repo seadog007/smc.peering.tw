@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { cn, useFormatDate } from "@/lib/utils";
+import IncidentDescription from '@/components/IncidentDescription';
 import {
   TriangleAlert,
   Check,
@@ -201,7 +202,9 @@ export default function IncidentList({
               </div>
               <h3 className="text-lg font-semibold">{incident.title}</h3>
 
-              <p className="text-sm text-white/80">{incident.description}</p>
+              <p className="text-sm text-white/80">
+                <IncidentDescription description={incident.description} />
+              </p>
 
               <div className="mt-1.5 flex flex-col gap-1 border-t border-white/10 pt-1.5 text-sm text-white/70 empty:hidden">
                 {incident.reparing_at && incident.reparing_at !== "" && (
