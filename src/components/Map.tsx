@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { useMediaQuery } from "usehooks-ts";
 import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
+
+import { cableNames, getCableServiceStart } from '@/lib/cable-names';
+
 import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import { cn } from "@/lib/utils";
@@ -122,11 +126,13 @@ interface MapWithCablesProps {
 export default function MapWithCables({
   cableFilter = "all",
 }: MapWithCablesProps) {
+  const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const landingPoints = landingPointsJson as unknown as LandingPoint[];
   const [cursor, setCursor] = useState<string>("");
   const [hoveredCableId, setHoveredCableId] = useState<string | null>(null);
   const [selectedCable, setSelectedCable] = useState<{
+    cableId: string;
     cableName: string;
     segmentId: string;
     coordinates: [number, number];
@@ -245,9 +251,14 @@ export default function MapWithCables({
     if (!feature) return;
 
     const coordinates = event.lngLat;
-    const properties = feature.properties;
+    const properties = feature.properties as {
+      cableId: string;
+      cableName: string;
+      segmentId: string;
+    };
 
     setSelectedCable({
+      cableId: properties.cableId,
       cableName: properties.cableName,
       segmentId: properties.segmentId,
       coordinates: [coordinates.lng, coordinates.lat],
@@ -411,15 +422,77 @@ export default function MapWithCables({
           onClose={() => setSelectedCable(null)}
           closeButton={true}
           closeOnClick={false}
-          maxWidth="250px"
+          maxWidth="min(340px, calc(100vw - 32px))"
+          className="z-20"
           offset={6}
         >
-          <div className="px-3 py-2">
+          <div className="max-h-[calc(100svh-64px)] overflow-y-auto px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
               {selectedCable.cableName}
             </h3>
-            <p className="mt-1 text-xs text-slate-400">
-              Segment: {selectedCable.segmentId}
+            {(cableNames[selectedCable.cableId] ?? [null]).map((names) => {
+              const serviceStart = getCableServiceStart(names);
+              return (
+                <dl
+                  key={names?.englishAbbreviation ?? selectedCable.cableId}
+                  className="mt-2 space-y-1 border-t border-gray-300 pt-2 text-xs wrap-anywhere"
+                >
+                  <div>
+                    <dt className="text-gray-500">
+                      {t('cablePopup.chineseName')}
+                    </dt>
+                    <dd className="text-gray-700">
+                      {names?.chineseName ?? t('cablePopup.notProvided')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-gray-500">
+                      {t('cablePopup.englishAbbreviation')}
+                    </dt>
+                    <dd className="text-gray-700">
+                      {names?.englishAbbreviation ?? t('cablePopup.notProvided')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-gray-500">
+                      {t('cablePopup.englishName')}
+                    </dt>
+                    <dd className="text-gray-700">
+                      {names?.englishName ?? t('cablePopup.notProvided')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-gray-500">
+                      {t('cablePopup.connectedCountries')}
+                    </dt>
+                    <dd className="text-gray-700">
+                      {names?.countries?.length
+                        ? names.countries
+                            .map((country) => t(`cablePopup.countryNames.${country}`, { defaultValue: country }))
+                            .join('、')
+                        : t('cablePopup.notProvided')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-gray-500">
+                      {t('cablePopup.serviceStart')}
+                    </dt>
+                    <dd className="text-gray-700">
+                      {serviceStart
+                        ? (
+                            <time dateTime={serviceStart.yearMonth.replace('/', '-')}>
+                              {serviceStart.yearMonth}
+                            </time>
+                          )
+                        : t('cablePopup.notProvided')}
+                    </dd>
+                  </div>
+                </dl>
+              );
+            })}
+            <p className="mt-2 text-xs wrap-anywhere text-slate-400">
+              {t('cablePopup.segmentId')}
+              : {selectedCable.segmentId}
             </p>
             <div className="mt-1 border-t border-gray-300 pt-1">
               <p className="text-xs whitespace-nowrap text-gray-500">

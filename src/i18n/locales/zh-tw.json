@@ -25,6 +25,29 @@
     "outageStatus": "台灣對外連線狀況",
     "outageStatusHint": "條數不等於連線能力。此處僅統計對外連線條數，不代表實際可用頻寬或傳輸容量。"
   },
+  "cablePopup": {
+    "chineseName": "中文全名",
+    "englishAbbreviation": "MODA 英文簡稱",
+    "englishName": "英文全名",
+    "connectedCountries": "連線國家列表",
+    "serviceStart": "啟用時間",
+    "countryNames": {
+      "HK": "香港",
+      "JP": "日本",
+      "PH": "菲律賓",
+      "SG": "新加坡",
+      "KR": "韓國",
+      "CN": "中國",
+      "MY": "馬來西亞",
+      "VN": "越南",
+      "TH": "泰國",
+      "US": "美國",
+      "GU": "關島",
+      "TW": "台灣"
+    },
+    "notProvided": "未提供",
+    "segmentId": "區段 ID"
+  },
   "filter": {
     "all": "全部",
     "normal": "正常",

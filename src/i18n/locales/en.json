@@ -25,6 +25,29 @@
     "outageStatus": "International Connectivity",
     "outageStatusHint": "Connection counts do not reflect connectivity capacity. These figures count international connections, not actual available bandwidth or transmission capacity."
   },
+  "cablePopup": {
+    "chineseName": "Chinese full name",
+    "englishAbbreviation": "MODA English abbreviation",
+    "englishName": "English full name",
+    "connectedCountries": "Connected countries/regions",
+    "serviceStart": "In service since",
+    "countryNames": {
+      "HK": "Hong Kong",
+      "JP": "Japan",
+      "PH": "Philippines",
+      "SG": "Singapore",
+      "KR": "South Korea",
+      "CN": "China",
+      "MY": "Malaysia",
+      "VN": "Vietnam",
+      "TH": "Thailand",
+      "US": "United States",
+      "GU": "Guam",
+      "TW": "Taiwan"
+    },
+    "notProvided": "Not provided",
+    "segmentId": "Segment ID"
+  },
   "filter": {
     "all": "All",
     "normal": "Normal",
