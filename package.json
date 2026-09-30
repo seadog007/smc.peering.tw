@@ -7,6 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test:statistics": "node --test tests/annual-statistics.test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

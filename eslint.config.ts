@@ -6,6 +6,7 @@ import importX from 'eslint-plugin-import-x';
 import js from '@eslint/js';
 import style from '@stylistic/eslint-plugin';
 import ts from 'typescript-eslint';
+import globals from 'globals';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -68,6 +69,14 @@ export default ts.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+  },
+  {
+    ...ts.configs.disableTypeChecked,
+    files: ['tests/**/*.mjs'],
+    languageOptions: {
+      ...ts.configs.disableTypeChecked.languageOptions,
+      globals: globals.node,
     },
   },
 );

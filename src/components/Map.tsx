@@ -6,6 +6,7 @@ import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
 
 import { cableNames, getCableServiceStart } from '@/lib/cable-names';
 import { cablesQueryOptions, isCableSegmentVisible } from '@/lib/cables';
+import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
 
 import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
@@ -15,7 +16,6 @@ import {
   getSegmentColor,
   getSegmentStatus,
   isBuildingSegment,
-  type CableStatusIncident,
 } from "@/lib/cable-status";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { motion } from "motion/react";
@@ -77,16 +77,6 @@ interface LandingPoint {
   name: string;
   coordinates: [number, number];
 }
-interface Incident extends CableStatusIncident {
-  date: string;
-  status: string;
-  cableid: string;
-  segment: string;
-  title: string;
-  description: string;
-  resolved_at: string;
-  reason?: string;
-}
 
 interface MapWithCablesProps {
   cableFilter?: CableFilter;
@@ -122,16 +112,8 @@ export default function MapWithCables({
   } | null>(null);
 
   const { data: incidents, isLoading: incidentsLoading } = useQuery({
-    queryKey: ["incidents"],
-    queryFn: async () => {
-      const res = await fetch("/data/incidents.json");
-      if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
-      const incidentsData = (await res.json()) as Incident[];
-      incidentsData.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-      return incidentsData;
-    },
+    ...incidentsQueryOptions,
+    select: newestIncidentsFirst,
   });
 
   const { data: cables, isLoading: cablesLoading } = useQuery(cablesQueryOptions);

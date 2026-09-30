@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { cn, useFormatDate } from "@/lib/utils";
+import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
 import IncidentDescription from '@/components/IncidentDescription';
 import {
   TriangleAlert,
@@ -46,18 +47,6 @@ const REASON_STYLES: Record<
   equipment: { pillClass: "bg-orange-600/40 text-orange-300", Icon: Cpu },
 };
 
-interface Incident {
-  date: string;
-  status: string;
-  reason: string;
-  cableid: string;
-  segment: string;
-  title: string;
-  description: string;
-  reparing_at: string;
-  resolved_at: string;
-}
-
 export default function IncidentList({
   showHistorical = false,
 }: {
@@ -67,16 +56,8 @@ export default function IncidentList({
   const { formatDateTime } = useFormatDate();
 
   const { data: incidents } = useQuery({
-    queryKey: ["incidents"],
-    queryFn: async () => {
-      const res = await fetch("/data/incidents.json");
-      if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
-      const sortedIncidents = (await res.json()) as Incident[];
-      sortedIncidents.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-      return sortedIncidents;
-    },
+    ...incidentsQueryOptions,
+    select: newestIncidentsFirst,
   });
 
   const filteredIncidents = incidents?.filter((incident) =>

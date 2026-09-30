@@ -1,5 +1,5 @@
 import { History } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
@@ -19,8 +19,56 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TimelineContent from "@/components/dialog/TimelineContent";
 import SidebarButton from "@/components/SidebarButton";
+import AnnualStatistics from '@/components/dialog/AnnualStatistics';
 
 export function TimelineView({ isActive }: { isActive: boolean }) {
+  const { t } = useTranslation();
+  const id = useId();
+  const [tab, setTab] = useState('timeline');
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tabs = ['timeline', 'annualStatistics'] as const;
+
+  return (
+    <div>
+      <div role="tablist" aria-label={t('timeline.views')} className="mb-5 flex gap-1 rounded-lg bg-white/5 p-1">
+        {tabs.map((value, index) => (
+          <button
+            key={value}
+            ref={(element) => { tabRefs.current[index] = element; }}
+            type="button"
+            role="tab"
+            id={`${id}-${value}-tab`}
+            aria-controls={`${id}-${value}-panel`}
+            aria-selected={tab === value}
+            tabIndex={tab === value ? 0 : -1}
+            className="flex-1 rounded-md px-3 py-2 text-sm text-white/60 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-sky-400 aria-selected:bg-white/10 aria-selected:font-medium aria-selected:text-white"
+            onClick={() => setTab(value)}
+            onKeyDown={(event) => {
+              let next = index;
+              if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+              else if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+              else if (event.key === 'Home') next = 0;
+              else if (event.key === 'End') next = tabs.length - 1;
+              else return;
+              event.preventDefault();
+              setTab(tabs[next]);
+              tabRefs.current[next]?.focus();
+            }}
+          >
+            {t(`timeline.tabs.${value}`)}
+          </button>
+        ))}
+      </div>
+      {tabs.map((value) => (
+        <div key={value} role="tabpanel" id={`${id}-${value}-panel`} aria-labelledby={`${id}-${value}-tab`} hidden={tab !== value} tabIndex={0} className="outline-offset-4">
+          {tab === value && (value === 'timeline' ? <CableTimelineView isActive={isActive} /> : <AnnualStatistics isActive={isActive} />)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CableTimelineView({ isActive }: { isActive: boolean }) {
   const { t } = useTranslation();
   const now = new Date();
   const timelineRange = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
@@ -134,11 +182,8 @@ export default function TimelineDialog() {
             <DialogHeader className="mb-3">
               <DialogTitle> {t("timeline.title")}</DialogTitle>
             </DialogHeader>
-            <DialogDescription asChild>
-              <div>
-                <TimelineView isActive={open} />
-              </div>
-            </DialogDescription>
+            <DialogDescription className="sr-only">{t('timeline.description')}</DialogDescription>
+            <TimelineView isActive={open} />
           </div>
         </ScrollArea>
       </DialogContent>

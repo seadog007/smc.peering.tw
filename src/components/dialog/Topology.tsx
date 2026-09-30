@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Minus, Network, Plus, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
 import {
   Dialog,
   DialogContent,
@@ -138,16 +139,6 @@ async function loadCables(): Promise<CableStatusCable[]> {
     return module.default;
   });
   return Promise.all(cablePromises);
-}
-
-async function loadIncidents(): Promise<Incident[]> {
-  const res = await fetch("/data/incidents.json");
-  if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
-  const incidentsData = (await res.json()) as Incident[];
-  incidentsData.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-  return incidentsData;
 }
 
 function getNodeColumn(node: TopologyNode) {
@@ -1219,8 +1210,8 @@ export function TopologyView({
   });
 
   const { data: incidents = [], isLoading: incidentsLoading } = useQuery({
-    queryKey: ["incidents"],
-    queryFn: loadIncidents,
+    ...incidentsQueryOptions,
+    select: newestIncidentsFirst,
     enabled: isActive && hasTopologyData,
   });
 
