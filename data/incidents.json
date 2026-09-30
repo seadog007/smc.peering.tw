@@ -1,5 +1,16 @@
 [
   {
+    "date": "2024-07-31T00:00:00+08:00",
+    "status": "notice",
+    "reason": "unknown",
+    "cableid": "frnal-fnal",
+    "segment": "fnal-seg-e",
+    "title": "FNAL 台灣外海斷線",
+    "description": "於 21°19.101'N 120°8.652'E 處發生故障，無接入台灣，不影響使用",
+    "reparing_at": "2024-09-10T00:00:00+08:00",
+    "resolved_at": "2025-05-20T00:00:00+08:00"
+  },
+  {
     "date": "2024-09-18T00:00:00+08:00",
     "status": "disconnected",
     "reason": "unknown",
@@ -63,7 +74,7 @@
     "title": "C2C 斷線",
     "description": "區段 1 （香港-菲律賓）於 21°16.4490'N 116°6.7150'E 處發生障礙（R18 Single FP Fault），影響香港南向流量",
     "reparing_at": "2025-09-25T00:00:00+08:00",
-    "resolved_at": "2024-10-10T11:33:00+08:00"
+    "resolved_at": "2025-10-10T11:33:00+08:00"
   },
   {
     "date": "2024-11-13T00:00:00+08:00",
@@ -842,8 +853,8 @@
     "cableid": "sjc2",
     "segment": "sjc2-seg-4",
     "title": "SJC2 S4 香港方向斷線",
-    "description": "From 中華電信公告「08月25日發生電力異常，訊務已疏轉至其他國際海纜」From 數位發展部「距香港舂坎角約105公里處發生芯線漏電障礙」",
-    "reparing_at": "2026-09-24T00:00:00+08:00",
+    "description": "From 中華電信公告「08月25日發生電力異常，訊務已疏轉至其他國際海纜」From 數位發展部「距香港舂坎角約105公里處發生芯線漏電障礙」ETR 延後至 11/30",
+    "reparing_at": "2026-11-30T00:00:00+08:00",
     "resolved_at": ""
   },
   {
