@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from 'usehooks-ts';
+
 import Sidebar from "./components/Sidebar";
 import CableFilter from "./components/CableFilter";
+import CableSearch from './components/CableSearch';
 
 import IntroModal from "@/components/dialog/Intro";
 import LanguageSelectModal from "@/components/dialog/LanguageSelect";
@@ -24,6 +27,19 @@ function App() {
     "all",
   );
 
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isolatedCableId, setIsolatedCableId] = useState<string | null>(null);
+  const [previewCableId, setPreviewCableId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isDesktop) {
+      setSearchQuery('');
+      setIsolatedCableId(null);
+      setPreviewCableId(null);
+    }
+  }, [isDesktop]);
+
   const [needsLanguageSelect, setNeedsLanguageSelect] = useState(false);
   useEffect(() => {
     const lng = (localStorage.getItem("i18nextLng") ?? "").trim();
@@ -32,17 +48,46 @@ function App() {
 
   return (
     <div className="relative h-svh w-full">
-      <Map cableFilter={cableFilter} />
+      <Map
+        cableFilter={cableFilter}
+        isolatedCableId={isDesktop ? isolatedCableId : null}
+        previewCableId={isDesktop ? previewCableId : null}
+      />
       <div
         className="absolute top-[calc(env(safe-area-inset-top)+8px)] z-10 max-md:right-2 md:top-2 md:left-2"
         data-tour="cable-filter"
       >
         <CableFilter
           cableFilter={cableFilter}
-          setCableFilter={setCableFilter}
+          setCableFilter={(filter) => {
+            setCableFilter(filter);
+            setIsolatedCableId(null);
+            setPreviewCableId(null);
+            setSearchQuery('');
+          }}
           t={t}
         />
       </div>
+      {isDesktop && (
+        <div className="absolute top-2 left-16 z-30">
+          <CableSearch
+            query={searchQuery}
+            onQueryChange={(query) => {
+              setSearchQuery(query);
+              setIsolatedCableId(null);
+              setPreviewCableId(null);
+              if (!query.trim()) setCableFilter('all');
+            }}
+            onSelect={(id, name) => {
+              setCableFilter('all');
+              setIsolatedCableId(id);
+              setSearchQuery(name);
+              setPreviewCableId(null);
+            }}
+            onPreview={setPreviewCableId}
+          />
+        </div>
+      )}
       <div className="absolute left-2 z-10 max-md:top-2 md:bottom-2">
         <div className="flex w-max flex-col gap-2 md:flex-col-reverse">
           <OutageCounter />

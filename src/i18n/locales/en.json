@@ -142,6 +142,24 @@
     "notProvided": "Not provided",
     "segmentId": "Segment ID"
   },
+  "cableSearch": {
+    "label": "Search cables",
+    "placeholder": "Search cables, countries…",
+    "clear": "Clear search and show all cables",
+    "results": "Matching cables",
+    "loading": "Loading cable data…",
+    "error": "Unable to load cable data. Please reload the page.",
+    "count_one": "{{count}} cable",
+    "count_other": "{{count}} cables",
+    "noResults": "No matching cables. Try a name, country, or segment ID.",
+    "match": {
+      "country": "Connected country: {{value}}",
+      "segment": "Segment: {{value}}",
+      "equipment": "Equipment: {{value}}",
+      "date": "In service since: {{value}}",
+      "id": "Cable ID: {{value}}"
+    }
+  },
   "filter": {
     "all": "All",
     "normal": "Normal",

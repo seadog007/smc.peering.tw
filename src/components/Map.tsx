@@ -1,13 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { useMediaQuery } from "usehooks-ts";
 import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
 
 import { cableNames, getCableServiceStart } from '@/lib/cable-names';
+import { cablesQueryOptions, isCableSegmentVisible } from '@/lib/cables';
 
 import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
+import type { CableFilter, Equipment } from '@/lib/cables';
 import { cn } from "@/lib/utils";
 import {
   getSegmentColor,
@@ -70,28 +72,6 @@ const BASE_MAP_STYLE: StyleSpecification = {
   ],
 };
 
-interface Segment {
-  id: string;
-  hidden?: boolean;
-  coordinates: [number, number][];
-  color?: string;
-  retired?: boolean;
-  building?: boolean;
-}
-interface Equipment {
-  id: string;
-  name: string;
-  coordinate: [number, number];
-}
-interface Cable {
-  id: string;
-  name: string;
-  color?: string;
-  building?: boolean;
-  segments: Segment[];
-  equipments?: Equipment[];
-  available_path?: string[][];
-}
 interface LandingPoint {
   id: string;
   name: string;
@@ -108,23 +88,16 @@ interface Incident extends CableStatusIncident {
   reason?: string;
 }
 
-async function loadCables(): Promise<Cable[]> {
-  const modules = import.meta.glob("../data/cables/*.json");
-  const cablePromises = Object.values(modules).map(async (loader) => {
-    const module = await loader();
-    return (module as { default: Cable }).default;
-  });
-  return Promise.all(cablePromises);
-}
-
-type CableFilter = "all" | "normal" | "broken";
-
 interface MapWithCablesProps {
   cableFilter?: CableFilter;
+  isolatedCableId?: string | null;
+  previewCableId?: string | null;
 }
 
 export default function MapWithCables({
   cableFilter = "all",
+  isolatedCableId = null,
+  previewCableId = null,
 }: MapWithCablesProps) {
   const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -161,10 +134,20 @@ export default function MapWithCables({
     },
   });
 
-  const { data: cables, isLoading: cablesLoading } = useQuery({
-    queryKey: ["cables"],
-    queryFn: async () => loadCables(),
-  });
+  const { data: cables, isLoading: cablesLoading } = useQuery(cablesQueryOptions);
+
+  useEffect(() => {
+    setSelectedCable(null);
+    setSelectedEquipment(null);
+    setHoveredCableId(null);
+    setCursor("");
+  }, [isolatedCableId, cableFilter]);
+
+  useEffect(() => {
+    if (previewCableId) setHoveredCableId(null);
+  }, [previewCableId]);
+
+  const highlightedCableId = previewCableId ?? hoveredCableId;
 
   const isLoading = useMemo(
     () => incidentsLoading || cablesLoading,
@@ -184,11 +167,9 @@ export default function MapWithCables({
           const color = getSegmentColor(segment, cable, incidents);
           const building = isBuildingSegment(segment, cable);
 
-          const shouldShow =
-            cableFilter === "all" ||
-            (cableFilter === "normal" && status === "normal") ||
-            (cableFilter === "broken" &&
-              (status === "broken" || status === "partial_disconnected"));
+          const shouldShow = isCableSegmentVisible(
+            cable.id, segment, status, cableFilter, isolatedCableId, previewCableId,
+          );
 
           if (!shouldShow) return;
 
@@ -234,7 +215,7 @@ export default function MapWithCables({
     });
 
     return allFeatures;
-  }, [cables, incidents, cableFilter]);
+  }, [cables, incidents, cableFilter, isolatedCableId, previewCableId]);
 
   const cableData: FeatureCollection<LineString> = useMemo(
     () => ({
@@ -324,19 +305,20 @@ export default function MapWithCables({
           id="cables-hover-glow"
           type="line"
           filter={
-            (hoveredCableId
+            (highlightedCableId
               ? [
                 "all",
                 ["!=", ["get", "status"], "broken-glow"],
-                ["==", ["get", "cableId"], hoveredCableId],
+                ["==", ["get", "cableId"], highlightedCableId],
               ]
               : ["==", ["get", "cableId"], "__none__"]) as any
           }
           layout={{ "line-join": "round", "line-cap": "round" }}
           paint={{
-            "line-color": "#333",
+            "line-color": previewCableId ? "#fff" : "#333",
             "line-width": 8,
-            "line-opacity": 1,
+            "line-blur": previewCableId ? 2 : 0,
+            "line-opacity": previewCableId ? 0.85 : 1,
           }}
         />
         <Layer
@@ -378,7 +360,7 @@ export default function MapWithCables({
         />
       </Source>
 
-      {cables?.map((cable) =>
+      {cables?.filter((cable) => !isolatedCableId || cable.id === isolatedCableId || cable.id === previewCableId).map((cable) =>
         cable.equipments?.map((equip) => (
           <Marker
             key={`marker-${equip.id}`}
