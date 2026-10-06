@@ -205,6 +205,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Version History
 
+- **v3.13.0** (2026-10-06): Added desktop cable search with hover preview and cable selection, and annual incident statistics with repair time trends and rolling averages
 - **v3.12.0** (2026-09-29): Added cable metadata, incident glossary tooltips, connectivity capacity details, license for data, and a public cable data repository link
 - **v3.11.2** (2026-06-01): Added full-page topology view and improved edge status coloring
 - **v3.11.1** (2026-06-01): Improved topology guided tour

@@ -682,6 +682,13 @@
           "Added license for data",
           "Added a public cable data repository link"
         ]
+      },
+      "3.13.0": {
+        "date": "2026-10-06",
+        "changes": [
+          "Added desktop cable search with hover preview and cable selection",
+          "Added annual incident statistics and repair time trends with rolling averages"
+        ]
       }
     }
   }
