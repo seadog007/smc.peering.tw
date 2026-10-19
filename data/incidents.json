@@ -900,5 +900,16 @@
     "description": "From 中華電信公告「10月6日發生芯線障礙，訊務已於第一時間疏轉至台馬第三海纜」From 數位發展部「距馬祖東引約45.3公里處斷纜」。ETR 11/30",
     "reparing_at": "2026-11-30T00:00:00+08:00",
     "resolved_at": ""
+  },
+  {
+    "date": "2026-10-16T00:00:00+08:00",
+    "status": "disconnected",
+    "reason": "unknown",
+    "cableid": "sjc2",
+    "segment": "",
+    "title": "SJC2 香港方向斷線",
+    "description": "From 中華電信公告「10月16日發生芯線障礙，訊務已於第一時間疏轉至其他國際海纜；往香港連線尖峰時段可能有輕微延遲」。From 數位發展部「距香港舂坎角約146公里處斷纜」。ETR 11/16",
+    "reparing_at": "2026-11-16T00:00:00+08:00",
+    "resolved_at": ""
   }
 ]
