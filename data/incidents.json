@@ -77,17 +77,6 @@
     "resolved_at": "2025-10-10T11:33:00+08:00"
   },
   {
-    "date": "2024-11-13T00:00:00+08:00",
-    "status": "disconnected",
-    "reason": "unknown",
-    "cableid": "apcn2",
-    "segment": "",
-    "title": "APCN2 未知方向斷線",
-    "description": "待補充",
-    "reparing_at": "",
-    "resolved_at": "2024-11-17T10:18:00+08:00"
-  },
-  {
     "date": "2025-01-03T00:00:00+08:00",
     "status": "disconnected",
     "reason": "sabotage",
