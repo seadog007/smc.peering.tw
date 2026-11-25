@@ -95,6 +95,9 @@ const LANDING_POINT_FEATURES: Feature<Point, PointProperties>[] = (
 
 const INTERACTIVE_LAYER_IDS = [POINT_HIT_LAYER_ID, CABLE_HIT_LAYER_ID];
 
+// Phones report up to 3x; drawing past 2x costs GPU time without a visible gain.
+const PIXEL_RATIO = window.devicePixelRatio > 2 ? 2 : undefined;
+
 interface MapWithCablesProps {
   cableFilter?: CableFilter;
   isolatedCableId?: string | null;
@@ -248,6 +251,7 @@ function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
+      pixelRatio={PIXEL_RATIO}
       interactiveLayerIds={INTERACTIVE_LAYER_IDS}
       doubleClickZoom={false}
       keyboard={false}
