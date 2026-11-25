@@ -9,6 +9,9 @@ import { cablesQueryOptions, isCableSegmentVisible } from '@/lib/cables';
 import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
 import {
   BASE_MAP_STYLE,
+  CABLE_HIT_LAYER_ID,
+  CABLE_LAYERS,
+  CABLE_SOURCE_ID,
   POINT_HIT_LAYER_ID,
   POINT_LAYERS,
   POINT_SOURCE_ID,
@@ -40,6 +43,19 @@ interface PointProperties {
   // Exact position; geometry read back from rendered tiles is quantised.
   lng: number;
   lat: number;
+}
+
+interface CableProperties {
+  cableId: string;
+  cableName: string;
+  segmentId: string;
+  color: string;
+  status: ReturnType<typeof getSegmentStatus>;
+  lineWidth: number;
+  building: boolean;
+  // Set on the cable previewed from search. Preview changes the visible set
+  // anyway, so it rides along with that data update instead of feature-state.
+  preview?: boolean;
 }
 
 interface CableSelection {
@@ -76,6 +92,8 @@ const LANDING_POINT_FEATURES: Feature<Point, PointProperties>[] = (
   },
   geometry: { type: "Point", coordinates: lp.coordinates },
 }));
+
+const INTERACTIVE_LAYER_IDS = [POINT_HIT_LAYER_ID, CABLE_HIT_LAYER_ID];
 
 interface MapWithCablesProps {
   cableFilter?: CableFilter;
@@ -131,69 +149,39 @@ function MapWithCables({
         .filter((segment) => !segment.hidden)
         .map((segment) => {
           const status = getSegmentStatus(segment, cable, incidents);
-          const color = getSegmentColor(segment, cable, incidents);
-          const building = isBuildingSegment(segment, cable);
-          const features: Feature<LineString>[] = [];
-
-          if (status === "broken") {
-            features.push({
-              type: "Feature",
-              properties: {
-                cableName: cable.name,
-                segmentId: segment.id,
-                cableId: cable.id,
-                color: "#ff0000",
-                status: "broken-glow",
-                lineWidth: 15,
-                lineBlur: 12,
-                lineOpacity: 0.4,
-              },
-              geometry: {
-                type: "LineString",
-                coordinates: segment.coordinates,
-              },
-            } as Feature<LineString>);
-          }
-
-          features.push({
+          const feature: Feature<LineString, CableProperties> = {
             type: "Feature",
             properties: {
+              cableId: cable.id,
               cableName: cable.name,
               segmentId: segment.id,
-              cableId: cable.id,
-              color,
+              color: getSegmentColor(segment, cable, incidents),
               status,
-              lineWidth: status === "broken" || status === "partial_disconnected" ? 3 : 1.5,
-              lineBlur: 0,
-              lineOpacity: 1,
-              building,
+              lineWidth: status === "normal" ? 1.5 : 3,
+              building: isBuildingSegment(segment, cable),
             },
-            geometry: {
-              type: "LineString",
-              coordinates: segment.coordinates,
-            },
-          } as Feature<LineString>);
-
-          return { cableId: cable.id, segment, status, features };
+            geometry: { type: "LineString", coordinates: segment.coordinates },
+          };
+          return { feature, segment };
         }),
     );
   }, [cables, incidents]);
 
-  const cableData: FeatureCollection<LineString> = useMemo(
-    () => ({
-      type: "FeatureCollection",
-      features: segmentFeatures
-        .filter(({ cableId, segment, status }) => isCableSegmentVisible(
-          cableId, segment, status, cableFilter, isolatedCableId, previewCableId,
-        ))
-        .flatMap(({ cableId, features }) => (cableId === previewCableId
-          // Preview changes the visible set anyway, so its highlight rides
-          // along with that data update instead of feature-state.
-          ? features.map((f) => ({ ...f, properties: { ...f.properties, preview: true } }))
-          : features)),
-    }),
-    [segmentFeatures, cableFilter, isolatedCableId, previewCableId],
-  );
+  const cableData = useMemo<FeatureCollection<LineString, CableProperties>>(() => ({
+    type: "FeatureCollection",
+    features: segmentFeatures
+      .filter(({ feature, segment }) => isCableSegmentVisible(
+        feature.properties.cableId,
+        segment,
+        feature.properties.status,
+        cableFilter,
+        isolatedCableId,
+        previewCableId,
+      ))
+      .map(({ feature }) => (feature.properties.cableId === previewCableId
+        ? { ...feature, properties: { ...feature.properties, preview: true } }
+        : feature)),
+  }), [segmentFeatures, cableFilter, isolatedCableId, previewCableId]);
 
   const pointData = useMemo<FeatureCollection<Point, PointProperties>>(() => {
     const equipment = (cables ?? [])
@@ -215,10 +203,15 @@ function MapWithCables({
     return { type: "FeatureCollection", features: [...equipment, ...LANDING_POINT_FEATURES] };
   }, [cables, isolatedCableId, previewCableId]);
 
-  const handleClick = (event: any) => {
-    const feature = event.features?.find(
-      (f: any) => f.properties?.status !== "broken-glow",
-    );
+  const handleMouseMove = useCallback((event: MapLayerMouseEvent) => {
+    const feature = event.features?.[0];
+    setHovered(feature?.id === undefined ? null : { source: feature.source, id: feature.id });
+  }, [setHovered]);
+
+  const handleMouseLeave = useCallback(() => setHovered(null), [setHovered]);
+
+  const handleClick = useCallback((event: MapLayerMouseEvent) => {
+    const feature = event.features?.[0];
     if (!feature) return;
 
     if (feature.source === POINT_SOURCE_ID) {
@@ -227,30 +220,15 @@ function MapWithCables({
       return;
     }
 
-    const coordinates = event.lngLat;
-    const properties = feature.properties as {
-      cableId: string;
-      cableName: string;
-      segmentId: string;
-    };
-
+    const cable = feature.properties as CableProperties;
     setSelection({
       kind: "cable",
-      cableId: properties.cableId,
-      cableName: properties.cableName,
-      segmentId: properties.segmentId,
-      coordinates: [coordinates.lng, coordinates.lat],
+      cableId: cable.cableId,
+      cableName: cable.cableName,
+      segmentId: cable.segmentId,
+      coordinates: [event.lngLat.lng, event.lngLat.lat],
     });
-  };
-
-  const handleMouseMove = useCallback((event: MapLayerMouseEvent) => {
-    const feature = event.features?.find(
-      (f) => f.properties?.status !== "broken-glow",
-    );
-    setHovered(feature?.id === undefined ? null : { source: feature.source, id: feature.id });
-  }, [setHovered]);
-
-  const handleMouseLeave = useCallback(() => setHovered(null), [setHovered]);
+  }, []);
 
   return (
     <Map
@@ -270,7 +248,7 @@ function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
-      interactiveLayerIds={[POINT_HIT_LAYER_ID, "cables-hit", "cables-layer", "cables-building-layer"]}
+      interactiveLayerIds={INTERACTIVE_LAYER_IDS}
       doubleClickZoom={false}
       keyboard={false}
       attributionControl={false}
@@ -278,64 +256,8 @@ function MapWithCables({
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
-      <Source id="cables" type="geojson" data={cableData} promoteId="cableId">
-        {/* Map hover is feature-state, so it never re-renders React or re-tiles data */}
-        <Layer
-          id="cables-highlight"
-          type="line"
-          filter={["!=", ["get", "status"], "broken-glow"] as any}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": "#ffffff",
-            // Zero width, not zero opacity: a transparent line still shades every
-            // pixel it covers, a zero-width one produces no fragments at all.
-            "line-width": [
-              "case",
-              ["any", ["boolean", ["feature-state", "hover"], false], ["==", ["get", "preview"], true]],
-              8,
-              0,
-            ],
-            "line-blur": 3,
-            "line-opacity": 0.6,
-          }}
-        />
-        <Layer
-          id="cables-layer"
-          type="line"
-          filter={["!=", ["get", "building"], true] as any}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": ["get", "color"],
-            "line-width": ["get", "lineWidth"],
-            "line-blur": ["get", "lineBlur"],
-            "line-opacity": ["get", "lineOpacity"],
-          }}
-        />
-        <Layer
-          id="cables-building-layer"
-          type="line"
-          filter={["==", ["get", "building"], true] as any}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": ["get", "color"],
-            "line-width": ["get", "lineWidth"],
-            "line-blur": ["get", "lineBlur"],
-            "line-opacity": ["get", "lineOpacity"],
-            "line-dasharray": [2, 2],
-          }}
-        />
-        {/* Invisible wide hit area to make hover/click easier */}
-        <Layer
-          id="cables-hit"
-          type="line"
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": "#000000",
-            "line-width": 18,
-            "line-opacity": 0,
-            "line-blur": 0,
-          }}
-        />
+      <Source id={CABLE_SOURCE_ID} type="geojson" data={cableData} promoteId="cableId">
+        {CABLE_LAYERS.map((layer) => <Layer key={layer.id} {...layer} />)}
       </Source>
 
       <Source id={POINT_SOURCE_ID} type="geojson" data={pointData} promoteId="key">
