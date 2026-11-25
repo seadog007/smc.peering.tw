@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from "usehooks-ts";
 import { driver, type Driver } from "driver.js";
@@ -29,7 +29,7 @@ function waitForElement(
   });
 }
 
-export default function TourController() {
+function TourController() {
   const { t } = useTranslation();
   const setStartTour = useTourStore((s) => s.setStartTour);
   const setTourActive = useTourStore((s) => s.setTourActive);
@@ -254,3 +254,4 @@ export default function TourController() {
   return null;
 }
 
+export default memo(TourController);

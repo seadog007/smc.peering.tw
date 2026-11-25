@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
-export default function TechClock() {
+function TechClock() {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -29,3 +29,5 @@ export default function TechClock() {
     </div>
   );
 }
+
+export default memo(TechClock);

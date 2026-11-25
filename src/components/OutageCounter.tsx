@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Tooltip,
@@ -24,7 +24,7 @@ interface Incident extends CableStatusIncident {
   resolved_at: string;
 }
 
-export default function OutageCounter() {
+function OutageCounter() {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState<number | null>(null);
@@ -158,3 +158,5 @@ export default function OutageCounter() {
     </Tooltip>
   );
 }
+
+export default memo(OutageCounter);
