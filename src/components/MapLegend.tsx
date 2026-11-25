@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -56,7 +56,7 @@ const legendItems = [
   },
 ] as const;
 
-export default function MapLegend() {
+function MapLegend() {
   const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const isCollapsed = collapsed;
@@ -165,3 +165,5 @@ export default function MapLegend() {
     </div>
   );
 }
+
+export default memo(MapLegend);

@@ -1,6 +1,7 @@
 import { clsx } from "clsx";
 import { cn } from "@/lib/utils";
 import {
+  memo,
   useCallback,
   useEffect,
   useRef,
@@ -399,7 +400,7 @@ function MobileSidebar() {
   );
 }
 
-export default function Sidebar() {
+function Sidebar() {
   const { i18n } = useTranslation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const isEnglish = i18n.language.startsWith("en");
@@ -505,3 +506,5 @@ function ChangeLanguageButton() {
     </SidebarButton>
   );
 }
+
+export default memo(Sidebar);
