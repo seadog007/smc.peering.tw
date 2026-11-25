@@ -7,8 +7,8 @@ import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
 import { cableNames, getCableServiceStart } from '@/lib/cable-names';
 import { cablesQueryOptions, isCableSegmentVisible } from '@/lib/cables';
 import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
+import { BASE_MAP_STYLE } from '@/lib/map-style';
 
-import type { StyleSpecification } from "maplibre-gl";
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import type { CableFilter, Equipment } from '@/lib/cables';
 import { cn } from "@/lib/utils";
@@ -20,57 +20,6 @@ import {
 import "maplibre-gl/dist/maplibre-gl.css";
 import { motion } from "motion/react";
 import landingPointsJson from "@/data/landing-points.json" with { type: "json" };
-
-// Keep map style object identity stable to avoid style reload flicker on re-renders
-const BASE_MAP_STYLE: StyleSpecification = {
-  version: 8,
-  name: "ExpTech Studio",
-  sources: {
-    map: {
-      type: "vector",
-      url: "https://lb.exptech.dev/api/v1/map/tiles/tiles.json",
-    },
-  },
-  sprite: "",
-  layers: [
-    {
-      id: "background",
-      type: "background",
-      paint: { "background-color": "#1f2025" },
-    },
-    {
-      id: "county",
-      type: "fill",
-      source: "map",
-      "source-layer": "city",
-      paint: { "fill-color": "#3F4045" },
-    },
-    {
-      id: "county-outline",
-      type: "line",
-      source: "map",
-      "source-layer": "city",
-      paint: { "line-color": "#a9b4bc" },
-    },
-    {
-      id: "town",
-      type: "fill",
-      source: "map",
-      "source-layer": "town",
-      paint: { "fill-color": "transparent" },
-    },
-    {
-      id: "global",
-      type: "fill",
-      source: "map",
-      "source-layer": "global",
-      paint: {
-        "fill-color": "#3F4045",
-        "fill-opacity": 1,
-      },
-    },
-  ],
-};
 
 interface LandingPoint {
   id: string;
