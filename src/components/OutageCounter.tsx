@@ -1,84 +1,31 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  computePathAvailability,
-  type CableStatusCable,
-  type CableStatusIncident,
-} from "@/lib/cable-status";
-
-interface CableLite extends CableStatusCable {
-  name: string;
-}
-
-interface Incident extends CableStatusIncident {
-  date: string;
-  status: string;
-  reason: string;
-  cableid: string;
-  segment: string;
-  resolved_at: string;
-}
+import { computePathAvailability } from "@/lib/cable-status";
+import { cablesQueryOptions } from "@/lib/cables";
+import { incidentsQueryOptions } from "@/lib/incidents";
 
 function OutageCounter() {
   const { t } = useTranslation();
 
-  const [total, setTotal] = useState<number | null>(null);
-  const [outages, setOutages] = useState<number | null>(null);
+  // The same queries the map and incident list use, so the cables and
+  // incidents are loaded once instead of fetched again here.
+  const { data: cables } = useQuery(cablesQueryOptions);
+  const { data: incidents } = useQuery(incidentsQueryOptions);
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadCablesLite(): Promise<CableLite[]> {
-      const modules = import.meta.glob<{ default: CableLite }>(
-        "../data/cables/*.json",
-      );
-      const cablePromises = Object.values(modules).map(async (loader) => {
-        const module = await loader();
-        return module.default;
-      });
-      return Promise.all(cablePromises);
-    }
-
-    async function loadIncidents(): Promise<Incident[]> {
-      const res = await fetch("/data/incidents.json");
-      if (!res.ok) throw new Error(`Failed to fetch incidents: ${res.status}`);
-      const incidentsData = (await res.json()) as Incident[];
-      incidentsData.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-      return incidentsData;
-    }
-
-    (async () => {
-      try {
-        const [cables, incidents] = await Promise.all([
-          loadCablesLite(),
-          loadIncidents(),
-        ]);
-        const { totalIntl, remainingIntl } = computePathAvailability(
-          cables,
-          incidents,
-        );
-        if (!mounted) return;
-        setTotal(totalIntl);
-        setOutages(totalIntl - remainingIntl);
-      } catch {
-        // on error, fallback to nulls
-        if (!mounted) return;
-        setTotal(null);
-        setOutages(null);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const availability = useMemo(
+    () => (cables && incidents ? computePathAvailability(cables, incidents) : null),
+    [cables, incidents],
+  );
+  const total = availability ? availability.totalIntl : null;
+  const outages = availability
+    ? availability.totalIntl - availability.remainingIntl
+    : null;
 
   const totalDisplay = total ?? "--";
   const onlineDisplay = total && outages ? total - outages : "--";
