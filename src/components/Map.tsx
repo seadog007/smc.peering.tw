@@ -213,6 +213,11 @@ function MapWithCables({
 
   const handleMouseLeave = useCallback(() => setHovered(null), [setHovered]);
 
+  const handleLoad = useCallback(() => {
+    // Rotation and pitch have no meaning on this flat map and are easy to trigger by accident.
+    mapRef.current?.getMap().touchZoomRotate.disableRotation();
+  }, []);
+
   const handleClick = useCallback((event: MapLayerMouseEvent) => {
     const feature = event.features?.[0];
     if (!feature) return;
@@ -251,11 +256,18 @@ function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
+      minZoom={2}
+      maxZoom={12}
+      maxPitch={0}
       pixelRatio={PIXEL_RATIO}
+      dragRotate={false}
+      pitchWithRotate={false}
+      touchPitch={false}
       interactiveLayerIds={INTERACTIVE_LAYER_IDS}
       doubleClickZoom={false}
       keyboard={false}
       attributionControl={false}
+      onLoad={handleLoad}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
