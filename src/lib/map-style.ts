@@ -2,7 +2,13 @@ import type { StyleSpecification } from 'maplibre-gl';
 
 const TILE_ORIGIN = 'https://static.lb.exptech.dev/api/v1/map';
 
+const MAP_BACKGROUND = '#1f2025';
+const MAP_LAND = '#3F4045';
+
 /**
+ * Land fills first, then borders, so the global land fill can no longer
+ * cover the county borders.
+ *
  * Tiles are addressed directly instead of through tiles.json, which saves a
  * round trip before the first tile request. The source stops at z9 (higher
  * levels add no detail) and MapLibre overzooms past it.
@@ -22,21 +28,21 @@ export const BASE_MAP_STYLE: StyleSpecification = {
     {
       id: 'background',
       type: 'background',
-      paint: { 'background-color': '#1f2025' },
+      paint: { 'background-color': MAP_BACKGROUND },
+    },
+    {
+      'id': 'global',
+      'type': 'fill',
+      'source': 'map',
+      'source-layer': 'global',
+      'paint': { 'fill-color': MAP_LAND },
     },
     {
       'id': 'county',
       'type': 'fill',
       'source': 'map',
       'source-layer': 'city',
-      'paint': { 'fill-color': '#3F4045' },
-    },
-    {
-      'id': 'county-outline',
-      'type': 'line',
-      'source': 'map',
-      'source-layer': 'city',
-      'paint': { 'line-color': '#a9b4bc' },
+      'paint': { 'fill-color': MAP_LAND },
     },
     {
       'id': 'town',
@@ -46,14 +52,11 @@ export const BASE_MAP_STYLE: StyleSpecification = {
       'paint': { 'fill-color': 'transparent' },
     },
     {
-      'id': 'global',
-      'type': 'fill',
+      'id': 'county-outline',
+      'type': 'line',
       'source': 'map',
-      'source-layer': 'global',
-      'paint': {
-        'fill-color': '#3F4045',
-        'fill-opacity': 1,
-      },
+      'source-layer': 'city',
+      'paint': { 'line-color': '#a9b4bc' },
     },
   ],
 };
