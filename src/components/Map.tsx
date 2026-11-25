@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { useMediaQuery } from "usehooks-ts";
@@ -14,6 +14,7 @@ import {
   POINT_SOURCE_ID,
 } from '@/lib/map-style';
 
+import type { MapLayerMouseEvent, MapRef } from "@vis.gl/react-maplibre";
 import type { Feature, FeatureCollection, LineString, Point } from "geojson";
 import type { CableFilter } from '@/lib/cables';
 import {
@@ -57,6 +58,11 @@ interface PointSelection {
 
 type Selection = CableSelection | PointSelection;
 
+interface FeatureRef {
+  source: string;
+  id: string | number;
+}
+
 const LANDING_POINT_FEATURES: Feature<Point, PointProperties>[] = (
   landingPointsJson as unknown as LandingPoint[]
 ).map((lp) => ({
@@ -84,8 +90,8 @@ function MapWithCables({
 }: MapWithCablesProps) {
   const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [cursor, setCursor] = useState<string>("");
-  const [hoveredCableId, setHoveredCableId] = useState<string | null>(null);
+  const mapRef = useRef<MapRef>(null);
+  const hoveredRef = useRef<FeatureRef | null>(null);
   const [selection, setSelection] = useState<Selection | null>(null);
 
   const { data: incidents } = useQuery({
@@ -95,17 +101,25 @@ function MapWithCables({
 
   const { data: cables } = useQuery(cablesQueryOptions);
 
+  const setHovered = useCallback((next: FeatureRef | null) => {
+    const map = mapRef.current?.getMap();
+    const prev = hoveredRef.current;
+    if (!map || (prev?.source === next?.source && prev?.id === next?.id)) return;
+
+    if (prev && map.getSource(prev.source)) map.setFeatureState(prev, { hover: false });
+    if (next) map.setFeatureState(next, { hover: true });
+    hoveredRef.current = next;
+    map.getCanvas().style.cursor = next ? "pointer" : "";
+  }, []);
+
   useEffect(() => {
     setSelection((current) => (current?.kind === "landing" ? current : null));
-    setHoveredCableId(null);
-    setCursor("");
-  }, [isolatedCableId, cableFilter]);
+    setHovered(null);
+  }, [isolatedCableId, cableFilter, setHovered]);
 
   useEffect(() => {
-    if (previewCableId) setHoveredCableId(null);
-  }, [previewCableId]);
-
-  const highlightedCableId = previewCableId ?? hoveredCableId;
+    if (previewCableId) setHovered(null);
+  }, [previewCableId, setHovered]);
 
   // Status depends only on the data, so it is resolved once per load rather
   // than on every filter, isolation, or preview change.
@@ -172,7 +186,11 @@ function MapWithCables({
         .filter(({ cableId, segment, status }) => isCableSegmentVisible(
           cableId, segment, status, cableFilter, isolatedCableId, previewCableId,
         ))
-        .flatMap(({ features }) => features),
+        .flatMap(({ cableId, features }) => (cableId === previewCableId
+          // Preview changes the visible set anyway, so its highlight rides
+          // along with that data update instead of feature-state.
+          ? features.map((f) => ({ ...f, properties: { ...f.properties, preview: true } }))
+          : features)),
     }),
     [segmentFeatures, cableFilter, isolatedCableId, previewCableId],
   );
@@ -225,18 +243,18 @@ function MapWithCables({
     });
   };
 
-  // Change cursor to pointer when hovering over interactive cable features (excluding glow layer)
-  const handleMouseMove = (event: any) => {
+  const handleMouseMove = useCallback((event: MapLayerMouseEvent) => {
     const feature = event.features?.find(
-      (f: any) => f.properties?.status !== "broken-glow",
+      (f) => f.properties?.status !== "broken-glow",
     );
-    setCursor(feature ? "pointer" : "");
-    setHoveredCableId(feature ? (feature.properties?.cableId ?? null) : null);
-  };
+    setHovered(feature?.id === undefined ? null : { source: feature.source, id: feature.id });
+  }, [setHovered]);
+
+  const handleMouseLeave = useCallback(() => setHovered(null), [setHovered]);
 
   return (
     <Map
-      cursor={cursor}
+      ref={mapRef}
       initialViewState={
         isMobile
           ? {
@@ -257,32 +275,28 @@ function MapWithCables({
       keyboard={false}
       attributionControl={false}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        setCursor("");
-        setHoveredCableId(null);
-      }}
+      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
-      <Source id="cables" type="geojson" data={cableData}>
-        {/* Hover glow layer for better visual feedback */}
+      <Source id="cables" type="geojson" data={cableData} promoteId="cableId">
+        {/* Map hover is feature-state, so it never re-renders React or re-tiles data */}
         <Layer
-          id="cables-hover-glow"
+          id="cables-highlight"
           type="line"
-          filter={
-            (highlightedCableId
-              ? [
-                "all",
-                ["!=", ["get", "status"], "broken-glow"],
-                ["==", ["get", "cableId"], highlightedCableId],
-              ]
-              : ["==", ["get", "cableId"], "__none__"]) as any
-          }
+          filter={["!=", ["get", "status"], "broken-glow"] as any}
           layout={{ "line-join": "round", "line-cap": "round" }}
           paint={{
-            "line-color": previewCableId ? "#fff" : "#333",
-            "line-width": 8,
-            "line-blur": previewCableId ? 2 : 0,
-            "line-opacity": previewCableId ? 0.85 : 1,
+            "line-color": "#ffffff",
+            // Zero width, not zero opacity: a transparent line still shades every
+            // pixel it covers, a zero-width one produces no fragments at all.
+            "line-width": [
+              "case",
+              ["any", ["boolean", ["feature-state", "hover"], false], ["==", ["get", "preview"], true]],
+              8,
+              0,
+            ],
+            "line-blur": 3,
+            "line-opacity": 0.6,
           }}
         />
         <Layer
@@ -324,7 +338,7 @@ function MapWithCables({
         />
       </Source>
 
-      <Source id={POINT_SOURCE_ID} type="geojson" data={pointData}>
+      <Source id={POINT_SOURCE_ID} type="geojson" data={pointData} promoteId="key">
         {POINT_LAYERS.map((layer) => <Layer key={layer.id} {...layer} />)}
       </Source>
 
