@@ -1,9 +1,14 @@
-import type { StyleSpecification } from 'maplibre-gl';
+import type { LayerProps } from '@vis.gl/react-maplibre';
+import type { ExpressionSpecification, StyleSpecification } from 'maplibre-gl';
 
 const TILE_ORIGIN = 'https://static.lb.exptech.dev/api/v1/map';
 
 const MAP_BACKGROUND = '#1f2025';
 const MAP_LAND = '#3F4045';
+
+export const POINT_SOURCE_ID = 'points';
+
+export const POINT_HIT_LAYER_ID = 'points-hit';
 
 /**
  * ExpTech base map with the palette and layer order shared by DPIP and TREM-Lite:
@@ -71,3 +76,54 @@ export const BASE_MAP_STYLE: StyleSpecification = {
     },
   ],
 };
+
+/** Scales a pixel width with zoom; equals `width` at the default zoom (5.5). */
+function byZoom(width: number | ExpressionSpecification): ExpressionSpecification {
+  return [
+    'interpolate', ['exponential', 1.4], ['zoom'],
+    3, ['*', width, 0.7],
+    5.5, width,
+    10, ['*', width, 2],
+  ];
+}
+
+const HOVERED: ExpressionSpecification = ['boolean', ['feature-state', 'hover'], false];
+
+// Zoom must stay the outermost expression, so the hover bump goes inside it.
+const POINT_RADIUS = byZoom(['+', 6, ['case', HOVERED, 1, 0]]);
+
+/** Equipment and landing-point layers. Rendered inside the `points` GeoJSON source. */
+export const POINT_LAYERS: LayerProps[] = [
+  {
+    id: 'equipment-points',
+    type: 'circle',
+    filter: ['==', ['get', 'kind'], 'equipment'],
+    paint: {
+      'circle-color': '#ffffff',
+      'circle-radius': POINT_RADIUS,
+      'circle-stroke-color': MAP_BACKGROUND,
+      'circle-stroke-width': 1,
+    },
+  },
+  {
+    id: 'landing-points',
+    type: 'circle',
+    filter: ['==', ['get', 'kind'], 'landing'],
+    paint: {
+      'circle-color': '#2563eb',
+      'circle-radius': POINT_RADIUS,
+      'circle-stroke-color': 'rgba(255, 255, 255, 0.95)',
+      'circle-stroke-width': 2,
+    },
+  },
+  {
+    // Invisible tap target larger than the dots, for touch screens.
+    id: POINT_HIT_LAYER_ID,
+    type: 'circle',
+    paint: {
+      'circle-color': '#000000',
+      'circle-radius': 14,
+      'circle-opacity': 0,
+    },
+  },
+];
