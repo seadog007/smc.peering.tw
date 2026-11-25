@@ -92,7 +92,7 @@ export default function IncidentList({
         // Determine pill classes, icon and label
         let pillClass = "";
         let IconComponent = TriangleAlert;
-        let iconClass = "size-4 animate-pulse";
+        let iconClass = "size-4 animate-pulse-steps";
         let label = isHistorical ? t("common.resolved") : t("common.active");
 
         if (isHistorical) {
@@ -108,19 +108,19 @@ export default function IncidentList({
           // partial: orange
           pillClass += " bg-orange-500/40 text-orange-300";
           IconComponent = TriangleAlert;
-          iconClass = "size-4 animate-pulse";
+          iconClass = "size-4 animate-pulse-steps";
           label = t("common.partial_disconnected");
         } else if (status === "disconnected") {
           // disconnected: red
           pillClass += " bg-red-500/40 text-red-300";
           IconComponent = XCircle;
-          iconClass = "size-4 animate-pulse";
+          iconClass = "size-4 animate-pulse-steps";
           label = t("common.disconnected");
         } else {
           // fallback: use active / red
           pillClass += " bg-red-500/40 text-red-300";
           IconComponent = TriangleAlert;
-          iconClass = "size-4 animate-pulse";
+          iconClass = "size-4 animate-pulse-steps";
           label = t("common.active");
         }
 
