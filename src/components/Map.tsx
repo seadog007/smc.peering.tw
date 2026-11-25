@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { useMediaQuery } from "usehooks-ts";
@@ -11,7 +11,6 @@ import { BASE_MAP_STYLE } from '@/lib/map-style';
 
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import type { CableFilter, Equipment } from '@/lib/cables';
-import { cn } from "@/lib/utils";
 import {
   getSegmentColor,
   getSegmentStatus,
@@ -33,7 +32,7 @@ interface MapWithCablesProps {
   previewCableId?: string | null;
 }
 
-export default function MapWithCables({
+function MapWithCables({
   cableFilter = "all",
   isolatedCableId = null,
   previewCableId = null,
@@ -60,12 +59,12 @@ export default function MapWithCables({
     coordinates: [number, number];
   } | null>(null);
 
-  const { data: incidents, isLoading: incidentsLoading } = useQuery({
+  const { data: incidents } = useQuery({
     ...incidentsQueryOptions,
     select: newestIncidentsFirst,
   });
 
-  const { data: cables, isLoading: cablesLoading } = useQuery(cablesQueryOptions);
+  const { data: cables } = useQuery(cablesQueryOptions);
 
   useEffect(() => {
     setSelectedCable(null);
@@ -80,32 +79,22 @@ export default function MapWithCables({
 
   const highlightedCableId = previewCableId ?? hoveredCableId;
 
-  const isLoading = useMemo(
-    () => incidentsLoading || cablesLoading,
-    [incidentsLoading, cablesLoading],
-  );
-
-  const cableFeatures = useMemo(() => {
+  // Status depends only on the data, so it is resolved once per load rather
+  // than on every filter, isolation, or preview change.
+  const segmentFeatures = useMemo(() => {
     if (!cables || !incidents) return [];
 
-    const allFeatures: Feature<LineString>[] = [];
-
-    cables.forEach((cable) => {
+    return cables.flatMap((cable) =>
       cable.segments
         .filter((segment) => !segment.hidden)
-        .forEach((segment) => {
+        .map((segment) => {
           const status = getSegmentStatus(segment, cable, incidents);
           const color = getSegmentColor(segment, cable, incidents);
           const building = isBuildingSegment(segment, cable);
-
-          const shouldShow = isCableSegmentVisible(
-            cable.id, segment, status, cableFilter, isolatedCableId, previewCableId,
-          );
-
-          if (!shouldShow) return;
+          const features: Feature<LineString>[] = [];
 
           if (status === "broken") {
-            allFeatures.push({
+            features.push({
               type: "Feature",
               properties: {
                 cableName: cable.name,
@@ -124,7 +113,7 @@ export default function MapWithCables({
             } as Feature<LineString>);
           }
 
-          allFeatures.push({
+          features.push({
             type: "Feature",
             properties: {
               cableName: cable.name,
@@ -142,18 +131,22 @@ export default function MapWithCables({
               coordinates: segment.coordinates,
             },
           } as Feature<LineString>);
-        });
-    });
 
-    return allFeatures;
-  }, [cables, incidents, cableFilter, isolatedCableId, previewCableId]);
+          return { cableId: cable.id, segment, status, features };
+        }),
+    );
+  }, [cables, incidents]);
 
   const cableData: FeatureCollection<LineString> = useMemo(
     () => ({
       type: "FeatureCollection",
-      features: cableFeatures,
+      features: segmentFeatures
+        .filter(({ cableId, segment, status }) => isCableSegmentVisible(
+          cableId, segment, status, cableFilter, isolatedCableId, previewCableId,
+        ))
+        .flatMap(({ features }) => features),
     }),
-    [cableFeatures],
+    [segmentFeatures, cableFilter, isolatedCableId, previewCableId],
   );
 
   const handleCableClick = (event: any) => {
@@ -192,14 +185,6 @@ export default function MapWithCables({
     setCursor(feature ? "pointer" : "");
     setHoveredCableId(feature ? (feature.properties?.cableId ?? null) : null);
   };
-
-  if (isLoading) {
-    return (
-      <div className={cn("flex h-full w-full items-center justify-center")}>
-        <div className="text-white">Loading map...</div>
-      </div>
-    );
-  }
 
   return (
     <Map
@@ -467,3 +452,5 @@ export default function MapWithCables({
     </Map>
   );
 }
+
+export default memo(MapWithCables);
