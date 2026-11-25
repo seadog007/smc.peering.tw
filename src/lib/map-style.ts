@@ -1,16 +1,23 @@
 import type { StyleSpecification } from 'maplibre-gl';
 
-// Keep map style object identity stable to avoid style reload flicker on re-renders
+const TILE_ORIGIN = 'https://static.lb.exptech.dev/api/v1/map';
+
+/**
+ * Tiles are addressed directly instead of through tiles.json, which saves a
+ * round trip before the first tile request. The source stops at z9 (higher
+ * levels add no detail) and MapLibre overzooms past it.
+ */
 export const BASE_MAP_STYLE: StyleSpecification = {
   version: 8,
   name: 'ExpTech Studio',
   sources: {
     map: {
       type: 'vector',
-      url: 'https://lb.exptech.dev/api/v1/map/tiles/tiles.json',
+      tiles: [`${TILE_ORIGIN}/tiles/{z}/{x}/{y}.pbf`],
+      minzoom: 0,
+      maxzoom: 9,
     },
   },
-  sprite: '',
   layers: [
     {
       id: 'background',
