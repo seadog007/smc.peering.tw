@@ -1,76 +1,32 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useQuery } from "@tanstack/react-query";
 import { useMediaQuery } from "usehooks-ts";
-import { Map, Source, Layer, Marker, Popup } from "@vis.gl/react-maplibre";
+import { Map, Source, Layer, Popup } from "@vis.gl/react-maplibre";
 
 import { cableNames, getCableServiceStart } from '@/lib/cable-names';
 import { cablesQueryOptions, isCableSegmentVisible } from '@/lib/cables';
 import { incidentsQueryOptions, newestIncidentsFirst } from '@/lib/incidents';
+import {
+  BASE_MAP_STYLE,
+  CABLE_HIT_LAYER_ID,
+  CABLE_LAYERS,
+  CABLE_SOURCE_ID,
+  POINT_HIT_LAYER_ID,
+  POINT_LAYERS,
+  POINT_SOURCE_ID,
+} from '@/lib/map-style';
 
-import type { StyleSpecification } from "maplibre-gl";
-import type { Feature, FeatureCollection, LineString } from "geojson";
-import type { CableFilter, Equipment } from '@/lib/cables';
-import { cn } from "@/lib/utils";
+import type { MapLayerMouseEvent, MapRef } from "@vis.gl/react-maplibre";
+import type { Feature, FeatureCollection, LineString, Point } from "geojson";
+import type { CableFilter } from '@/lib/cables';
 import {
   getSegmentColor,
   getSegmentStatus,
   isBuildingSegment,
 } from "@/lib/cable-status";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { motion } from "motion/react";
 import landingPointsJson from "@/data/landing-points.json" with { type: "json" };
-
-// Keep map style object identity stable to avoid style reload flicker on re-renders
-const BASE_MAP_STYLE: StyleSpecification = {
-  version: 8,
-  name: "ExpTech Studio",
-  sources: {
-    map: {
-      type: "vector",
-      url: "https://lb.exptech.dev/api/v1/map/tiles/tiles.json",
-    },
-  },
-  sprite: "",
-  layers: [
-    {
-      id: "background",
-      type: "background",
-      paint: { "background-color": "#1f2025" },
-    },
-    {
-      id: "county",
-      type: "fill",
-      source: "map",
-      "source-layer": "city",
-      paint: { "fill-color": "#3F4045" },
-    },
-    {
-      id: "county-outline",
-      type: "line",
-      source: "map",
-      "source-layer": "city",
-      paint: { "line-color": "#a9b4bc" },
-    },
-    {
-      id: "town",
-      type: "fill",
-      source: "map",
-      "source-layer": "town",
-      paint: { "fill-color": "transparent" },
-    },
-    {
-      id: "global",
-      type: "fill",
-      source: "map",
-      "source-layer": "global",
-      paint: {
-        "fill-color": "#3F4045",
-        "fill-opacity": 1,
-      },
-    },
-  ],
-};
 
 interface LandingPoint {
   id: string;
@@ -78,183 +34,213 @@ interface LandingPoint {
   coordinates: [number, number];
 }
 
+type PointKind = "equipment" | "landing";
+
+interface PointProperties {
+  key: string;
+  kind: PointKind;
+  name: string;
+  // Exact position; geometry read back from rendered tiles is quantised.
+  lng: number;
+  lat: number;
+}
+
+interface CableProperties {
+  cableId: string;
+  cableName: string;
+  segmentId: string;
+  color: string;
+  status: ReturnType<typeof getSegmentStatus>;
+  lineWidth: number;
+  building: boolean;
+  // Set on the cable previewed from search. Preview changes the visible set
+  // anyway, so it rides along with that data update instead of feature-state.
+  preview?: boolean;
+}
+
+interface CableSelection {
+  kind: "cable";
+  cableId: string;
+  cableName: string;
+  segmentId: string;
+  coordinates: [number, number];
+}
+
+interface PointSelection {
+  kind: PointKind;
+  name: string;
+  coordinates: [number, number];
+}
+
+type Selection = CableSelection | PointSelection;
+
+interface FeatureRef {
+  source: string;
+  id: string | number;
+}
+
+const LANDING_POINT_FEATURES: Feature<Point, PointProperties>[] = (
+  landingPointsJson as unknown as LandingPoint[]
+).map((lp) => ({
+  type: "Feature",
+  properties: {
+    key: `lp-${lp.id}`,
+    kind: "landing",
+    name: lp.name,
+    lng: lp.coordinates[0],
+    lat: lp.coordinates[1],
+  },
+  geometry: { type: "Point", coordinates: lp.coordinates },
+}));
+
+const INTERACTIVE_LAYER_IDS = [POINT_HIT_LAYER_ID, CABLE_HIT_LAYER_ID];
+
+// Phones report up to 3x; drawing past 2x costs GPU time without a visible gain.
+const PIXEL_RATIO = window.devicePixelRatio > 2 ? 2 : undefined;
+
 interface MapWithCablesProps {
   cableFilter?: CableFilter;
   isolatedCableId?: string | null;
   previewCableId?: string | null;
 }
 
-export default function MapWithCables({
+function MapWithCables({
   cableFilter = "all",
   isolatedCableId = null,
   previewCableId = null,
 }: MapWithCablesProps) {
   const { t } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const landingPoints = landingPointsJson as unknown as LandingPoint[];
-  const [cursor, setCursor] = useState<string>("");
-  const [hoveredCableId, setHoveredCableId] = useState<string | null>(null);
-  const [selectedCable, setSelectedCable] = useState<{
-    cableId: string;
-    cableName: string;
-    segmentId: string;
-    coordinates: [number, number];
-  } | null>(null);
+  const mapRef = useRef<MapRef>(null);
+  const hoveredRef = useRef<FeatureRef | null>(null);
+  const [selection, setSelection] = useState<Selection | null>(null);
 
-  const [selectedEquipment, setSelectedEquipment] = useState<{
-    name: string;
-    coordinates: [number, number];
-  } | null>(null);
-
-  const [selectedLandingPoint, setSelectedLandingPoint] = useState<{
-    name: string;
-    coordinates: [number, number];
-  } | null>(null);
-
-  const { data: incidents, isLoading: incidentsLoading } = useQuery({
+  const { data: incidents } = useQuery({
     ...incidentsQueryOptions,
     select: newestIncidentsFirst,
   });
 
-  const { data: cables, isLoading: cablesLoading } = useQuery(cablesQueryOptions);
+  const { data: cables } = useQuery(cablesQueryOptions);
+
+  const setHovered = useCallback((next: FeatureRef | null) => {
+    const map = mapRef.current?.getMap();
+    const prev = hoveredRef.current;
+    if (!map || (prev?.source === next?.source && prev?.id === next?.id)) return;
+
+    if (prev && map.getSource(prev.source)) map.setFeatureState(prev, { hover: false });
+    if (next) map.setFeatureState(next, { hover: true });
+    hoveredRef.current = next;
+    map.getCanvas().style.cursor = next ? "pointer" : "";
+  }, []);
 
   useEffect(() => {
-    setSelectedCable(null);
-    setSelectedEquipment(null);
-    setHoveredCableId(null);
-    setCursor("");
-  }, [isolatedCableId, cableFilter]);
+    setSelection((current) => (current?.kind === "landing" ? current : null));
+    setHovered(null);
+  }, [isolatedCableId, cableFilter, setHovered]);
 
   useEffect(() => {
-    if (previewCableId) setHoveredCableId(null);
-  }, [previewCableId]);
+    if (previewCableId) setHovered(null);
+  }, [previewCableId, setHovered]);
 
-  const highlightedCableId = previewCableId ?? hoveredCableId;
-
-  const isLoading = useMemo(
-    () => incidentsLoading || cablesLoading,
-    [incidentsLoading, cablesLoading],
-  );
-
-  const cableFeatures = useMemo(() => {
+  // Status depends only on the data, so it is resolved once per load rather
+  // than on every filter, isolation, or preview change.
+  const segmentFeatures = useMemo(() => {
     if (!cables || !incidents) return [];
 
-    const allFeatures: Feature<LineString>[] = [];
-
-    cables.forEach((cable) => {
+    return cables.flatMap((cable) =>
       cable.segments
         .filter((segment) => !segment.hidden)
-        .forEach((segment) => {
+        .map((segment) => {
           const status = getSegmentStatus(segment, cable, incidents);
-          const color = getSegmentColor(segment, cable, incidents);
-          const building = isBuildingSegment(segment, cable);
-
-          const shouldShow = isCableSegmentVisible(
-            cable.id, segment, status, cableFilter, isolatedCableId, previewCableId,
-          );
-
-          if (!shouldShow) return;
-
-          if (status === "broken") {
-            allFeatures.push({
-              type: "Feature",
-              properties: {
-                cableName: cable.name,
-                segmentId: segment.id,
-                cableId: cable.id,
-                color: "#ff0000",
-                status: "broken-glow",
-                lineWidth: 15,
-                lineBlur: 12,
-                lineOpacity: 0.4,
-              },
-              geometry: {
-                type: "LineString",
-                coordinates: segment.coordinates,
-              },
-            } as Feature<LineString>);
-          }
-
-          allFeatures.push({
+          const feature: Feature<LineString, CableProperties> = {
             type: "Feature",
             properties: {
+              cableId: cable.id,
               cableName: cable.name,
               segmentId: segment.id,
-              cableId: cable.id,
-              color,
+              color: getSegmentColor(segment, cable, incidents),
               status,
-              lineWidth: status === "broken" || status === "partial_disconnected" ? 3 : 1.5,
-              lineBlur: 0,
-              lineOpacity: 1,
-              building,
+              lineWidth: status === "normal" ? 1.5 : 3,
+              building: isBuildingSegment(segment, cable),
             },
-            geometry: {
-              type: "LineString",
-              coordinates: segment.coordinates,
-            },
-          } as Feature<LineString>);
-        });
-    });
-
-    return allFeatures;
-  }, [cables, incidents, cableFilter, isolatedCableId, previewCableId]);
-
-  const cableData: FeatureCollection<LineString> = useMemo(
-    () => ({
-      type: "FeatureCollection",
-      features: cableFeatures,
-    }),
-    [cableFeatures],
-  );
-
-  const handleCableClick = (event: any) => {
-    const feature = event.features?.find(
-      (f: any) => f.properties?.status !== "broken-glow",
+            geometry: { type: "LineString", coordinates: segment.coordinates },
+          };
+          return { feature, segment };
+        }),
     );
+  }, [cables, incidents]);
+
+  const cableData = useMemo<FeatureCollection<LineString, CableProperties>>(() => ({
+    type: "FeatureCollection",
+    features: segmentFeatures
+      .filter(({ feature, segment }) => isCableSegmentVisible(
+        feature.properties.cableId,
+        segment,
+        feature.properties.status,
+        cableFilter,
+        isolatedCableId,
+        previewCableId,
+      ))
+      .map(({ feature }) => (feature.properties.cableId === previewCableId
+        ? { ...feature, properties: { ...feature.properties, preview: true } }
+        : feature)),
+  }), [segmentFeatures, cableFilter, isolatedCableId, previewCableId]);
+
+  const pointData = useMemo<FeatureCollection<Point, PointProperties>>(() => {
+    const equipment = (cables ?? [])
+      .filter((cable) => !isolatedCableId || cable.id === isolatedCableId || cable.id === previewCableId)
+      .flatMap((cable) => cable.equipments ?? [])
+      .map((equip): Feature<Point, PointProperties> => ({
+        type: "Feature",
+        properties: {
+          key: `eq-${equip.id}`,
+          kind: "equipment",
+          name: equip.name,
+          lng: equip.coordinate[0],
+          lat: equip.coordinate[1],
+        },
+        geometry: { type: "Point", coordinates: equip.coordinate },
+      }));
+
+    // Landing points last so they draw over equipment, as the markers did.
+    return { type: "FeatureCollection", features: [...equipment, ...LANDING_POINT_FEATURES] };
+  }, [cables, isolatedCableId, previewCableId]);
+
+  const handleMouseMove = useCallback((event: MapLayerMouseEvent) => {
+    const feature = event.features?.[0];
+    setHovered(feature?.id === undefined ? null : { source: feature.source, id: feature.id });
+  }, [setHovered]);
+
+  const handleMouseLeave = useCallback(() => setHovered(null), [setHovered]);
+
+  const handleLoad = useCallback(() => {
+    // Rotation and pitch have no meaning on this flat map and are easy to trigger by accident.
+    mapRef.current?.getMap().touchZoomRotate.disableRotation();
+  }, []);
+
+  const handleClick = useCallback((event: MapLayerMouseEvent) => {
+    const feature = event.features?.[0];
     if (!feature) return;
 
-    const coordinates = event.lngLat;
-    const properties = feature.properties as {
-      cableId: string;
-      cableName: string;
-      segmentId: string;
-    };
+    if (feature.source === POINT_SOURCE_ID) {
+      const point = feature.properties as PointProperties;
+      setSelection({ kind: point.kind, name: point.name, coordinates: [point.lng, point.lat] });
+      return;
+    }
 
-    setSelectedCable({
-      cableId: properties.cableId,
-      cableName: properties.cableName,
-      segmentId: properties.segmentId,
-      coordinates: [coordinates.lng, coordinates.lat],
+    const cable = feature.properties as CableProperties;
+    setSelection({
+      kind: "cable",
+      cableId: cable.cableId,
+      cableName: cable.cableName,
+      segmentId: cable.segmentId,
+      coordinates: [event.lngLat.lng, event.lngLat.lat],
     });
-  };
-
-  const handleEquipmentClick = (equipment: Equipment) => {
-    setSelectedEquipment({
-      name: equipment.name,
-      coordinates: equipment.coordinate,
-    });
-  };
-
-  // Change cursor to pointer when hovering over interactive cable features (excluding glow layer)
-  const handleMouseMove = (event: any) => {
-    const feature = event.features?.find(
-      (f: any) => f.properties?.status !== "broken-glow",
-    );
-    setCursor(feature ? "pointer" : "");
-    setHoveredCableId(feature ? (feature.properties?.cableId ?? null) : null);
-  };
-
-  if (isLoading) {
-    return (
-      <div className={cn("flex h-full w-full items-center justify-center")}>
-        <div className="text-white">Loading map...</div>
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <Map
-      cursor={cursor}
+      ref={mapRef}
       initialViewState={
         isMobile
           ? {
@@ -270,120 +256,35 @@ export default function MapWithCables({
       }
       style={{ width: "100%", height: "100%" }}
       mapStyle={BASE_MAP_STYLE}
-      interactiveLayerIds={["cables-hit", "cables-layer", "cables-building-layer"]}
+      minZoom={2}
+      maxZoom={12}
+      maxPitch={0}
+      pixelRatio={PIXEL_RATIO}
+      dragRotate={false}
+      pitchWithRotate={false}
+      touchPitch={false}
+      interactiveLayerIds={INTERACTIVE_LAYER_IDS}
       doubleClickZoom={false}
       keyboard={false}
       attributionControl={false}
+      onLoad={handleLoad}
       onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        setCursor("");
-        setHoveredCableId(null);
-      }}
-      onClick={handleCableClick}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
     >
-      <Source id="cables" type="geojson" data={cableData}>
-        {/* Hover glow layer for better visual feedback */}
-        <Layer
-          id="cables-hover-glow"
-          type="line"
-          filter={
-            (highlightedCableId
-              ? [
-                "all",
-                ["!=", ["get", "status"], "broken-glow"],
-                ["==", ["get", "cableId"], highlightedCableId],
-              ]
-              : ["==", ["get", "cableId"], "__none__"]) as any
-          }
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": previewCableId ? "#fff" : "#333",
-            "line-width": 8,
-            "line-blur": previewCableId ? 2 : 0,
-            "line-opacity": previewCableId ? 0.85 : 1,
-          }}
-        />
-        <Layer
-          id="cables-layer"
-          type="line"
-          filter={["!=", ["get", "building"], true] as any}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": ["get", "color"],
-            "line-width": ["get", "lineWidth"],
-            "line-blur": ["get", "lineBlur"],
-            "line-opacity": ["get", "lineOpacity"],
-          }}
-        />
-        <Layer
-          id="cables-building-layer"
-          type="line"
-          filter={["==", ["get", "building"], true] as any}
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": ["get", "color"],
-            "line-width": ["get", "lineWidth"],
-            "line-blur": ["get", "lineBlur"],
-            "line-opacity": ["get", "lineOpacity"],
-            "line-dasharray": [2, 2],
-          }}
-        />
-        {/* Invisible wide hit area to make hover/click easier */}
-        <Layer
-          id="cables-hit"
-          type="line"
-          layout={{ "line-join": "round", "line-cap": "round" }}
-          paint={{
-            "line-color": "#000000",
-            "line-width": 18,
-            "line-opacity": 0,
-            "line-blur": 0,
-          }}
-        />
+      <Source id={CABLE_SOURCE_ID} type="geojson" data={cableData} promoteId="cableId">
+        {CABLE_LAYERS.map((layer) => <Layer key={layer.id} {...layer} />)}
       </Source>
 
-      {cables?.filter((cable) => !isolatedCableId || cable.id === isolatedCableId || cable.id === previewCableId).map((cable) =>
-        cable.equipments?.map((equip) => (
-          <Marker
-            key={`marker-${equip.id}`}
-            longitude={equip.coordinate[0]}
-            latitude={equip.coordinate[1]}
-            onClick={() => handleEquipmentClick(equip)}
-          >
-            <div className="z-[1] size-5 cursor-pointer rounded-full bg-white" />
-          </Marker>
-        )),
-      )}
+      <Source id={POINT_SOURCE_ID} type="geojson" data={pointData} promoteId="key">
+        {POINT_LAYERS.map((layer) => <Layer key={layer.id} {...layer} />)}
+      </Source>
 
-      {landingPoints.map((lp) => (
-        <Marker
-          key={`lp-${lp.id}`}
-          longitude={lp.coordinates[0]}
-          latitude={lp.coordinates[1]}
-          onClick={() =>
-            setSelectedLandingPoint({
-              name: lp.name,
-              coordinates: lp.coordinates,
-            })
-          }
-        >
-          <motion.div
-            className="size-4 cursor-pointer rounded-full bg-gradient-to-b from-blue-500 to-blue-600 shadow-lg ring-2 ring-white/95 md:size-3"
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileTap={{
-              scale: 0.95,
-            }}
-          />
-        </Marker>
-      ))}
-
-      {selectedCable && (
+      {selection?.kind === "cable" && (
         <Popup
-          longitude={selectedCable.coordinates[0]}
-          latitude={selectedCable.coordinates[1]}
-          onClose={() => setSelectedCable(null)}
+          longitude={selection.coordinates[0]}
+          latitude={selection.coordinates[1]}
+          onClose={() => setSelection(null)}
           closeButton={true}
           closeOnClick={false}
           maxWidth="min(340px, calc(100vw - 32px))"
@@ -392,13 +293,13 @@ export default function MapWithCables({
         >
           <div className="max-h-[calc(100svh-64px)] overflow-y-auto px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
-              {selectedCable.cableName}
+              {selection.cableName}
             </h3>
-            {(cableNames[selectedCable.cableId] ?? [null]).map((names) => {
+            {(cableNames[selection.cableId] ?? [null]).map((names) => {
               const serviceStart = getCableServiceStart(names);
               return (
                 <dl
-                  key={names?.englishAbbreviation ?? selectedCable.cableId}
+                  key={names?.englishAbbreviation ?? selection.cableId}
                   className="mt-2 space-y-1 border-t border-gray-300 pt-2 text-xs wrap-anywhere"
                 >
                   <div>
@@ -456,65 +357,43 @@ export default function MapWithCables({
             })}
             <p className="mt-2 text-xs wrap-anywhere text-slate-400">
               {t('cablePopup.segmentId')}
-              : {selectedCable.segmentId}
+              : {selection.segmentId}
             </p>
-            <div className="mt-1 border-t border-gray-300 pt-1">
-              <p className="text-xs whitespace-nowrap text-gray-500">
-                {selectedCable.coordinates[1].toFixed(4)}°N,{" "}
-                {selectedCable.coordinates[0].toFixed(4)}°E
-              </p>
-            </div>
+            <CoordinateLine coordinates={selection.coordinates} />
           </div>
         </Popup>
       )}
 
-      {selectedEquipment && (
+      {selection && selection.kind !== "cable" && (
         <Popup
-          longitude={selectedEquipment.coordinates[0]}
-          latitude={selectedEquipment.coordinates[1]}
-          onClose={() => setSelectedEquipment(null)}
+          longitude={selection.coordinates[0]}
+          latitude={selection.coordinates[1]}
+          onClose={() => setSelection(null)}
           closeButton={true}
           closeOnClick={false}
-          maxWidth="250px"
+          maxWidth={selection.kind === "landing" ? "260px" : "250px"}
           offset={6}
         >
           <div className="px-3 py-2">
             <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
-              {selectedEquipment.name}
+              {selection.name}
             </h3>
-            <div className="mt-1 border-t border-gray-300 pt-1">
-              <p className="text-xs whitespace-nowrap text-gray-500">
-                {selectedEquipment.coordinates[1].toFixed(4)}°N,{" "}
-                {selectedEquipment.coordinates[0].toFixed(4)}°E
-              </p>
-            </div>
-          </div>
-        </Popup>
-      )}
-
-      {selectedLandingPoint && (
-        <Popup
-          longitude={selectedLandingPoint.coordinates[0]}
-          latitude={selectedLandingPoint.coordinates[1]}
-          onClose={() => setSelectedLandingPoint(null)}
-          closeButton={true}
-          closeOnClick={false}
-          maxWidth="260px"
-          offset={6}
-        >
-          <div className="px-3 py-2">
-            <h3 className="m-0 pr-5 text-sm leading-snug font-semibold break-words text-gray-700">
-              {selectedLandingPoint.name}
-            </h3>
-            <div className="mt-1 border-t border-gray-300 pt-1">
-              <p className="text-xs whitespace-nowrap text-gray-500">
-                {selectedLandingPoint.coordinates[1].toFixed(4)}°N,{" "}
-                {selectedLandingPoint.coordinates[0].toFixed(4)}°E
-              </p>
-            </div>
+            <CoordinateLine coordinates={selection.coordinates} />
           </div>
         </Popup>
       )}
     </Map>
   );
 }
+
+function CoordinateLine({ coordinates }: { coordinates: [number, number] }) {
+  return (
+    <div className="mt-1 border-t border-gray-300 pt-1">
+      <p className="text-xs whitespace-nowrap text-gray-500">
+        {`${coordinates[1].toFixed(4)}°N, ${coordinates[0].toFixed(4)}°E`}
+      </p>
+    </div>
+  );
+}
+
+export default memo(MapWithCables);
